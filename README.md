@@ -28,6 +28,15 @@ Distribution Packages:
 
 To manually install mpvc, use the Makefile provided or link/copy mpvc to somewhere to your $PATH.
 
+## Quick Start
+
+```
+# append and start mpv playing
+$ mpvc -a video.mkv
+# same as above, but playing without video output
+$ mpvc -a video.mkv -Q
+```
+
 ## Usage
 
 mpvc requires the use of mpv and its `--input-ipc-server` option.
