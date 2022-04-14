@@ -26,11 +26,13 @@ Distribution Packages:
 - [Gentoo](https://gitlab.com/xy2_/osman) - `emerge mpvc`
 - [Nixos](http://github.com/nixos/nixpkgs) - `nix-env -i mpvc`
 
-To manually install mpvc, use the Makefile provided or link/copy mpvc to somewhere to your $PATH.
+To manually install mpvc, use the Makefile provided or link/copy mpvc to somewhere to your `$PATH`.
 
 ## Quick Start
 
 ```
+# install (link) under $HOME/bin/
+$ make link BINDIR=$HOME/bin
 # append and start mpv playing
 $ mpvc -a video.mkv
 # same as above, but playing without video output
@@ -49,7 +51,7 @@ To keep the ipc-server open permanently, use:
 $ mpv --input-ipc-server=/tmp/mpvsocket
 ```
 
-You can also specify the default ipc server in your $XDG_CONFIG_HOME/mpv.conf
+You can also specify the default ipc server in your `$XDG_CONFIG_HOME/mpv.conf`
 which will make the most recent mpv instance you start be controllable via mpvc:
 ```
 input-ipc-server=/tmp/mpvsocket
