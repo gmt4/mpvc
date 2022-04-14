@@ -15,7 +15,7 @@ link: $(SCRIPT)
 
 install:
 	@echo 'Installing mpvc...'
-	install -Dm755 mpvc $(DESTDIR)$(PREFIX)/bin/mpvc
+	install -Dm755 mpvc $(BINDIR)/mpvc
 
 uninstall:
-	rm -f $(DESTDIR)$(PREFIX)/bin/mpvc
+	rm -f $(BINDIR)/mpvc
