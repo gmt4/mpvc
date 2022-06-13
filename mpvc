@@ -382,7 +382,7 @@ savePlaylist() {
 ###############################################################################
 
 appendTrack() {
-    filename="$*"
+    filename="$@"
 
     # require absolute paths
     if [ -e "$filename" ]; then
@@ -404,7 +404,7 @@ appendTrack() {
 
     # test if socket is open to add more files too, else start mpv socket up
     if quiet pgrep -f "mpv .*$SOCKET"; then
-        sockcmd '{ "command": ["loadfile", "'$filename'", "append-play" ] }'
+        sockcmd '{ "command": ["loadfile", "'"$filename"'", "append-play" ] }'
     else
         exec mpv --really-quiet --idle=once --input-ipc-server="${SOCKET}" \
             $MPVOPTIONS "$filename" &
