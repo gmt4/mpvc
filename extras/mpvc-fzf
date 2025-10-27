@@ -551,7 +551,7 @@ EOF
 mpvcfzf_invid_instances()
 {
     mpvcfzf_curl 'https://api.invidious.io/instances.json?sort_by=type,health,api' |
-        jq -c '.[].[1] | [ .uri, .flag, .region, .monitor.enabled, .monitor.uptime ]'
+        jq -c '.[] | .[1] | [ .uri, .flag, .region, .monitor.enabled, .monitor.uptime ]'
 }
 
 mpvcfzf_now_getvids() { echo "$@" | awk '/youtube|yewtu/ { sub("^.*/",""); sub(".*=",""); sub("^","\\&v="); printf $0; }'; }
