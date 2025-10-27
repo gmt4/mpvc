@@ -980,7 +980,7 @@ mpvc_parse_time() {
                 awk -F ':' '{ for (x=1; x<=NF; x++) t=t*60+$x; print t }')
             ;;
     esac
-    printf "%d" "$timeInt"
+    printf "%g" "$timeInt"
 }
 
 mpvc_handle_socket() {
