@@ -100,9 +100,11 @@ usage()
 {
     cat <<EOF
 usage: $PROGNAME -[vdlLh] args # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
- -a|asrc    : Show default pactl audio output (used as source for screencast)
- -c|cast    : Record an screencast using x11+pulse
- -d|default : Cut current media between ab-loop points using defaults (copy)
+ -a|asrc    : Show default pactl audio output (used as source for screencast).
+ -c|cast    : Record an screencast using x11+pulse.
+ -i|info    : Run ffprobe(1) on input file and report media info.
+
+ -d|default : Cut current media between ab-loop points using defaults (copy).
  -l|lossy   : Cut current media between ab-loop points using lossy compression.
  -L|lossless: Cut current media between ab-loop points using lossless compression.
  -v|vidcord : Cut current media between ab-loop points using vidcord compression.
