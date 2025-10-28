@@ -65,6 +65,12 @@ mpvc_cut_vres()
         }'
 }
 
+mpvc_cut_info()
+{
+    ffprobe -hide_banner -loglevel info "$@" 2>&1 |
+        awk '/^Input/ {print} /Stream #/ {print} /Duration:/ {print}'
+}
+
 mpvc_cut_asrc()
 {
     pactl list sources |
@@ -112,12 +118,14 @@ main()
 
     case "${1:-}" in
     -h|--help|help)          usage ;;
-    -a|asrc)                 mpvc_cut_asrc "$@"; return ;;
     -l|--lossy|lossy)        operation="lossy" mpvc_cut ;;
     -L|--lossless|lossless)  operation="lossless" mpvc_cut ;;
     -v|--vidcord|vidcord)    operation="vidcord" mpvc_cut ;;
     -d|--default|default|'') operation="default" mpvc_cut ;;
-    -c|cast)                 mpvc_screencast "$@" ;;
+
+    -i|info)                 shift; mpvc_cut_info "$@"; return ;;
+    -a|asrc)                 shift; mpvc_cut_asrc "$@"; return ;;
+    -c|cast)                 shift; mpvc_screencast "$@" ;;
     *)                       usage ;;
     esac
 }
