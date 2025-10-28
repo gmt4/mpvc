@@ -629,6 +629,9 @@ mpvc_play_next() {
     QUIETFLAG="true"
     # add track to the playlist & move to next position
     mpvc_appendtracks "$@"
+
+    if [ $(mpvc_get playlist-count) -eq 1 ]; then return; fi
+
     lid_last="$(( $(mpvc_get playlist-count) - 1 ))"
     lid_next="$(( $(mpvc_get playlist-pos) + 1 ))"
     for f in "$@";
