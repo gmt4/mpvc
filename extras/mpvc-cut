@@ -16,7 +16,7 @@ set -euf
 
 mpvc_cut_ffmpeg()
 {
-    ffmpeg -hide_banner -loglevel "$loglevel" -i "$path" -ss "$pointA" -to "$pointB" "$@"
+    ffmpeg -hide_banner -loglevel "$LOGLEVEL" -i "$path" -ss "$pointA" -to "$pointB" "$@"
 }
 
 mpvc_cutfile()
@@ -34,7 +34,7 @@ mpvc_cutfile()
     infile="${path##*/}"
     infile="${infile##"$fileExt"}"
     outfile="${outfile:-$infile.$pointA.$pointB}"
-    loglevel=${loglevel:-warning}
+    LOGLEVEL=${LOGLEVEL:-warning}
 
     echo "# $PROGNAME $operation $pointA $pointB $fileExt in $infile out $outfile"
 
@@ -48,6 +48,7 @@ mpvc_cutfile()
     ;;
     lossless) mpvc_cut_ffmpeg -c:v libx265 -x265-params lossless=1 "$outfile.mp4" ;;
     lossy)    mpvc_cut_ffmpeg "$outfile.mp4" ;;
+    dryrun)   mpvc_cut_ffmpeg -f null /dev/null ;;
     *)        mpvc_cut_ffmpeg -c copy -map 0 "$outfile.$fileExt" ;;
     esac
 }
@@ -90,20 +91,20 @@ mpvc_screencast()
     asrc=$(mpvc_cut_asrc)
 
     fout="${fout:-mpvc-cast-$(date -Iseconds | sed 's/:/-/g').mkv}"
-    loglevel=${loglevel:-warning}
+    LOGLEVEL=${LOGLEVEL:-warning}
     framerate=${framerate:-25}
 
     if [ -z "$vres" ]; then usage; fi
     if [ -z "$asrc" ]; then usage; fi
 
     echo "# $PROGNAME: recording vres $vres asrc $asrc to $fout (ctl+c to finish)"
-    ffmpeg -hide_banner -loglevel "$loglevel" -video_size "$vres" -framerate "$framerate" -f x11grab -i :0.0 -f pulse -ac 2 -i "$asrc" "$fout"
+    ffmpeg -hide_banner -loglevel "$LOGLEVEL" -video_size "$vres" -framerate "$framerate" -f x11grab -i :0.0 -f pulse -ac 2 -i "$asrc" "$fout"
 }
 
 usage()
 {
     cat <<EOF
-usage: $PROGNAME -[vdlLh] args # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
+usage: $PROGNAME -[acidlLvDh] args # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
  -a|asrc    : Show default pactl audio output (used as source for screencast).
  -c|cast    : Record an screencast using x11+pulse.
  -i|info    : Run ffprobe(1) on input file and report media info.
@@ -112,6 +113,7 @@ usage: $PROGNAME -[vdlLh] args # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
  -l|lossy   : Cut current media between ab-loop points using lossy compression.
  -L|lossless: Cut current media between ab-loop points using lossless compression.
  -v|vidcord : Cut current media between ab-loop points using vidcord compression.
+ -D|dryrun  : Cut current media between ab-loop points using dryrun (no action).
  -h|help    : This help
 *tips: If unsure about where to begin, start with: $PROGNAME preset
 EOF
@@ -127,7 +129,8 @@ main()
     -l|--lossy|lossy)        operation="lossy" mpvc_cut ;;
     -L|--lossless|lossless)  operation="lossless" mpvc_cut ;;
     -v|--vidcord|vidcord)    operation="vidcord" mpvc_cut ;;
-    -d|--default|default|'') operation="default" mpvc_cut ;;
+    -d|--default|default)    operation="default" mpvc_cut ;;
+    -D|--dryrun|dryrun)      operation="dryrun" mpvc_cut ;;
 
     -i|info)                 shift; mpvc_cut_info info "$@"; return ;;
     -I|Info)                 shift; mpvc_cut_info Info "$@"; return ;;
