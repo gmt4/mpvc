@@ -67,8 +67,12 @@ mpvc_cut_vres()
 
 mpvc_cut_info()
 {
+    mode=$1; shift
     ffprobe -hide_banner -loglevel info "$@" 2>&1 |
-        awk '/^Input/ {print} /Stream #/ {print} /Duration:/ {print}'
+        case "$mode" in
+        info) awk '/^Input/ {print} /Stream #/ {print} /Duration:/ {print}' ;;
+        Info) awk '{print}' ;;
+        esac
 }
 
 mpvc_cut_asrc()
@@ -125,7 +129,8 @@ main()
     -v|--vidcord|vidcord)    operation="vidcord" mpvc_cut ;;
     -d|--default|default|'') operation="default" mpvc_cut ;;
 
-    -i|info)                 shift; mpvc_cut_info "$@"; return ;;
+    -i|info)                 shift; mpvc_cut_info info "$@"; return ;;
+    -I|Info)                 shift; mpvc_cut_info Info "$@"; return ;;
     -a|asrc)                 shift; mpvc_cut_asrc "$@"; return ;;
     -c|cast)                 shift; mpvc_screencast "$@" ;;
     *)                       usage ;;
