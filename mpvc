@@ -75,6 +75,7 @@ EOF
  cmdr                     : Send command to $PROGNAME socket & retrieve raw JSON.
  sockcmd                  : Send MPV JSON IPC command to $PROGNAME socket.
  socklist                 : List $PROGNAME sockets.
+ socklista                : List $PROGNAME sockets (active).
  togglec                  : Toggle MPV cache property.
  togglef                  : Toggle MPV full-screen property.
  togglei                  : Toggle MPV idle property.
@@ -291,6 +292,10 @@ mpvc_socklist() {
         if [ ! -S "$f" ]; then continue; fi
         echo "$f	idle-active=$(MPVC_SOCKET=$f mpvc_get idle-active)"
     done
+}
+
+mpvc_socklist_active() {
+    mpvc_socklist | awk '/idle-active=$/ {print $1}'
 }
 
 mpvc_sockecho() { echo "$@" | mpvc_sockrepl; }
@@ -1046,7 +1051,7 @@ main() {
     --config|config) ;;
     --ttysize|ttysize|--ttycols|ttycols|--ttylines|ttylines|--statussz|statussz) ;;
     -k|--kill|kill|-K|--killall|killall) ;;
-    -c|--crop|crop|-C|--clear|clear|cmd|sockcmd|socklist|--socklist) ;;
+    -c|--crop|crop|-C|--clear|clear|cmd|sockcmd|socklist|--socklist|socklista|--socklista) ;;
     -a|add|--add|-A|load|--load|playnext|--playnext|-n|playnow|--playnow|mpv|--mpv|stash|--stash|--toggle|toggle|-q|--quiet) ;;
     version|--version|version-long|--version-long|-Q|--vid=no|-S|--socket) ;;
     help|--help|-h|help-long|--help-long|-H|--list-options) ;;
@@ -1118,6 +1123,7 @@ main() {
             --sockcmd|sockcmd)               shift; mpvc_sockecho "${1:-}"; QUIETFLAG=true ;;
             --sockrepl|sockrepl)             shift; mpvc_sockrepl; QUIETFLAG=true ;;
             --socklist|socklist)             shift; mpvc_socklist "${1:-}"; QUIETFLAG=true ;;
+            --socklista|socklista)           shift; mpvc_socklist_active "${1:-}"; QUIETFLAG=true ;;
 
             --search|search)                 shift; mpvc_search "full" "$@"; QUIETFLAG=true ;;
             --Search|Search)                 shift; mpvc_search "numbered" "$@"; QUIETFLAG=true ;;
