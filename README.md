@@ -72,7 +72,8 @@ Recommended extras:
 - `yt-dlp`
 - `cava`
 
-⚠️ Note tools **must** be up to date, in special `yt-dlp` to play streaming services, run `mpvc-installer check-reqs|config-user` to check.
+>[!WARNING]
+> **Note tools must be up to date**, in special `yt-dlp` to play streaming services, run `mpvc-installer check-reqs|config-user` to check and update.
 
 ## Installation
 
