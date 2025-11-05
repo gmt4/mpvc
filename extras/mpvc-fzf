@@ -600,6 +600,7 @@ usage: $PROGNAME opts # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
  -l|local      : Search & play local media
  -q|quality    : Select and change yt-dlp video quality (ytdl-format)
  -s|search     : Search on Invidious
+ -S|socket     : Set mpv socket [default: ${MPVC_SOCKET:-}].
  -t|thumbnail  : Retrieve thumbnail_url from metadata of the current YT-URL
  -T|Thumbnail  : Display thumbnail_url from metadata of the provided YT-URL
  -p|splay      : Search & play media found using Invidious
@@ -666,6 +667,7 @@ main()
         -q|quality)     shift; mpvcfzf_quality; return ;;
         -r|explorer)    shift; mpvcfzf_explorer; return ;;
         -s|search)      shift; mpvcfzf_isearch "$arg1"; return;;
+        -S|socket)      shift; export MPVC_SOCKET="${1:-}";;
         -t|thumbnail)   shift; mpvcfzf_thumbnail "$arg1"; return ;;
         -T|Thumbnail)   shift; mpvcfzf_thumbnail_preview "$arg1" ; return ;;
         -u|url)         shift; mpvcfzf_csearch_play "$arg1"; return ;;
