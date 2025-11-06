@@ -356,6 +356,7 @@ mpvcfzf_playlist()
     (if [ -z "$len" ]; then echo; else mpvc fullplaylist; fi) |
         mpvcfzf_preview --prompt="(playlist) " \
         --bind='ctrl-o:execute-silent(mpvc play {1})' \
+        --bind='ctrl-t:execute-silent(mpvc add {+1} &)' \
         --bind='ctrl-r:reload(mpvc fullplaylist)'
 }
 
