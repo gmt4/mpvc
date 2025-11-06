@@ -373,6 +373,7 @@ mpvcfzf_stashlist()
     mpvc stash list | mpvcfzf_awk0 |
         mpvcfzf_preview --prompt="(stash) " \
         --bind='ctrl-o:execute-silent(mpvc stash apply {+} &)' \
+        --bind='ctrl-t:execute-silent(mpvc stash append {+1} &)' \
         --bind='ctrl-r:reload(mpvc stash list | mpvc-fzf -0)'
 }
 
