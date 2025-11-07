@@ -340,9 +340,8 @@ mpvcfzf_iplay()
 mpvcfzf_local()
 {
     dir=${1:-./} # list relative files excluding .dot files/dirs
-    find $dir -path "$dir.*" -prune -o -type f,d -print | sed "s|^$dir||" | sort |
-        mpvcfzf_preview --prompt="(local) " |
-            mpvc load
+    find $dir -path "$dir.*" -prune -o -print | sed "s|^$dir||" | sort |
+        mpvcfzf_preview --prompt="(local) "
 }
 
 mpvcfzf_explorer()
@@ -356,7 +355,6 @@ mpvcfzf_playlist()
     (if [ -z "$len" ]; then echo; else mpvc fullplaylist; fi) |
         mpvcfzf_preview --prompt="(playlist) " \
         --bind='ctrl-o:execute-silent(mpvc play {1})' \
-        --bind='ctrl-t:execute-silent(mpvc add {+1} &)' \
         --bind='ctrl-r:reload(mpvc fullplaylist)'
 }
 
