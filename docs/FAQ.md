@@ -2,6 +2,25 @@
 
 Contribute answers in a `Q: A:` format to your favorite Frequently Asked Questions.
 
+## Companion tools
+
+* [fzf](https://github.com/junegunn/fzf)
+* [cava](https://github.com/karlstav/cava)
+* [yark](https://github.com/Owez/yark)
+* [copyparty](https://github.com/9001/copyparty)
+
+### Related tools
+
+* [ytfzf](https://github.com/pystardust/ytfzf)
+* [rmpvc](https://github.com/mierak/rmpc)
+* [ytmdl](https://github.com/deepjyoti30/ytmdl)
+* [ytmp](https://github.com/unclereeemus/ytmp)
+* [mpv-sockets](https://github.com/seanbreckenridge/mpv-sockets)
+
+## MPRIS support?
+
+* Check the [logbook](https://gmt4.github.io/mpvc/logbook.html#logbook-20240214) for howto setup.
+
 ## BSD support?
 
 The current focus is on GNU/Linux OSes, however, as BSDs as Open/Free/Net BSD are UNIX with POSIX-sh, support is easy thanks to [pkg(1)](https://man.freebsd.org/cgi/man.cgi?pkg):
@@ -27,26 +46,6 @@ Your best aim for using mpvc under Windows is to follow mpv documentation: [http
 - Second, step should be getting mpvc.
 - Third, should be getting a socat (see [socat.ps1](https://github.com/gmt4/mpvc/blob/master/extras/win32/socat.ps1)) replacement command under windows to perform read/write on the `MPVC_SOCKET` named pipe used by mpv/mpvc.
 - Last, AFAIK nobody has got to this point, so if somebody gets mpvc working on windows, report back, and update this. 
-
-## MPRIS support?
-
-* Check the [logbook](https://gmt4.github.io/mpvc/logbook.html#logbook-20240214) for howto setup.
-
-
-## Companion tools
-
-* [fzf](https://github.com/junegunn/fzf)
-* [cava](https://github.com/karlstav/cava)
-* [yark](https://github.com/Owez/yark)
-* [copyparty](https://github.com/9001/copyparty)
-
-### Related tools
-
-* [ytfzf](https://github.com/pystardust/ytfzf)
-* [rmpvc](https://github.com/mierak/rmpc)
-* [ytmdl](https://github.com/deepjyoti30/ytmdl)
-* [ytmp](https://github.com/unclereeemus/ytmp)
-* [mpv-sockets](https://github.com/seanbreckenridge/mpv-sockets)
 
 ## Screenshots
 
