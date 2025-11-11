@@ -117,7 +117,8 @@ This does git clone, and symlinks the mpvc scripts to `BINDIR` (default `~/bin`)
 
  # use mpvc to add/load/save media files or online YT URLs
  mpvc add /path/to/your/*.mp3 # or your URLs
- find . -type f -name '*.mp3' | fzf | mpvc load
+ find . -type f -name '*.mp3' | mpvc load
+ fzf | mpvc load # even better than the above
  mpvc save my-playlist
 
  # use mpvc stash to store/recover current mpv state (see the logbook for more)
@@ -139,7 +140,7 @@ This does git clone, and symlinks the mpvc scripts to `BINDIR` (default `~/bin`)
  mpvc-tui -T
 ```
 
-For more  check the  [LogBook](#logbook) (remember your best chance is to try, play, and have fun).
+For more  check the  [LogBook](#logbook) (remember your best chance is to try, play, learn, and have fun).
 
 ### Curl
 
