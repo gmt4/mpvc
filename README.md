@@ -259,6 +259,8 @@ usage: mpvc opts # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
  -s | --stop | stop       : Always stop playback.
  -P | --play | play       : Always start playback.
  -p | --toggle            : Toggle playback.
+      --repeat | repeat   : Loop the playlist.
+      --single | single   : Loop a single file.
     | --next | next       : Jump to next entry in the playlist
     | --prev | prev       : Jump to previous entry in the playlist
  -i | --playlist          : Print filenames of tracks to fit within terminal.
