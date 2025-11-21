@@ -354,10 +354,13 @@ mpvctui_usage()
     cat <<EOF
 usage: $PROGNAME opts # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
  -d|dir     : Set the WD to the media directory given as argument
+ -h|help    : This help you are reading
+ -H|history : Starts the $PROGNAME history
+ -k|kill    : Stop the running $PROGNAME
  -n|notify  : Desktop notification using notify on mpvc events (notify-send*)
+   |socket  : Set mpv socket [default: ${MPVC_SOCKET:-}].
  -s|suggest : Suggest a random media to play based on previous media played
  -S|scrobler: Starts the $PROGNAME scrobbler
- -H|history : Starts the $PROGNAME history
  -t|tui     : Starts the $PROGNAME to manage the mpv playlist (rlwrap*)
  -T|Tui     : Combo that starts $PROGNAME -t -n, and adds media given as args
  -x|launch  : Starts $PROGNAME in a new $MPVC_TUI_TERM (\$MPVC_TUI_TERM) # combine with <opts>
@@ -379,19 +382,20 @@ mpvctui_main()
         -d|dir)      shift; MPVC_TUI_DIR="$arg1"; cd "$MPVC_TUI_DIR" || return;;
         -h|help)     shift; mpvctui_usage ;;
         -H|history)  shift; cat "$MPVC_TUI_SCROBBLER" ;;
-        -t|tui)      shift; mpvctui_watch ;;
-        -T|Tui)      shift; mpvctui_watch_auto "$@" ;;
         -M|Mouse)    shift; mpvctui_launch "-m$arg1"; exit ;; # -g 15x1
         -m|mouse)    shift; mpvctui_mouse "$arg1" ;;
         -n|Notify)   shift; mpvctui_notify_loop "${1:-}" ;;
         -N|notify)   shift; mpvctui_notify "$@" ;;
         -k|kill)     shift; pkill -f "$PROGNAME" ;;
+        -t|tui)      shift; mpvctui_watch ;;
+        -T|Tui)      shift; mpvctui_watch_auto "$@" ;;
+           socket)   shift; export MPVC_SOCKET="$arg1"; shift ;;
         -s|suggest)  shift; mpvctui_suggest ;;
         -S|scrobler) shift; mpvctui_notify_loop_cli "${1:-}" ;;
-        -u|updatec)  shift; MPVC_TUI_UPDATEC="$arg1" ;;
+        -u|updatec)  shift; MPVC_TUI_UPDATEC="$arg1"; shift ;;
         -x|launch)   shift; mpvctui_launch "$@"; exit ;;
 
-        *) mpvctui_usage;;
+        #*) mpvctui_usage;;
         esac
     done
 }
