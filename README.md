@@ -223,7 +223,7 @@ The `mpc(1)` man page covers most of the functionality that mpc & mpvc have in c
 
 * [mpc(1): https://linux.die.net/man/1/mpc](https://linux.die.net/man/1/mpc)
 
-For the `mpv(1)` command read the mpv reference manual at: 
+For the `mpv(1)` command read the mpv reference manual at:
 
 * [https://mpv.io/manual/stable/](https://mpv.io/manual/stable/)
 
@@ -268,6 +268,7 @@ usage: mpvc opts # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
  -v | --vol | vol         : Increase/decrease volume relative to current volume.
  -h | --help              : Prints the short help.
  -H | --help-long         : Prints the long help (tip: mpvc -H 2>&1 | less).
+
 *tips: If unsure about where to begin, have a look at https://gmt4.github.io/mpvc
 ```
 
@@ -276,52 +277,62 @@ usage: mpvc opts # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
 ```console
 usage: mpvc-tui opts # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
  -d|dir     : Set the WD to the media directory given as argument
+ -h|help    : This help you are reading
+ -H|history : Starts the mpvc-tui history
+ -k|kill    : Stop the running mpvc-tui
  -n|notify  : Desktop notification using notify on mpvc events (notify-send*)
+   |socket  : Set mpv socket [default: ].
  -s|suggest : Suggest a random media to play based on previous media played
  -S|scrobler: Starts the mpvc-tui scrobbler
- -H|history : Starts the mpvc-tui history
  -t|tui     : Starts the mpvc-tui to manage the mpv playlist (rlwrap*)
  -T|Tui     : Combo that starts mpvc-tui -t -n, and adds media given as args
  -x|launch  : Starts mpvc-tui in a new xterm ($MPVC_TUI_TERM) # combine with <opts>
  -v|version : Prints the mpvc-tui version.
+
 *tips: If unsure about where to begin, start with: mpvc-tui -d /path/to/media/ -T
 ````
 
 ### mpvc-fzf
 
 ```console
-usage: mpvc-fzf opts # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
- -a|stash    : Start fzf to manage mpvc stashes
- -b|browse   : Start fzf to manage the provided ytdl-archive URL
- -c|chapters : Start fzf to manage the current mpv chapterlist
- -d|dir      : Set the WD to the media directory given as argument
- -e|eqz      : Start fzf to manage the equalizer settings
- -f|playlist : Start fzf to manage the current mpv playist
- -g|fetch    : Fetch the given YT URL, and store locally
- -G|Fetch    : Search on Invidious, fetch, and store locally
- -i|lyrics   : Search given media lyrics on Invidious
- -k|dplay    : Search & play DuckDuckGo videos
- -K|dsearch  : Search DuckDuckGo videos
- -l|local    : Search & play local media
- -q|quality  : Select and change yt-dlp video quality (ytdl-format)
- -s|search   : Search on Invidious
- -t|thumbnail: Retrieve thumbnail_url from metadata of the current YT-URL
- -T|Thumbnail: Retrieve thumbnail_url from metadata of the provided YT-URL
- -p|splay    : Search & play media found using Invidious
- -u|url      : Search the given YT URL (supports vids,channels,playlist feeds)
- -U|Url      : Search & play the given YT URL
- -x|launch   : Starts mpvc-fzf in a new xterm (config $MPVC_TERM) [combine -x with other opts]
- -y|related  : Search related media on Invidious
- -Y|Related  : Search & play related media using Invidious
- -z|relatedo : Search current media-title on Invidious and return related media
- -v|version  : Return the mpvc-fzf version.
 
-    now      : Return a shareable URL to the "now listening" playlist
-    lofi     : Search & play Lo-Fi channels
-    somafm   : Search & play SomaFM channels
-    radioapi : Search & play Radio-Browser API channels
-    ntsradio : Search & play NTS-Radio API channels
-    custom   : Search & play your custom feeds (channels, playlists, ...)
+usage: mpvc-fzf opts # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
+ -a|stash      : Start fzf to manage mpvc stashes
+ -b|browse     : Start fzf to manage the provided ytdl-archive URL
+ -c|chapters   : Start fzf to manage the current mpv chapterlist
+ -d|dir        : Set the WD to the media directory given as argument
+ -e|eqz        : Start fzf to manage the equalizer settings
+ -f|playlist   : Start fzf to manage the current mpv playist
+ -g|fetch      : Fetch the given YT URL, and store locally
+ -G|Fetch      : Search on Invidious, fetch, and store locally
+ -i|lyrics     : Search given media lyrics on Invidious
+ -k|dplay      : Search & play DuckDuckGo videos
+ -K|dsearch    : Search DuckDuckGo videos
+ -l|local      : Search & play local media at $1
+ -q|quality    : Select and change yt-dlp video quality (ytdl-format)
+ -r|explorer   : Explore local media at ytdl-archive/
+ -s|search     : Search on Invidious
+ -S|socket     : Set mpv socket [default: ].
+ -t|thumbnail  : Retrieve thumbnail_url from metadata of the current YT-URL
+ -T|Thumbnail  : Display thumbnail_url from metadata of the provided YT-URL
+ -p|splay      : Search & play media found using Invidious
+ -u|url        : Search the given YT URL (supports vids,channels,playlist feeds)
+ -U|Url        : Search & play the given YT URL
+ -x|launch     : Starts mpvc-fzf in a new xterm (config $MPVC_TERM) [combine -x with other opts]
+ -y|related    : Search related media on Invidious
+ -Y|Related    : Search & play related media using Invidious
+ -z|relatedo   : Search current media-title on Invidious and return related media
+ -v|version    : Return the mpvc-fzf version.
+
+    now        : Return a shareable URL to the "now listening" playlist
+    lofi       : Search & play Lo-Fi channels
+    somafm     : Search & play SomaFM channels
+    radioapi   : Search & play Radio-Browser API channels
+    ntsradio   : Search & play NTS-Radio API channels
+    custom     : Search & play your custom feeds (channels, playlists, ...)
+    custom-gen : Generate a template for your custom feeds (channels, playlists, ...)
+    invid-list : List available Invidious instances (set MPVC_FZF_INVID_URL)
+
 *tips: If unsure about where to begin, start: mpvc-fzf -p 'kupla mirage'
 ```
 
@@ -340,6 +351,7 @@ usage: mpvc-installer args # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
   install-sys    : Install to BINDIR=/usr/local/bin
   uninstall-sys  : Uninstall from BINDIR=/usr/local/bin
   uninstall-user : Uninstall from BINDIR=/home/user/bin
+
 *tips: If unsure where to start, start with: mpvc-installer fetch-user
 ```
 
