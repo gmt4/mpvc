@@ -291,7 +291,8 @@ mpvc_ytquery_json() {
             result=$(mpvc_curl_cache_json "$filename")
             ;;
         *) # otherwise, assume its a local file
-            result='{ "title":"'"${filename##*/}"'","request_id":0 }' # basenamed
+            filename=$([ -n "${filename##*/}" ] && echo "${filename##*/}" || echo "$filename")
+            result='{ "title":"'"${filename}"'","request_id":0 }' # basenamed
             ;;
         esac
         echo "$result"
