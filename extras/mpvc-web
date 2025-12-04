@@ -515,8 +515,9 @@ mpvc_web_mkcert()
 mpvc_web_https()
 {
     MPVC_WEB_LISTEN="bind=$MPVC_WEB_HOST,cert=$MPVC_WEB_SSL_PEM,cafile=$MPVC_WEB_SSL_PEM,verify=$MPVC_WEB_SSL_VERIFY"
+    MPVC_WEB_TCP=$([ "$MPVC_WEB_HOST" != "0" ] && echo "$MPVC_WEB_HOST" || echo "localhost")
 
-    socat "OPENSSL-LISTEN:$MPVC_WEB_SSL_PORT,$MPVC_WEB_LISTEN,reuseaddr,fork" "TCP:$MPVC_WEB_HOST:$MPVC_WEB_PORT" &
+    socat "OPENSSL-LISTEN:$MPVC_WEB_SSL_PORT,$MPVC_WEB_LISTEN,reuseaddr,fork" "TCP:$MPVC_WEB_TCP:$MPVC_WEB_PORT" &
     #echo "$$" > "$MPVC_WEB_SSL_PID"
 }
 
