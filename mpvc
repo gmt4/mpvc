@@ -272,27 +272,27 @@ mpvc_curl() { curl -sL -A 'Mozilla/5.0' "$@"; }
 mpvc_ytquery_json() {
     for i in "$@"
     do
-        filename="${i:-}"
-        filename=${filename##'"'}; filename=${filename%%'"'}
-        case "$filename" in
+        url="${i:-}"
+        url=${url##'"'}; url=${url%%'"'}
+        case "$url" in
         https://youtu.be/watch*|https://youtube.com/watch*|https://www.youtube.com/watch*|https://m.youtube.com/watch*)
-            filename="$(echo "$filename" | sed 's/youtube.com/youtu.be/; s/\(m\|www\).youtu.be/youtu.be/; s|/watch/\??v=|/|')"
-            result=$(mpvc_curl_cache_json "$filename")
+            url="$(echo "$url" | sed 's/youtube.com/youtu.be/; s/\(m\|www\).youtu.be/youtu.be/; s|/watch/\??v=|/|')"
+            result=$(mpvc_curl_cache_json "$url")
             ;;
         https://youtu.be/*|https://youtube.com/*|https://www.youtube.com/*|https://m.youtube.com/*)
-            result=$(mpvc_curl_cache_json "$filename")
+            result=$(mpvc_curl_cache_json "$url")
             ;;
         https://yewtu.be/watch*)
-            filename="$(echo "$filename" | sed 's|://yewtu.be|://youtu.be|; s|/watch?v=|/|')"
-            result=$(mpvc_curl_cache_json "$filename")
+            url="$(echo "$url" | sed 's|://yewtu.be|://youtu.be|; s|/watch?v=|/|')"
+            result=$(mpvc_curl_cache_json "$url")
             ;;
         https://yewtu.be/*)
-            filename="$(echo "$filename" | sed 's|://yewtu.be|://youtu.be|')"
-            result=$(mpvc_curl_cache_json "$filename")
+            url="$(echo "$url" | sed 's|://yewtu.be|://youtu.be|')"
+            result=$(mpvc_curl_cache_json "$url")
             ;;
         *) # otherwise, assume its a local file
-            filename=$([ -n "${filename##*/}" ] && echo "${filename##*/}" || echo "$filename")
-            result='{ "title":"'"${filename}"'","request_id":0 }' # basenamed
+            url=$([ -n "${url##*/}" ] && echo "${url##*/}" || echo "$url")
+            result='{ "title":"'"${url}"'","request_id":0 }' # basenamed
             ;;
         esac
         echo "$result"
