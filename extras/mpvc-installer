@@ -144,7 +144,7 @@ mpvc_check_requirements()
     done
     # recommened, and good to have, but not required
     echo "# Checking recommended deps:"
-    for cmd in curl rlwrap notify-send jq yt-dlp; do
+    for cmd in curl rlwrap notify-send jq yt-dlp deno; do
         if command -v "$cmd" | sed 's/^/  /'; then
             $cmd --version | awk 'NR==1 { print "    "$1,$2 }'
         else
