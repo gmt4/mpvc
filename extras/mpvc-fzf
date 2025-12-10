@@ -656,7 +656,7 @@ main()
         -L|Lyrics)      shift; mpvcfzf_lyrics_ddg; return ;;
         -k|dplay)       shift; mpvcfzf_ddg_play "$arg1"; return ;;
         -K|dsearch)     shift; mpvcfzf_ddg "$arg1"; return ;;
-        -l|local)       shift; mpvcfzf_explorer "$@"; return ;;
+        -l|local)       shift; mpvcfzf_explorer "${@:-.}"; return ;;
         -n|next)        shift; mpvcfzf_nextvideo "$arg1"; return ;;
 
         -o|osearch)     shift; mpvcfzf_isearch_once "$arg1" ;; # lucky
