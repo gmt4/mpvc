@@ -1136,13 +1136,6 @@ main() {
             --gets|gets|gs)                  shift; mpvc_get "${1:-}"; QUIETFLAG=true;;
             --setr|setr|sr)                  shift; mpvc_setr "$@"; return;;
             --getr|getr|gr)                  shift; mpvc_getr "${1:-}"; QUIETFLAG=true;;
-            --togglec|togglec)               shift; mpvc_cycle "cache" ;;
-            --togglef|togglef)               shift; mpvc_cycle "fullscreen" ;;
-            --togglei|togglei)               shift; mpvc_cycle "idle" ;;
-            --toggler|toggler|rotate)        shift; mpvc_rotate "$@"; QUIETFLAG=true ;;
-            --toggles|toggles)               shift; mpvc_cycle "shuffle";  QUIETFLAG=true ;;
-            --togglev|togglev)               shift; mpvc_cycle "video" ;;
-            --togglew|togglew)               shift; mpvc_cycle "force-window" ;;
             --idle|idle)                     shift; mpvc_idle "${1:-}"; QUIETFLAG=true ;;
             --idleloop|idleloop)             shift; mpvc_idleloop "${1:-}"; QUIETFLAG=true ;;
             --observe|observe)               shift; mpvc_observe "${1:-}"; QUIETFLAG=true ;;
@@ -1170,6 +1163,13 @@ main() {
             ytquery|ytq)                     shift; mpvc_ytquery "$@"; return;;
             ytqueryjson|ytqj)                shift; mpvc_ytquery_json "$@"; return;;
             ytqueryfield)                    shift; mpvc_ytquery_field "$@"; return;;
+            --togglec|togglec)                      mpvc_cycle "cache" ;;
+            --togglef|togglef)                      mpvc_cycle "fullscreen" ;;
+            --togglei|togglei)                      mpvc_cycle "idle" ;;
+            --toggler|toggler|rotate)               mpvc_rotate; QUIETFLAG=true ;;
+            --toggles|toggles)                      mpvc_cycle "shuffle";  QUIETFLAG=true ;;
+            --togglev|togglev)                      mpvc_cycle "video" ;;
+            --togglew|togglew)                      mpvc_cycle "force-window" ;;
 
             cprev|--chapter-prev|chapter-prev)            mpvc_chapter_set -1 "relative" ;;
             cnext|--chapter-next|chapter-next)            mpvc_chapter_set +1 "relative" ;;
