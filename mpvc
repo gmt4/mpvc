@@ -66,8 +66,8 @@ EOF
  -A | --playnext          : Add media to playlist after the current track.
  -n | --playnow           : Add media to playlist after the current track, and play it.
     | --playrand          : Select a random track from the playlist, and play it.
- -o | --save              : Save current playlist to given path.
- -l | --load              : Load playlist from given path (stdin if none is specified).
+    | --save              : Save current playlist to given path.
+    | --load              : Load playlist from given path (stdin if none is specified).
  -c | --crop              : Clear the playlist except for the media currently playing.
  -l | --loop              : Loop currently playing playlist.
  -L | --loopfile          : Loop currently playing file.
@@ -807,10 +807,6 @@ mpvc_clear_playlist() {
     echo "Playlist cleared."
 }
 
-mpvc_rotate() {
-    mpvc_ecmdr "cycle-values" video-rotate 0 90 180 270
-}
-
 ## Chapter functions ##########################################################
 
 mpvc_chapter_list_json()
@@ -1122,13 +1118,7 @@ main() {
             -j|--track|track)                shift; mpvc_set_track "${1:-}" relative  ;;
             -J|--tracknum|tracknum)          shift; mpvc_set_track "${1:-}" absolute  ;;
             -r|--remove|rm|remove|del)       shift; mpvc_remove_track "${1:-}"; QUIETFLAG=true;;
-            -o|--save|save)                  shift; mpvc_save_playlist "${1:-}" ;;
-            --load|load)                     shift; mpvc_load_playlist      ;;
 
-            mpv|--mpv)                       shift; mpvc_mpv ;; # "$@"
-            --current|current)               ;;
-            --loadc|loadc)                   shift; mpvc_load_playlist "clear"    ;;
-            --saven|saven)                   shift; mpvc_get_playlist_once "numbered"; QUIETFLAG=true;;
             --cycle|cycle)                   shift; mpvc_cycle "$@"; QUIETFLAG=true;;
             --set|set|s)                     shift; mpvc_set "$@"; return;;
             --get|get|g)                     shift; mpvc_get "${1:-}"; QUIETFLAG=true;;
@@ -1163,10 +1153,18 @@ main() {
             ytquery|ytq)                     shift; mpvc_ytquery "$@"; return;;
             ytqueryjson|ytqj)                shift; mpvc_ytquery_json "$@"; return;;
             ytqueryfield)                    shift; mpvc_ytquery_field "$@"; return;;
+
+            mpv|--mpv)                              mpvc_mpv ;; # "$@"
+            --current|current)                      ;;
+            --save|save)                            mpvc_save_playlist ;;
+            --load|load)                            mpvc_load_playlist ;;
+            --loadc|loadc)                          mpvc_load_playlist "clear"    ;;
+            --saven|saven)                          mpvc_get_playlist_once "numbered"; QUIETFLAG=true;;
+
             --togglec|togglec)                      mpvc_cycle "cache" ;;
             --togglef|togglef)                      mpvc_cycle "fullscreen" ;;
             --togglei|togglei)                      mpvc_cycle "idle" ;;
-            --toggler|toggler|rotate)               mpvc_rotate; QUIETFLAG=true ;;
+            --toggler|toggler|rotate)               mpvc_ecmdr "cycle-values" video-rotate 0 90 180 270; QUIETFLAG=true ;;
             --toggles|toggles)                      mpvc_cycle "shuffle";  QUIETFLAG=true ;;
             --togglev|togglev)                      mpvc_cycle "video" ;;
             --togglew|togglew)                      mpvc_cycle "force-window" ;;
