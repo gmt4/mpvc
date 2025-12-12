@@ -538,11 +538,8 @@ mpvcfzf_feed_custom_gen()
 
     "results":
     [
-        {
-            "title":"copyparty feed",
-            "subtitle":"copyparty sub",
-            "audio_stream_endpoint":"http://localhost:3923/"
-        }
+        { "title":"mpvc-8443 feed", "subtitle":"mpvc-8443 sub", "audio_stream_endpoint":"http://localhost:8443/" },
+        { "title":"copyparty feed", "subtitle":"copyparty sub", "audio_stream_endpoint":"http://localhost:3923/" }
     ]
 }
 EOF
