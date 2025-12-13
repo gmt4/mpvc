@@ -535,10 +535,10 @@ mpvcfzf_feed_custom_gen()
     cat <<EOF
 {
     "metadata": { "title":"Custom-feed", "subtitle":"feed example" },
-
     "results":
     [
-        { "title":"mpvc-8443 feed", "subtitle":"mpvc-8443 sub", "audio_stream_endpoint":"http://localhost:8443/" },
+        { "title":"mpvc-8888 feed", "subtitle":"mpvc-8888 sub", "audio_stream_endpoint":"http://localhost:8888/ytdl-archive/" },
+        { "title":"mpvc-8443 feed", "subtitle":"mpvc-8443 sub", "audio_stream_endpoint":"https://localhost:8443/ytdl-archive/" },
         { "title":"copyparty feed", "subtitle":"copyparty sub", "audio_stream_endpoint":"http://localhost:3923/" }
     ]
 }
