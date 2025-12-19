@@ -37,10 +37,9 @@
     @charset "UTF-8";
     .container {
       display: grid;
-      text-align: center;
-      grid-template-columns: 12em 12em 12em;
-      grid-template-rows: 12em 12em 12em;
+      grid-template-columns: auto auto auto;
       grid-gap: 10px;
+      text-align: center;
       padding-left: 10px;
     }
     .item {
@@ -56,6 +55,7 @@
       box-shadow: 0px 0px 9px 9px rgba(0, 0, 0, 0.5);
       height: 100%;
       width: 100%;
+      resize: both;
     }
     </style>
 
