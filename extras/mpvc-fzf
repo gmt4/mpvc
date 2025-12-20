@@ -665,7 +665,7 @@ main()
         -q|quality)     shift; mpvcfzf_quality; return ;;
         -r|explorer)    shift; mpvcfzf_explorer "$MPVC_YTDL_OUTPUT" "$@"; return ;;
         -s|search)      shift; mpvcfzf_isearch "$arg1"; return;;
-        -S|socket)      shift; export MPVC_SOCKET="${1:-}";;
+        -S|socket)      shift; export MPVC_SOCKET="${1:-}"; shift;;
         -t|thumbnail)   shift; mpvcfzf_thumbnail "$arg1"; return ;;
         -T|Thumbnail)   shift; mpvcfzf_thumbnail_preview "$arg1" ; return ;;
         -u|url)         shift; mpvcfzf_csearch_play "$arg1"; return ;;
