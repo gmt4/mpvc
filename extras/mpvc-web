@@ -370,8 +370,8 @@ mpvc_web_index()
             <a href="?cmd=mpvc --mute" ${MPVC_WEB_SHORTCUT_MUTE}>mute</a>
             <a href="?cmd=mpvc start 0">start</a>
             <a href="?cmd=mpvc start $">end</a>
-            <a href="?cmd=mpvc prev" title="prev" ${MPVC_WEB_SHORTCUT_PREV}>tr-</a>
-            <a href="?cmd=mpvc next" title="next" ${MPVC_WEB_SHORTCUT_NEXT}>tr+</a>
+            <a href="?cmd=mpvc prev" title="prev" ${MPVC_WEB_SHORTCUT_PREV}>prv</a>
+            <a href="?cmd=mpvc next" title="next" ${MPVC_WEB_SHORTCUT_NEXT}>nxt</a>
         </li>
         <li>
             mpvc
