@@ -175,6 +175,7 @@ mpvc_load()
 
 mpvc_reset()  { mpvc_setvals "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"; }
 mpvc_clear()  { mpvc set af ""; }
+mpvc_rm() { mpvc cmd af remove '@mpvc-equalizer:lavfi=[firequalizer]'; }
 mpvc_change() { mpvc_setvals $(mpvc_values | sed "$@"); }
 mpvc_vals()   { echo "$(mpvc_values)"; }
 mpvc_json()   { mpvc getr af | jq -C .data | sed '/graph/ s/:/:\n\t/g'; }
@@ -221,6 +222,7 @@ main()
     load)   shift; mpvc_load "$@";;
     reset)  shift; mpvc_reset;;
     clear)  shift; mpvc_clear;;
+    rm)     shift; mpvc_rm;;
     change) shift; mpvc_change "$@";;
     preset) shift; mpvc_presets "$@";;
     values) shift; mpvc_values;;
