@@ -297,32 +297,36 @@ usage: mpvc-tui opts # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
 ```console
 
 usage: mpvc-fzf opts # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
- -a|stash      : Start fzf to manage mpvc stashes
- -b|browse     : Start fzf to manage the provided ytdl-archive URL
- -c|chapters   : Start fzf to manage the current mpv chapterlist
- -d|dir        : Set the WD to the media directory given as argument
- -e|eqz        : Start fzf to manage the equalizer settings
- -f|playlist   : Start fzf to manage the current mpv playist
- -g|fetch      : Fetch the given YT URL, and store locally
- -G|Fetch      : Search on Invidious, fetch, and store locally
- -i|lyrics     : Search given media lyrics on Invidious
- -k|dplay      : Search & play DuckDuckGo videos
- -K|dsearch    : Search DuckDuckGo videos
- -l|local      : Search & play local media at $1
- -q|quality    : Select and change yt-dlp video quality (ytdl-format)
- -r|explorer   : Explore local media at ytdl-archive/
- -s|search     : Search on Invidious
- -S|socket     : Set mpv socket [default: ].
- -t|thumbnail  : Retrieve thumbnail_url from metadata of the current YT-URL
- -T|Thumbnail  : Display thumbnail_url from metadata of the provided YT-URL
- -p|splay      : Search & play media found using Invidious
- -u|url        : Search the given YT URL (supports vids,channels,playlist feeds)
- -U|Url        : Search & play the given YT URL
- -x|launch     : Starts mpvc-fzf in a new xterm (config $MPVC_TERM) [combine -x with other opts]
- -y|related    : Search related media on Invidious
- -Y|Related    : Search & play related media using Invidious
- -z|relatedo   : Search current media-title on Invidious and return related media
- -v|version    : Return the mpvc-fzf version.
+  -a|stash      : Start fzf to manage mpvc stashes
+  -b|browse     : Start fzf to manage the provided ytdl-archive URL
+  -c|chapters   : Start fzf to manage the current mpv chapterlist
+  -C|cache      : Search cache by URL for remote media and return local file
+ -CC|cmds       : Search and run commands from stdin
+  -d|dir        : Set the WD to the media directory given as argument
+  -e|eqz        : Start fzf to manage the equalizer settings
+  -f|playlist   : Start fzf to manage the current mpv playist
+  -g|fetch      : Fetch the given YT URL, and store locally
+  -G|Fetch      : Search on Invidious, fetch, and store locally
+  -i|lyrics     : Search given media lyrics on Invidious
+  -I|Lyrics     : Search given media lyrics on DDG
+  -k|dplay      : Search & play DuckDuckGo videos
+  -K|dsearch    : Search DuckDuckGo videos
+  -l|local      : Search & play local media at $1
+  -q|quality    : Select and change yt-dlp video quality (ytdl-format)
+  -r|explorer   : Explore local media at ytdl-archive/
+  -s|search     : Search on Invidious
+  -S|socket     : Set mpv socket [default: ].
+ -SS|socklist   : Select and set the current mpv socket to operate
+  -t|thumbnail  : Retrieve thumbnail_url from metadata of the current YT-URL
+  -T|Thumbnail  : Display thumbnail_url from metadata of the provided YT-URL
+  -p|splay      : Search & play media found using Invidious
+  -u|url        : Search the given YT URL (supports vids,channels,playlist feeds)
+  -U|Url        : Search & play the given YT URL
+  -x|launch     : Starts mpvc-fzf in a new xterm (config $MPVC_TERM) [combine -x with other opts]
+  -y|related    : Search related media on Invidious
+  -Y|Related    : Search & play related media using Invidious
+  -z|relatedo   : Search current media-title on Invidious and return related media
+  -v|version    : Return the mpvc-fzf version.
 
     now        : Return a shareable URL to the "now listening" playlist
     lofi       : Search & play Lo-Fi channels
