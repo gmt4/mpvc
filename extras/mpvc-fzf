@@ -432,6 +432,13 @@ mpvcfzf_cmds()
     mpvcfzf_preview --prompt '(cmds)' --bind='ctrl-o:execute(sh -c {})' "$@";
 }
 
+mpvcfzf_socklist()
+{
+    socket=$(mpvc socklist | mpvcfzf_preview --prompt="(socks) " "$@")
+    echo "$socket"
+    export MPVC_SOCKET="${socket%	*}"
+}
+
 mpvcfzf_equalizer()
 {
     mpvc-equalizer preset |
@@ -599,6 +606,7 @@ usage: $PROGNAME opts # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
  -r|explorer   : Explore local media at ytdl-archive/
  -s|search     : Search on Invidious
  -S|socket     : Set mpv socket [default: ${MPVC_SOCKET:-}].
+   |socklist   : Select and set the current mpv socket to operate
  -t|thumbnail  : Retrieve thumbnail_url from metadata of the current YT-URL
  -T|Thumbnail  : Display thumbnail_url from metadata of the provided YT-URL
  -p|splay      : Search & play media found using Invidious
@@ -665,7 +673,8 @@ main()
         -q|quality)     shift; mpvcfzf_quality; return ;;
         -r|explorer)    shift; mpvcfzf_explorer "$MPVC_YTDL_OUTPUT" "$@"; return ;;
         -s|search)      shift; mpvcfzf_isearch "$arg1"; return;;
-        -S|socket)      shift; export MPVC_SOCKET="${1:-}"; shift;;
+        -S|socket)      shift; export MPVC_SOCKET="${1:-}"; shift ;;
+           socklist)    shift; mpvcfzf_socklist ;;
         -t|thumbnail)   shift; mpvcfzf_thumbnail "$arg1"; return ;;
         -T|Thumbnail)   shift; mpvcfzf_thumbnail_preview "$arg1" ; return ;;
         -u|url)         shift; mpvcfzf_csearch_play "$arg1"; return ;;
