@@ -474,7 +474,8 @@ mpvc_get_playlist() {
                {
                    if (!ENVIRON["NO_COLOR"])
                    {
-                       mpvc " cmd expand-text \\${percent-pos}" | getline pct
+                       ytcmd=sprintf("%s cmd expand-text \\${percent-pos}", mpvc)
+                       ytcmd | getline pct
                        nchars=int((cols-(length(lid)+1+1+1)) * (pct/100))
                        fmtstr="\033[7m%2d  %-"nchars"s\033[0m"
                    }
