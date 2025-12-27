@@ -1077,7 +1077,7 @@ main() {
     --ttysize|ttysize|--ttycols|ttycols|--ttylines|ttylines|--statussz|statussz) ;;
     -k|--kill|kill|-K|--killall|killall) ;;
     -c|--crop|crop|-C|--clear|clear|cmd|sockcmd|socklist|--socklist|socklista|--socklista) ;;
-    -a|add|--add|-A|load|--load|playnext|--playnext|-n|playnow|--playnow|mpv|--mpv|stash|--stash|--toggle|toggle|-q|--quiet) ;;
+    -a|add|--add|-A|load|--load|playnext|--playnext|-n|playnow|--playnow|mpv|--mpv|stash|--stash|-q|--quiet) ;;
     version|--version|version-long|--version-long|-Q|--vid=no|-S|--socket) ;;
     help|--help|-h|help-long|--help-long|-H|--list-options) ;;
     *) mpvc_validate_socket;; # otherwise, validate socket
