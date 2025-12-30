@@ -217,9 +217,11 @@ Running `mpvc-installer config-user`, just installs the default configuration fi
 
 ### QuickConfig
 
+For a quick config just copy/symlink docs/config/ to ~/.config/mpvc/
+
 ```console
-# for a quick config: just copy/symlink docs/config/ to ~/.config/mpvc/
-cd mpvc.git
+# either use `mpvc-installer config-user` or do the cp/symlink by hand
+cd mpvc/
 ln -f -s $PWD/docs/config/mpv.conf ~/.config/mpv/
 ln -f -s $PWD/docs/config/mpvc.conf ~/.config/mpvc/
 ln -f -s $PWD/docs/config/yt-dlp.conf ~/.config/mpvc/
