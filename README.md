@@ -15,7 +15,13 @@ For more on the features of this fork check: [Git](#git) QuickStart, [LogBook](#
 
 ⏩ Skip directly to [Installation](#installation) to try mpvc!
 
-<details open>
+<details>
+<summary>mpvc-fzf running on macOS <i>(click to view screenshot)</i></summary>
+
+![mpvc-fzf on macOS](../../blob/master/docs/assets/mpvc-fzf-mac.jpg)
+</details>
+
+<details>
 <summary>mpvc-tui -T: running the mpvc TUI (with albumart) <i>(click to view screenshot)</i></summary>
 
 ![mpvc-tui -T screenshot](../../blob/master/docs/assets/mpvc-tui-new.png)
@@ -27,7 +33,7 @@ For more on the features of this fork check: [Git](#git) QuickStart, [LogBook](#
 ![mpvc-tui -T screenshot](../../blob/master/docs/assets/mpvc-tui.png)
 </details>
 
-<details>
+<details open>
 <summary>mpvc-fzf -f: running with fzf to manage the playlist <i>(click to view screenshot)</i></summary>
 
 ![mpvc-fzf screenshot](../../blob/master/docs/assets/mpvc-tui-arch.png)
