@@ -16,7 +16,7 @@
     <meta property="og:title" content="🎧 gmt4 mpvc logbook"/>
     <meta property="og:url" content="https://gmt4.github.io/mpvc/logbook.html"/>
     <meta property="og:description" content="A minimal mpc-like CLI and TUI for controlling mpv from the shell"/>
-    <meta property="og:image" content="https://raw.githubusercontent.com/gmt4/mpvc/master/docs/mpvc-tui.png"/>
+    <meta property="og:image" content="https://raw.githubusercontent.com/gmt4/mpvc/master/docs/assets/mpvc-tui.png"/>
     <!-- GH stuff -->
     <script async="true" defer="true" src="https://buttons.github.io/buttons.js"></script>
     <style type="text/css" media="all">
@@ -401,7 +401,7 @@ Check <a href="https://github.com/gmt4/mpvc/blob/master/extras/mpvc-web">extras/
 </p>
 
 <p>
-As a minor thing I've started aliasing <code>mpvc</code> commands that I use frequently to their "m" counterparts in sh(1), not perfect, but handy enough, and saves some typing: see the bash_aliases fulllist at <a href="bash_aliases.mpvc">bash_aliases.mpvc</a> (<a href="https://github.com/gmt4/mpvc/blob/master/docs/bash_aliases.mpvc">bash_aliases (github)</a>). Some handy examples are:
+As a minor thing I've started aliasing <code>mpvc</code> commands that I use frequently to their "m" counterparts in sh(1), not perfect, but handy enough, and saves some typing: see the bash_aliases fulllist at <a href="bash_aliases.mpvc">bash_aliases.mpvc</a> (<a href="https://github.com/gmt4/mpvc/blob/master/docs/config/bash_aliases.mpvc">bash_aliases (github)</a>). Some handy examples are:
 
 <pre>
 alias m="mpvc"
@@ -480,7 +480,7 @@ This approach has some limitations, lets say, sometimes you want to fully disabl
 
 <li>
     Storing URLs media locally, some URLs are played frequently that makes sense to cache them.
-    At this point, <code>yt-dlp</code> has <code>--download-archive</code> functionality that is useful (this can be enabled in <a href="https://github.com/gmt4/mpvc/blob/master/docs/mpv.conf">docs/mpv.conf</a>).
+    At this point, <code>yt-dlp</code> has <code>--download-archive</code> functionality that is useful (this can be enabled in <a href="https://github.com/gmt4/mpvc/blob/master/docs/config/mpv.conf">docs/config/mpv.conf</a>).
     This works as follows:
     <ul>
     <li>First, <code>mpvc-fzf -g URL</code>, with get the URL and download it where <code>mpv.conf</code> defines.</li>
