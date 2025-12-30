@@ -66,7 +66,6 @@ mpvc_chapter_gen()
     isabsolute=${2:-1}
 
     path=$(mpvc get path)
-    percentpos=$(mpvc get percent-pos)
     mediatitle=$(mpvc get media-title)
 
     awk -v isabsolute="$isabsolute" -v mediatitle="$mediatitle" -v path="$path" '
