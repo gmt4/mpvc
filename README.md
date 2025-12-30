@@ -215,6 +215,15 @@ Running `mpvc-installer config-user`, just installs the default configuration fi
 
 - `$TERM` configuration: A decent terminal with color/sixels support is recommended (`256color/vt340`), but outside of the scope of `mpvc` config.
 
+```console
+# for a quick config: just copy/symlink docs/config/ to ~/.config/mpvc/
+cd mpvc.git
+ln -f -s $PWD/docs/config/mpv.conf ~/.config/mpv/
+ln -f -s $PWD/docs/config/mpvc.conf ~/.config/mpvc/
+ln -f -s $PWD/docs/config/yt-dlp.conf ~/.config/mpvc/
+
+```
+
 ## Documentation
 
 ### Manuals
