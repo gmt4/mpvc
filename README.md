@@ -205,13 +205,13 @@ nix-env -i mpvc
 
 Running `mpvc-installer config-user`, just installs the default configuration files listed below under `~/.config/mpvc/`, afterwards, check and adjust them to suit your needs.
 
-- `mpvc` configuration is performed on [docs/mpvc.conf](../../blob/master/docs/mpvc.conf).
+- `mpvc` configuration is performed on [docs/mpvc.conf](../../blob/master/docs/config/mpvc.conf).
 
-- `mpv` configuration is performed on [docs/mpv.conf](../../blob/master/docs/mpv.conf).
+- `mpv` configuration is performed on [docs/mpv.conf](../../blob/master/docs/config/mpv.conf).
 
-- `yt-dlp` configuration is performed on [docs/yt-dlp.conf](../../blob/master/docs/yt-dlp.conf).
+- `yt-dlp` configuration is performed on [docs/yt-dlp.conf](../../blob/master/docs/config/yt-dlp.conf).
 
-- `shell` aliases to type less [docs/bash_aliases.mpvc](../../blob/master/docs/bash_aliases.mpvc).
+- `shell` aliases to type less [docs/bash_aliases.mpvc](../../blob/master/docs/config/bash_aliases.mpvc).
 
 - `$TERM` configuration: A decent terminal with color/sixels support is recommended (`256color/vt340`), but outside of the scope of `mpvc` config.
 
