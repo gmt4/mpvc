@@ -58,9 +58,8 @@ mpvc_chapter_merge() # usage: merge in.opus ffmetadata.txt out.opus
     ffmpeg -i "$srcfile" -i "$ffmetafile" -map_metadata 1 -codec copy "$dstfile"
 }
 
-# usage: mpvc_chapter_gen < chapterlist.txt, generates a ffmpeg metadata chapters file
 # usage: mpvc_chapter_gen [chapter-file] < chapterlist.txt with entries format: (HH:MM:SS) title (time can be relative or absolute)
-mpvc_chapter_gen()
+mpvc_chapter_gen() # usage: gen < chapterlist.txt, generates a ffmpeg metadata chapters file
 {
     chaptersfile=${1:-$(mpvc_chapter_file)}
     isabsolute=${2:-1}
@@ -104,8 +103,6 @@ mpvc_chapter_gen()
             otitle=title
         }
     ' | tee "$chaptersfile"
-
-    #cat "$chaptersfile"
 }
 
 # usage mpvc_chapter_load chapters.txt ffmetadata chapter-file
