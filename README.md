@@ -55,7 +55,7 @@ For more on the features of this fork check: [Git](#git) QuickStart, [LogBook](#
 - [extras/mpvc-web](../../blob/master/extras/mpvc-web): a hack to remotely control mpvc from web (handy on mobile)
 - [extras/mpvc-mpris](../../blob/master/extras/mpvc-mpris): speaks MPRIS to control mpv player through key-bindings.
 - [extras/mpvc-equalizer](../../blob/master/extras/mpvc-equalizer): provides a basic mpv equalizer for the CLI.
-- [extras/mpvc-autostart](../../blob/master/extras/mpvc-autostart): automatic mpv start/stop based on presence.
+- [extras/mpvc-autopilot](../../blob/master/extras/mpvc-autopilot): automatic mpv start/stop based on presence.
 - [extras/mpvc-installer](../../blob/master/extras/mpvc-installer): provides an installer to install/update mpvc.
 
 For more details on how to use the above tools have a look at the [Git](#git) QuickStart Guide, [LogBook](#logbook).
