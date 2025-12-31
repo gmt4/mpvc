@@ -25,7 +25,7 @@ MPVC_CONFIG_DIR="${MPVC_CONFIGDIR:-$HOME/.config/mpvc}"
 
 DOCS="README.md docs/config/mpv.conf docs/logbook.html"
 LICENSES="LICENSE.md"
-SCRIPT="mpvc extras/mpvc-tui extras/mpvc-fzf extras/mpvc-cut extras/mpvc-chapter extras/mpvc-mpris extras/mpvc-equalizer extras/mpvc-web extras/mpvc-autostart extras/mpvc-installer"
+SCRIPT="mpvc extras/mpvc-tui extras/mpvc-fzf extras/mpvc-cut extras/mpvc-chapter extras/mpvc-mpris extras/mpvc-equalizer extras/mpvc-web extras/mpvc-autopilot extras/mpvc-installer"
 
 MPV_CONFIG="docs/config/mpv.conf"
 MPVC_CONFIG="docs/config/mpvc.conf docs/config/yt-dlp.conf"
