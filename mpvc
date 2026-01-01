@@ -125,7 +125,7 @@ EOF
  ytqj | ytqueryj          : Given a yt URL report the yt metadata
 
  (--)ascii                : Echo mpvc ascii art 🎧
- (--)config               : Opens mpvc.conf in ${EDITOR}
+ (--)config               : Edit mpvc.conf in default editor (EDITOR=${EDITOR})
  (--)status               : Show current $PROGNAME status
  (--)cstatus              : Show current $PROGNAME channel status
  (--)lofi                 : Show current $PROGNAME status (one-liner)
@@ -213,7 +213,7 @@ mpvc_defaults()
 [%status%] #%position%/%playlistlength% %time%/%length% (%percentage%%) \\r\
 vol:%volume%% mute:%mute% repeat:%repeat% single:%single% \\r\
 vid:%video% scr:%screen% win:%force-window% fs:%fullscreen% \\r\
-chapter:%chapter% %=chapter%/%chapters% shuffle:%shuffle% idle:%idle%"
+ch:%chapter% %=chapter%/%chapters% shuffle:%shuffle% idle:%idle%"
 
     # print default status of mpv instance
     if [ -z "$MPVC_FMTSTR" ]; then
@@ -1146,7 +1146,7 @@ main() {
                --searchplay|searchplay|splay)shift; mpvc_search_play "full" "${1:-}" ;;
                --searchPlay|searchPlay|sPlay)shift; mpvc_search_play "numbered" "${1:-}" ;;
             --stash|stash)                   shift; mpvc_stash "${1:-}" "${2:-}";;
-            --expand-text|expand-text)       shift; mpvc_cmd expand-text "$@"; return;;
+            --expand-text|expand-text|et)    shift; mpvc_cmd expand-text "$@"; return;;
             --metadata|metadata|meta)        shift; mpvc_getr metadata "$@"; return;;
             --filename|filename)             shift; mpvc_get_playlist_filename "$@"; return;;
             --replay|replay)                 mpvc_set_time "absolute" 0 ;;
