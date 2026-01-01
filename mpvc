@@ -211,7 +211,7 @@ mpvc_defaults()
     MPVC_FMTSTR_DFLT="\
 %artist% - %title% \\r\
 [%status%] #%position%/%playlistlength% %time%/%length% (%percentage%%) \\r\
-vol:%volume%% mute:%mute% repeat:%repeat% single:%single% ab:%ablooplofi% \\r\
+vol:%volume%% mute:%mute% repeat:%repeat% single:%single% ab:%abloop% \\r\
 vid:%video% scr:%screen% win:%force-window% fs:%fullscreen% \\r\
 ch:%chapter% %=chapter%/%chapters% shuffle:%shuffle% idle:%idle%"
 
@@ -931,6 +931,7 @@ mpvc_print_status() {
             gsub("%percentage%", "${percent-pos}")
             gsub("%repeat%", "${loop-playlist}")
             gsub("%single%", "${loop-file}")
+            gsub("%abloop%", "${!ab-loop-a==no:yes}${?ab-loop-a==no:no}${!ab-loop-a:NA}")
             gsub("%frame%", "${estimated-frame-number}")
             gsub("%remaining%", "${playtime-remaining}")
             gsub("%length%", "${duration}")
