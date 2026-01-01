@@ -207,11 +207,11 @@ mpvc_defaults()
     : "${MPVC_IMAGESFLAG:=}"
     : "${MPVC_LOCAL_CACHE:=false}"
     : "${MPVC_FMTSTR:=}"
-    : "${MPVC_FMTSTR_LOFI:='[%status%] %statuslofi% %title% 🎶%percentage%% #%position%/%playlistlength% %=chapter%/%chapters% %mutelofi%%volume%% %singlelofi%%repeatlofi%%idlelofi%%videolofi%'}"
+    : "${MPVC_FMTSTR_LOFI:='[%status%] %statuslofi% %title% 🎶%percentage%% #%position%/%playlistlength% %=chapter%/%chapters% %mutelofi%%volume%% %ablooplofi%%singlelofi%%repeatlofi%%idlelofi%%videolofi%'}"
     MPVC_FMTSTR_DFLT="\
 %artist% - %title% \\r\
 [%status%] #%position%/%playlistlength% %time%/%length% (%percentage%%) \\r\
-vol:%volume%% mute:%mute% repeat:%repeat% single:%single% \\r\
+vol:%volume%% mute:%mute% repeat:%repeat% single:%single% ab:%ablooplofi% \\r\
 vid:%video% scr:%screen% win:%force-window% fs:%fullscreen% \\r\
 ch:%chapter% %=chapter%/%chapters% shuffle:%shuffle% idle:%idle%"
 
@@ -918,6 +918,8 @@ mpvc_print_status() {
 
             gsub("%singlelofi%", "${!loop-file==no:⇌}${?loop-file==no:_}${!loop-file:NA}")
             gsub("%repeatlofi%", "${?loop-playlist==inf:↻}${!loop-playlist==inf:_}${!loop-playlist:NA}")
+            gsub("%ablooplofi%", "${!ab-loop-a==no:c}${?ab-loop-a==no:_}${!ab-loop-a:NA}")
+
             gsub("%shufflelofi%", "${!shuffle==no:🔀}${?shuffle==no:_}${!shuffle:NA}")
             gsub("%idlelofi%", "${?idle==yes:∞}${!idle==yes:_}${!idle:NA}")
             gsub("%videolofi%", "${!video==no:📀}${?video==no:🎧}${!video:NA}")
