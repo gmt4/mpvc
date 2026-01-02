@@ -232,16 +232,22 @@ mpvcfzf_thumbnail()
 
     yturl=$(mpvcfzf_getvideo_id_from_fd "$yturl")
     case "$yturl" in
-#   *://stream.radioparadise.com/aac*)      mpvcfzf_curl https://api.radioparadise.com/api/now_playing?chan=0 | jq -j .cover ;;
-#   *://stream.radioparadise.com/mellow*)   mpvcfzf_curl https://api.radioparadise.com/api/now_playing?chan=1 | jq -j .cover ;;
-#   *://stream.radioparadise.com/rock*)     mpvcfzf_curl https://api.radioparadise.com/api/now_playing?chan=2 | jq -j .cover ;;
-#   *://stream.radioparadise.com/global*)   mpvcfzf_curl https://api.radioparadise.com/api/now_playing?chan=3 | jq -j .cover ;;
-#   *://stream.radioparadise.com/beyond*)   mpvcfzf_curl https://api.radioparadise.com/api/now_playing?chan=4 | jq -j .cover ;;
-#   *://stream.radioparadise.com/serenity*) mpvcfzf_curl https://api.radioparadise.com/api/now_playing?chan=5 | jq -j .cover ;;
+#    *://stream.radioparadise.com/aac*)      mpvcfzf_thumbnail_rp chan=0 ;;
+#    *://stream.radioparadise.com/mellow*)   mpvcfzf_thumbnail_rp chan=1 ;;
+#    *://stream.radioparadise.com/rock*)     mpvcfzf_thumbnail_rp chan=2 ;;
+#    *://stream.radioparadise.com/global*)   mpvcfzf_thumbnail_rp chan=3 ;;
+#    *://stream.radioparadise.com/beyond*)   mpvcfzf_thumbnail_rp chan=4 ;;
+#    *://stream.radioparadise.com/serenity*) mpvcfzf_thumbnail_rp chan=5 ;;
     *://youtu.be*)                          mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
     *://yewtu.be*)                          mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
     *)                                      mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
     esac
+}
+
+mpvcfzf_thumbnail_rp()
+{
+    # radioparadise disabled, returns application/octet-stream which browsers refuse to display
+    mpvcfzf_curl "https://api.radioparadise.com/api/now_playing?$1" | jq -j .cover
 }
 
 mpvcfzf_thumbnail_preview()
