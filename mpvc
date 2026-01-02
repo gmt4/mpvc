@@ -916,12 +916,12 @@ mpvc_print_status() {
             gsub("%statuslofi%", "${?pause==yes:≡}${?pause==no:►}${!pause:NA}");
             gsub("%mutelofi%", "${?mute==yes:🔇}${?mute==no:🔊}${!mute:NA}");
 
-            gsub("%singlelofi%", "${!loop-file==no:⇌}${?loop-file==no:_}${!loop-file:NA}")
-            gsub("%repeatlofi%", "${?loop-playlist==inf:↻}${!loop-playlist==inf:_}${!loop-playlist:NA}")
             gsub("%ablooplofi%", "${!ab-loop-a==no:c}${?ab-loop-a==no:_}${!ab-loop-a:NA}")
+            gsub("%singlelofi%", "${!loop-file==no:s}${?loop-file==no:_}${!loop-file:NA}")
+            gsub("%repeatlofi%", "${?loop-playlist==inf:r}${!loop-playlist==inf:_}${!loop-playlist:NA}")
 
             gsub("%shufflelofi%", "${!shuffle==no:🔀}${?shuffle==no:_}${!shuffle:NA}")
-            gsub("%idlelofi%", "${?idle==yes:∞}${!idle==yes:_}${!idle:NA}")
+            gsub("%idlelofi%", "${?idle==yes:i}${!idle==yes:_}${!idle:NA}")
             gsub("%videolofi%", "${!video==no:📀}${?video==no:🎧}${!video:NA}")
 
             gsub("%status%", "${?pause==yes:pause}${?pause==no:play}${!pause:NA}");
