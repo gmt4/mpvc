@@ -39,7 +39,7 @@ For more on the features of this fork check: [Git](#git) QuickStart, [LogBook](#
 ![mpvc-fzf screenshot](../../blob/master/docs/assets/mpvc-tui-arch.png)
 </details>
 
-<details>
+<details open>
 <summary>mpvc-tui -n: running with mpvc-fzf and desktop notifications on the upper-right corner <i>(click to view screenshot)</i></summary>
 
 ![mpvc tui+fzf+notifications screenshot](../../blob/master/docs/assets/mpvc-tui-fzf.png)
