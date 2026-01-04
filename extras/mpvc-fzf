@@ -17,8 +17,7 @@ set -euf
 
 quiet()  { "$@" > /dev/null 2>&1; }
 mpvcfzf_warn() { echo "$@" >&2; }
-mpvcfzf_awk0() { awk '{print $NF}'; }
-mpvcfzf_awk1() { awk '{print $1}'; }
+mpvcfzf_awk() { awk '{print $'$1'}'; }
 mpvc() { "$PROGDIR/mpvc" "$@"; } # mpvc-web?
 
 # Set defaults
@@ -650,8 +649,9 @@ main()
         arg1="${2:-}"
 
         case "$arg" in
-        -0|awk0)        shift; mpvcfzf_awk0; return ;;
-        -1|awk1)        shift; mpvcfzf_awk1; return ;;
+        -0|awk0)        shift; mpvcfzf_awk NF; return ;;
+        -1|awk1)        shift; mpvcfzf_awk 1; return ;;
+        -2|awk2)        shift; mpvcfzf_awk 2; return ;;
 
         -a|stash)       shift; mpvcfzf_stashlist; return ;;
         -b|browse)      shift; mpvcfzf_urlbrowser "$@"; return ;;
