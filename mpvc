@@ -210,10 +210,10 @@ mpvc_defaults()
     : "${MPVC_FMTSTR_LOFI:='[%status%] %statuslofi% %title% 🎶%percentage%% #%position%/%playlistlength% %=chapter%/%chapters% %mutelofi%%volume%% %shufflelofi%%ablooplofi%%singlelofi%%repeatlofi%%idlelofi%%videolofi%'}"
     MPVC_FMTSTR_DFLT="\
 %artist% - %title% \\r\
-[%status%] #%position%/%playlistlength% %time%/%length% (%percentage%%) \\r\
-vol:%volume%% mute:%mute% repeat:%repeat% single:%single% ab:%abloop% \\r\
-vid:%video% scr:%screen% win:%force-window% fs:%fullscreen% \\r\
-ch:%chapter% %=chapter%/%chapters% shuffle:%shuffle% idle:%idle%"
+[%status%] #%position%/%playlistlength% %time%/%length% (%percentage%%) vol:%volume%% \\r\
+mute:%mute% repeat:%repeat% single:%single% ab:%abloop% shuffle:%shuffle% \\r\
+vid:%video% scr:%screen% win:%force-window% fs:%fullscreen% idle:%idle% \\r\
+ch:%chapter% %=chapter%/%chapters%"
 
     # print default status of mpv instance
     if [ -z "$MPVC_FMTSTR" ]; then
