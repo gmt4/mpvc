@@ -139,7 +139,7 @@ mpvcfzf_csearch_play()
 {
     mpvcfzf_csearch "$1" |
         mpvcfzf_preview --prompt="(csearch) " |
-            mpvcfzf_awk1
+            mpvcfzf_awk 1
 }
 
 mpvcfzf_isearch_once()
@@ -176,12 +176,12 @@ mpvcfzf_related_play()
 {
     mpvcfzf_related_search "$1" |
         mpvcfzf_preview --prompt="(similar) " |
-            mpvcfzf_awk1
+            mpvcfzf_awk 1
 }
 
 mpvcfzf_related_once()
 {
-    mpvcfzf_related_search "$(mpvcfzf_isearch_once "${1:-$(mpvc get media-title)}" | mpvcfzf_awk1)"
+    mpvcfzf_related_search "$(mpvcfzf_isearch_once "${1:-$(mpvc get media-title)}" | mpvcfzf_awk 1)"
 }
 
 mpvcfzf_lyrics()
@@ -340,7 +340,7 @@ mpvcfzf_iplay()
 {
     mpvcfzf_isearch "$1" |
         mpvcfzf_preview --prompt="(youtube) " |
-            mpvcfzf_awk1
+            mpvcfzf_awk 1
 }
 
 mpvcfzf_local()
@@ -375,7 +375,7 @@ mpvcfzf_chapterlist()
 
 mpvcfzf_stashlist()
 {
-    mpvc stash list | mpvcfzf_awk0 |
+    mpvc stash list | mpvcfzf_awk NF |
         mpvcfzf_preview --prompt="(stash) " \
         --bind='ctrl-o:execute-silent(mpvc stash apply {+} &)' \
         --bind='ctrl-t:execute-silent(mpvc stash append {+1} &)' \
@@ -405,7 +405,7 @@ mpvcfzf_ddg_play()
 {
     mpvcfzf_ddg "$@" |
         mpvcfzf_preview --prompt="(ddg) " |
-            mpvcfzf_awk1 |
+            mpvcfzf_awk 1 |
                 mpvc load
 }
 
