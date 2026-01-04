@@ -345,14 +345,13 @@ mpvcfzf_iplay()
 
 mpvcfzf_local()
 {
-    dir=./
-    find $dir -path "$dir.*" -prune -o -print | sed "s|^$dir||" | sort |
-        mpvcfzf_preview --prompt="(local) " "$@"
-}
-
-mpvcfzf_explorer()
-{
-    (dir="${1:-}"; shift; cd "$dir" || return; mpvcfzf_local "$@")
+    (
+        cdir=./
+        dir="${1:-}"; shift;
+        cd "$dir" || return;
+        find $cdir -path "$cdir.*" -prune -o -print | sed "s|^$cdir||" | sort |
+            mpvcfzf_preview --prompt="(local) " "$@" | sed "s|^|$dir|"
+    )
 }
 
 mpvcfzf_playlist()
@@ -610,9 +609,9 @@ usage: $PROGNAME opts # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
   -I|Lyrics     : Search given media lyrics on DDG
   -k|dplay      : Search & play DuckDuckGo videos
   -K|dsearch    : Search DuckDuckGo videos
-  -l|local      : Search & play local media at \$1
+  -l|local      : Search & play local media at \$1 (handy to pipe to m load)
   -q|quality    : Select and change yt-dlp video quality (ytdl-format)
-  -r|explorer   : Explore local media at ytdl-archive/
+  -r|explorer   : Shortcut to search local media at ytdl-archive/
   -s|search     : Search on Invidious
   -S|socket     : Set mpv socket [default: ${MPVC_SOCKET:-}].
  -SS|socklist   : Select and set the current mpv socket to operate
@@ -671,7 +670,7 @@ main()
         -I|Lyrics)      shift; mpvcfzf_lyrics_ddg; return ;;
         -k|dplay)       shift; mpvcfzf_ddg_play "$arg1"; return ;;
         -K|dsearch)     shift; mpvcfzf_ddg "$arg1"; return ;;
-        -l|local)       shift; mpvcfzf_explorer "${@:-.}"; return ;;
+        -l|local)       shift; mpvcfzf_local "${@:-.}"; return ;;
         -n|next)        shift; mpvcfzf_nextvideo "$arg1"; return ;;
 
         -o|osearch)     shift; mpvcfzf_isearch_once "$arg1" ;; # lucky
@@ -681,7 +680,7 @@ main()
         -p|splay)       shift; mpvcfzf_iplay "$arg1" | mpvc load; return ;;
         -P|Splay)       shift; mpvcfzf_iplay "$arg1" | mpvc loadc; return ;;
         -q|quality)     shift; mpvcfzf_quality; return ;;
-        -r|explorer)    shift; mpvcfzf_explorer "$MPVC_YTDL_OUTPUT" "$@"; return ;;
+        -r|explorer)    shift; mpvcfzf_local "$MPVC_YTDL_OUTPUT" "$@"; return ;;
         -s|search)      shift; mpvcfzf_isearch "$arg1"; return;;
         -S|socket)      shift; export MPVC_SOCKET="${1:-}"; shift ;;
        -SS|socklist)    shift; mpvcfzf_socklist ;;
