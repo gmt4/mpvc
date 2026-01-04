@@ -426,7 +426,7 @@ A solution for this was to write a small script in <a href="https://github.com/g
 <p>
 For an example of its usage, just run <code>PERIOD=300 NCHECK=3 mpvc-autopilot -i 192.168.0.2</code> where <code>192.168.0.2</code> must be replaced by the LAN IP of your phone. The listing below show the output <code>mpvc-autopilot</code> doing periodic pings at 300 sec (5 minutes) intervals. When NCHECK=3 consecutive ping checks fail to detect the device, the audio is paused (pause=true). As soon as one ping check succeeds, the audio is resumed (pause=false). This means that each 300 * 3 seconds (15 minutes) the audio can be paused, and in 5 minutes resumed. Personally I prefer to raise NCHECKS=6, to have about 30 minutes of audio without pauses, anyway, the parameters are there for catter for your needs, just play with them.
 <pre>
-user@box mpvc $ PERIOD=300 NCHECK=3 mpvc-autopilot -i 192.168.0.2
+user@box mpvc $ mpvc-autopilot -p 300 -n 3 -i 192.168.0.2
 # mpvc-autopilot mpvc pingscan PERIOD=300 NCHECK=3 192.168.0.2
 # 2023-09-15T19:26+00:00 mpvc-autopilot PERIOD=300 NCHECK=6 pause=false c=0 n=0
 # 2023-09-15T19:31+00:00 mpvc-autopilot PERIOD=300 NCHECK=6 pause=false c=0 n=-1
@@ -758,7 +758,7 @@ Combine that with Tailscale or a cheap VPS and you have <b>your music, your way,
 <pre>
 </pre>
 </p>
-   
+
 <h2 id="gmt4-mpvc-logbook-the-end">The End</h2>
 
 Return to the <a href="#gmt4-mpvc-fork">Start</a>
