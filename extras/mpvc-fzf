@@ -263,14 +263,6 @@ mpvcfzf_nextvideo()
     echo "$next_url"
 }
 
-mpvcfzf_icache_ytdlro() { mpvc getr ytdl-raw-options; }
-mpvcfzf_icache_archive() {
-    if [ -n "$MPVC_YTDL_ARCHIVE" ]; then
-        echo "$MPVC_YTDL_ARCHIVE"
-    else
-        mpvcfzf_icache_ytdlro | jq -r ".data.download-archive"
-    fi
-}
 mpvcfzf_icache_output() { mpvcfzf_icache_ytdlro | jq -r ".data.output"; }
 mpvcfzf_icache_output_dir() {
     if [ -n "$MPVC_YTDL_OUTPUT" ]; then
@@ -285,7 +277,6 @@ mpvcfzf_icache_output_dir() {
 mpvcfzf_icache()
 {
     # check for media present in local cache
-    #ytdl_archive="$(mpvcfzf_icache_archive)"
     ytdl_output="$(mpvcfzf_icache_output_dir)"
     ytdl_dir="$ytdl_output"
 
