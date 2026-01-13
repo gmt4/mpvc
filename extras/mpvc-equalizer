@@ -204,6 +204,7 @@ usage: $PROGNAME opts # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
  load   : Loads equalizer settings
  reset  : Resets equalizer settings (set af gains to 0)
  clear  : Clears equalizer settings (clear af)
+ toggle : toggle equalizer settings (toggle af)
  preset : Show/Set equalizer settings preset
  values : Show equalizer settings as float values
  bars   : Show equalizer settings as graph bars
