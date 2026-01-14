@@ -31,7 +31,7 @@ mpvcap_btcheck()   { hcitool scan | awk "/$@/ {print}"; }
 
 mpvcap_autopilot()
 {
-    echo "# $PROGNAME $@"
+    echo "# $PROGNAME $@ $MPVC_AP_CMD $MPVC_AP_CHECK PERIOD=$MPVC_AP_PERIOD NCHECK=$MPVC_AP_NCHECK [$MPVC_AP_HOURMIN,$MPVC_AP_HOURMAX]"
     outputdir=$(mpvc-fzf -OO)
     while sleep ${MPVC_AP_PERIOD}
     do
@@ -51,7 +51,7 @@ mpvcap_autostart()
     target="$1"
     ncheck=0
 
-    echo "# $PROGNAME $@ $MPVC_AP_CHECK PERIOD=$MPVC_AP_PERIOD NCHECK=$MPVC_AP_NCHECK [$MPVC_AP_HOURMIN,$MPVC_AP_HOURMAX]"
+    echo "# $PROGNAME $@ $MPVC_AP_CMD $MPVC_AP_CHECK PERIOD=$MPVC_AP_PERIOD NCHECK=$MPVC_AP_NCHECK [$MPVC_AP_HOURMIN,$MPVC_AP_HOURMAX]"
     while sleep ${MPVC_AP_PERIOD}
     do
         hour=$(date +%_H)
