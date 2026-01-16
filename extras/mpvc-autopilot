@@ -29,6 +29,7 @@ mpvcap_defaults()
 mpvcap_pingcheck() { ping -c 5 "$@" | awk 'NR == 2 && /time=/ { sub(":.*time=",": time="); print }'; }
 mpvcap_btcheck()   { hcitool scan | awk "/$@/ {print}"; }
 
+# autopilot play tracks at random from musicdir each PERIOD secs
 mpvcap_autopilot()
 {
     echo "# $PROGNAME $@ $MPVC_AP_CMD $MPVC_AP_CHECK PERIOD=$MPVC_AP_PERIOD NCHECK=$MPVC_AP_NCHECK [$MPVC_AP_HOURMIN,$MPVC_AP_HOURMAX]"
@@ -45,7 +46,7 @@ mpvcap_autopilot()
     done
 }
 
-# check for device/phone: if present resume audio, otherwise, pause.
+# autostart checks for device/phone: if present resume audio, otherwise, pause.
 mpvcap_autostart()
 {
     target="$1"
