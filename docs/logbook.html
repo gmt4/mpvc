@@ -232,6 +232,7 @@ Some usage examples of the above are:
 <li><code>mpvc idleloop</code>: send the mpv events to stdout.</li>
 <li><code>mpvc idleloop | awk '/playback-restart/ {print}'</code>: select only the "playback-restart" mpv events.</li>
 <li><code>mpvc idleloop | awk '/playback-restart/ {system("notify-send -u normal -i dialog-warning \"$(mpvc)\"");print}'</code>: Send a notification when the track changes.</li>
+<li><code>mpvc idleloop | awk '/end-file/{ if(i++%2==0)system("mpvc playrand") }'</code>: select a random track when the current one ends.</li>
 </ul>
 
 The <code>mpvc-tui -n</code> uses <code>mpvc idleloop</code> to raise desktop notifications, as shown above.
