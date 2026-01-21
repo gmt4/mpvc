@@ -17,8 +17,7 @@ set -euf
 
 quiet()  { "$@" > /dev/null 2>&1; }
 mpvcfzf_warn() { echo "$@" >&2; }
-mpvcfzf_awk0() { awk '{print $NF}'; }
-mpvcfzf_awk1() { awk '{print $1}'; }
+mpvcfzf_awk() { awk '{print $'$1'}'; }
 mpvc() { "$PROGDIR/mpvc" "$@"; } # mpvc-web?
 
 # Set defaults
@@ -140,7 +139,7 @@ mpvcfzf_csearch_play()
 {
     mpvcfzf_csearch "$1" |
         mpvcfzf_preview --prompt="(csearch) " |
-            mpvcfzf_awk1
+            mpvcfzf_awk 1
 }
 
 mpvcfzf_isearch_once()
@@ -177,12 +176,12 @@ mpvcfzf_related_play()
 {
     mpvcfzf_related_search "$1" |
         mpvcfzf_preview --prompt="(similar) " |
-            mpvcfzf_awk1
+            mpvcfzf_awk 1
 }
 
 mpvcfzf_related_once()
 {
-    mpvcfzf_related_search "$(mpvcfzf_isearch_once "${1:-$(mpvc get media-title)}" | mpvcfzf_awk1)"
+    mpvcfzf_related_search "$(mpvcfzf_isearch_once "${1:-$(mpvc get media-title)}" | mpvcfzf_awk 1)"
 }
 
 mpvcfzf_lyrics()
@@ -232,15 +231,22 @@ mpvcfzf_thumbnail()
 
     yturl=$(mpvcfzf_getvideo_id_from_fd "$yturl")
     case "$yturl" in
-    *://stream.radioparadise.com/aac*)      echo $(mpvcfzf_curl https://api.radioparadise.com/api/now_playing?chan=0 | jq -j .cover) ;;
-    *://stream.radioparadise.com/mellow*)   echo $(mpvcfzf_curl https://api.radioparadise.com/api/now_playing?chan=1 | jq -j .cover) ;;
-    *://stream.radioparadise.com/rock*)     echo $(mpvcfzf_curl https://api.radioparadise.com/api/now_playing?chan=2 | jq -j .cover) ;;
-    *://stream.radioparadise.com/global*)   echo $(mpvcfzf_curl https://api.radioparadise.com/api/now_playing?chan=3 | jq -j .cover) ;;
-    *://stream.radioparadise.com/beyond*)   echo $(mpvcfzf_curl https://api.radioparadise.com/api/now_playing?chan=4 | jq -j .cover) ;;
-    *://stream.radioparadise.com/serenity*) echo $(mpvcfzf_curl https://api.radioparadise.com/api/now_playing?chan=5 | jq -j .cover) ;;
+#    *://stream.radioparadise.com/aac*)      mpvcfzf_thumbnail_rp chan=0 ;;
+#    *://stream.radioparadise.com/mellow*)   mpvcfzf_thumbnail_rp chan=1 ;;
+#    *://stream.radioparadise.com/rock*)     mpvcfzf_thumbnail_rp chan=2 ;;
+#    *://stream.radioparadise.com/global*)   mpvcfzf_thumbnail_rp chan=3 ;;
+#    *://stream.radioparadise.com/beyond*)   mpvcfzf_thumbnail_rp chan=4 ;;
+#    *://stream.radioparadise.com/serenity*) mpvcfzf_thumbnail_rp chan=5 ;;
+    *://youtu.be*)                          mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
     *://yewtu.be*)                          mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
     *)                                      mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
     esac
+}
+
+mpvcfzf_thumbnail_rp()
+{
+    # radioparadise disabled, returns application/octet-stream which browsers refuse to display
+    mpvcfzf_curl "https://api.radioparadise.com/api/now_playing?$1" | jq -j .cover
 }
 
 mpvcfzf_thumbnail_preview()
@@ -257,14 +263,6 @@ mpvcfzf_nextvideo()
     echo "$next_url"
 }
 
-mpvcfzf_icache_ytdlro() { mpvc getr ytdl-raw-options; }
-mpvcfzf_icache_archive() {
-    if [ -n "$MPVC_YTDL_ARCHIVE" ]; then
-        echo "$MPVC_YTDL_ARCHIVE"
-    else
-        mpvcfzf_icache_ytdlro | jq -r ".data.download-archive"
-    fi
-}
 mpvcfzf_icache_output() { mpvcfzf_icache_ytdlro | jq -r ".data.output"; }
 mpvcfzf_icache_output_dir() {
     if [ -n "$MPVC_YTDL_OUTPUT" ]; then
@@ -279,7 +277,6 @@ mpvcfzf_icache_output_dir() {
 mpvcfzf_icache()
 {
     # check for media present in local cache
-    #ytdl_archive="$(mpvcfzf_icache_archive)"
     ytdl_output="$(mpvcfzf_icache_output_dir)"
     ytdl_dir="$ytdl_output"
 
@@ -334,20 +331,18 @@ mpvcfzf_iplay()
 {
     mpvcfzf_isearch "$1" |
         mpvcfzf_preview --prompt="(youtube) " |
-            mpvcfzf_awk1
+            mpvcfzf_awk 1
 }
 
 mpvcfzf_local()
 {
-    dir=${1:-./} # list relative files excluding .dot files/dirs
-    find $dir -path "$dir.*" -prune -o -type f,d -print | sed "s|^$dir||" | sort |
-        mpvcfzf_preview --prompt="(local) " |
-            mpvc load
-}
-
-mpvcfzf_explorer()
-{
-    (cd "$MPVC_YTDL_OUTPUT" || return; mpvcfzf_local)
+    (
+        cdir=./
+        dir="${1:-}"; shift;
+        cd "$dir" || return;
+        find $cdir -path "$cdir.*" -prune -o -print | sed "s|^$cdir||" | sort |
+            mpvcfzf_preview --prompt="(local) " "$@" | sed "s|^|$dir|"
+    )
 }
 
 mpvcfzf_playlist()
@@ -370,9 +365,10 @@ mpvcfzf_chapterlist()
 
 mpvcfzf_stashlist()
 {
-    mpvc stash list | mpvcfzf_awk0 |
+    mpvc stash list | mpvcfzf_awk NF |
         mpvcfzf_preview --prompt="(stash) " \
         --bind='ctrl-o:execute-silent(mpvc stash apply {+} &)' \
+        --bind='ctrl-t:execute-silent(mpvc stash append {+1} &)' \
         --bind='ctrl-r:reload(mpvc stash list | mpvc-fzf -0)'
 }
 
@@ -399,7 +395,7 @@ mpvcfzf_ddg_play()
 {
     mpvcfzf_ddg "$@" |
         mpvcfzf_preview --prompt="(ddg) " |
-            mpvcfzf_awk1 |
+            mpvcfzf_awk 1 |
                 mpvc load
 }
 
@@ -430,6 +426,13 @@ mpvcfzf_urlbrowser()
 mpvcfzf_cmds()
 {
     mpvcfzf_preview --prompt '(cmds)' --bind='ctrl-o:execute(sh -c {})' "$@";
+}
+
+mpvcfzf_socklist()
+{
+    socket=$(mpvc socklist | mpvcfzf_preview --prompt="(socks) " "$@")
+    echo "$socket"
+    export MPVC_SOCKET="${socket%	*}"
 }
 
 mpvcfzf_equalizer()
@@ -535,14 +538,11 @@ mpvcfzf_feed_custom_gen()
     cat <<EOF
 {
     "metadata": { "title":"Custom-feed", "subtitle":"feed example" },
-
     "results":
     [
-        {
-            "title":"copyparty feed",
-            "subtitle":"copyparty sub",
-            "audio_stream_endpoint":"http://localhost:3923/"
-        }
+        { "title":"mpvc-8888 feed", "subtitle":"mpvc-8888 sub", "audio_stream_endpoint":"http://localhost:8888/ytdl-archive/" },
+        { "title":"mpvc-8443 feed", "subtitle":"mpvc-8443 sub", "audio_stream_endpoint":"https://localhost:8443/ytdl-archive/" },
+        { "title":"copyparty feed", "subtitle":"copyparty sub", "audio_stream_endpoint":"http://localhost:3923/" }
     ]
 }
 EOF
@@ -551,7 +551,7 @@ EOF
 mpvcfzf_invid_instances()
 {
     mpvcfzf_curl 'https://api.invidious.io/instances.json?sort_by=type,health,api' |
-        jq -c '.[].[1] | [ .uri, .flag, .region, .monitor.enabled, .monitor.uptime ]'
+        jq -c '.[] | .[1] | [ .uri, .flag, .region, .monitor.enabled, .monitor.uptime ]'
 }
 
 mpvcfzf_now_getvids() { echo "$@" | awk '/youtube|yewtu/ { sub("^.*/",""); sub(".*=",""); sub("^","\\&v="); printf $0; }'; }
@@ -586,30 +586,36 @@ mpvcfzf_usage()
 {
     cat <<EOF
 usage: $PROGNAME opts # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
- -a|stash      : Start fzf to manage mpvc stashes
- -b|browse     : Start fzf to manage the provided ytdl-archive URL
- -c|chapters   : Start fzf to manage the current mpv chapterlist
- -d|dir        : Set the WD to the media directory given as argument
- -e|eqz        : Start fzf to manage the equalizer settings
- -f|playlist   : Start fzf to manage the current mpv playist
- -g|fetch      : Fetch the given YT URL, and store locally
- -G|Fetch      : Search on Invidious, fetch, and store locally
- -i|lyrics     : Search given media lyrics on Invidious
- -k|dplay      : Search & play DuckDuckGo videos
- -K|dsearch    : Search DuckDuckGo videos
- -l|local      : Search & play local media
- -q|quality    : Select and change yt-dlp video quality (ytdl-format)
- -s|search     : Search on Invidious
- -t|thumbnail  : Retrieve thumbnail_url from metadata of the current YT-URL
- -T|Thumbnail  : Display thumbnail_url from metadata of the provided YT-URL
- -p|splay      : Search & play media found using Invidious
- -u|url        : Search the given YT URL (supports vids,channels,playlist feeds)
- -U|Url        : Search & play the given YT URL
- -x|launch     : Starts $PROGNAME in a new $MPVC_TERM (config \$MPVC_TERM) [combine -x with other opts]
- -y|related    : Search related media on Invidious
- -Y|Related    : Search & play related media using Invidious
- -z|relatedo   : Search current media-title on Invidious and return related media
- -v|version    : Return the $PROGNAME version.
+  -a|stash      : Start fzf to manage mpvc stashes
+  -b|browse     : Start fzf to manage the provided ytdl-archive URL
+  -c|chapters   : Start fzf to manage the current mpv chapterlist
+  -C|cache      : Search cache by URL for remote media and return local file
+ -CC|cmds       : Search and run commands from stdin
+  -d|dir        : Set the WD to the media directory given as argument
+  -e|eqz        : Start fzf to manage the equalizer settings
+  -f|playlist   : Start fzf to manage the current mpv playist
+  -g|fetch      : Fetch the given YT URL, and store locally
+  -G|Fetch      : Search on Invidious, fetch, and store locally
+  -i|lyrics     : Search given media lyrics on Invidious
+  -I|Lyrics     : Search given media lyrics on DDG
+  -k|dplay      : Search & play DuckDuckGo videos
+  -K|dsearch    : Search DuckDuckGo videos
+  -l|local      : Search & play local media at \$1 (handy to pipe to m load)
+  -q|quality    : Select and change yt-dlp video quality (ytdl-format)
+  -r|explorer   : Shortcut to search local media at ytdl-archive/
+  -s|search     : Search on Invidious
+  -S|socket     : Set mpv socket [default: ${MPVC_SOCKET:-}].
+ -SS|socklist   : Select and set the current mpv socket to operate
+  -t|thumbnail  : Retrieve thumbnail_url from metadata of the current YT-URL
+  -T|Thumbnail  : Display thumbnail_url from metadata of the provided YT-URL
+  -p|splay      : Search & play media found using Invidious
+  -u|url        : Search the given YT URL (supports vids,channels,playlist feeds)
+  -U|Url        : Search & play the given YT URL
+  -x|launch     : Starts $PROGNAME in a new $MPVC_TERM (config \$MPVC_TERM) [combine -x with other opts]
+  -y|related    : Search related media on Invidious
+  -Y|Related    : Search & play related media using Invidious
+  -z|relatedo   : Search current media-title on Invidious and return related media
+  -v|version    : Return the $PROGNAME version.
 
     now        : Return a shareable URL to the "now listening" playlist
     lofi       : Search & play Lo-Fi channels
@@ -633,8 +639,9 @@ main()
         arg1="${2:-}"
 
         case "$arg" in
-        -0|awk0)        shift; mpvcfzf_awk0; return ;;
-        -1|awk1)        shift; mpvcfzf_awk1; return ;;
+        -0|awk0)        shift; mpvcfzf_awk NF; return ;;
+        -1|awk1)        shift; mpvcfzf_awk 1; return ;;
+        -2|awk2)        shift; mpvcfzf_awk 2; return ;;
 
         -a|stash)       shift; mpvcfzf_stashlist; return ;;
         -b|browse)      shift; mpvcfzf_urlbrowser "$@"; return ;;
@@ -651,10 +658,10 @@ main()
         -G|Fetch)       shift; mpvcfzf_fetch "$(mpvcfzf_iplay "$@")"; return ;;
         -h|help)        shift; mpvcfzf_usage; return ;;
         -i|lyrics)      shift; mpvcfzf_lyrics "$arg1"; return ;;
-        -L|Lyrics)      shift; mpvcfzf_lyrics_ddg; return ;;
+        -I|Lyrics)      shift; mpvcfzf_lyrics_ddg; return ;;
         -k|dplay)       shift; mpvcfzf_ddg_play "$arg1"; return ;;
         -K|dsearch)     shift; mpvcfzf_ddg "$arg1"; return ;;
-        -l|local)       shift; mpvcfzf_local "$arg1"; return ;;
+        -l|local)       shift; mpvcfzf_local "${@:-.}"; return ;;
         -n|next)        shift; mpvcfzf_nextvideo "$arg1"; return ;;
 
         -o|osearch)     shift; mpvcfzf_isearch_once "$arg1" ;; # lucky
@@ -664,8 +671,10 @@ main()
         -p|splay)       shift; mpvcfzf_iplay "$arg1" | mpvc load; return ;;
         -P|Splay)       shift; mpvcfzf_iplay "$arg1" | mpvc loadc; return ;;
         -q|quality)     shift; mpvcfzf_quality; return ;;
-        -r|explorer)    shift; mpvcfzf_explorer; return ;;
+        -r|explorer)    shift; mpvcfzf_local "$MPVC_YTDL_OUTPUT" "$@"; return ;;
         -s|search)      shift; mpvcfzf_isearch "$arg1"; return;;
+        -S|socket)      shift; export MPVC_SOCKET="${1:-}"; shift ;;
+       -SS|socklist)    shift; mpvcfzf_socklist ;;
         -t|thumbnail)   shift; mpvcfzf_thumbnail "$arg1"; return ;;
         -T|Thumbnail)   shift; mpvcfzf_thumbnail_preview "$arg1" ; return ;;
         -u|url)         shift; mpvcfzf_csearch_play "$arg1"; return ;;

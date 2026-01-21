@@ -175,6 +175,7 @@ mpvc_load()
 
 mpvc_reset()  { mpvc_setvals "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"; }
 mpvc_clear()  { mpvc set af ""; }
+mpvc_toggle() { mpvc cmd af toggle '@mpvc-equalizer:lavfi=[firequalizer]'; }
 mpvc_change() { mpvc_setvals $(mpvc_values | sed "$@"); }
 mpvc_vals()   { echo "$(mpvc_values)"; }
 mpvc_json()   { mpvc getr af | jq -C .data | sed '/graph/ s/:/:\n\t/g'; }
@@ -203,6 +204,7 @@ usage: $PROGNAME opts # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
  load   : Loads equalizer settings
  reset  : Resets equalizer settings (set af gains to 0)
  clear  : Clears equalizer settings (clear af)
+ toggle : toggle equalizer settings (toggle af)
  preset : Show/Set equalizer settings preset
  values : Show equalizer settings as float values
  bars   : Show equalizer settings as graph bars
@@ -221,6 +223,7 @@ main()
     load)   shift; mpvc_load "$@";;
     reset)  shift; mpvc_reset;;
     clear)  shift; mpvc_clear;;
+    toggle) shift; mpvc_toggle;;
     change) shift; mpvc_change "$@";;
     preset) shift; mpvc_presets "$@";;
     values) shift; mpvc_values;;

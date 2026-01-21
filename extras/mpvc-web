@@ -237,6 +237,32 @@ function mpvcHttpGet(url)
     xmlHttp.send(null);
     return xmlHttp.responseText;
 }
+
+function Help()
+{
+    var help = (
+        'mpvc HTML accesskeys shortcuts:\n'+
+        '\n'+
+        '- $MPVC_WEB_SHORTCUT_HELP: this help\n'+
+        '- $MPVC_WEB_SHORTCUT_APPLY: select stash\n'+
+        '- $MPVC_WEB_SHORTCUT_CLI: select cli\n'+
+        '- $MPVC_WEB_SHORTCUT_EQUALIZER: select equalizer\n'+
+        '- $MPVC_WEB_SHORTCUT_REFRESH: refresh\n'+
+        '- $MPVC_WEB_SHORTCUT_KILL: select kill\n'+
+        '- $MPVC_WEB_SHORTCUT_NEXT: next track\n'+
+        '- $MPVC_WEB_SHORTCUT_PREV: prev track\n'+
+        '- $MPVC_WEB_SHORTCUT_TRACK: select track\n'+
+        '- $MPVC_WEB_SHORTCUT_SEEK: select seek\n'+
+        '- $MPVC_WEB_SHORTCUT_PAUSE: select pause\n'+
+        '- $MPVC_WEB_SHORTCUT_VOL: select volume\n'+
+        '- $MPVC_WEB_SHORTCUT_MUTE: select mute\n'+
+        '- $MPVC_WEB_SHORTCUT_ARCHIVE: select archive\n'+
+        '\n'+
+        '*For more, Read The Source Luke!\n'+
+        ''
+    )
+    alert(help)
+}
 EOF
 }
 
@@ -283,30 +309,6 @@ main()
     esac
 }
 main "\$@"
-EOF
-}
-
-mpvc_web_help()
-{
-    cat <<EOF
-$PROGNAME HTML accesskeys shortcuts:\n
-\n
-- $MPVC_WEB_SHORTCUT_HELP: this help\n
-- $MPVC_WEB_SHORTCUT_APPLY: select stash\n
-- $MPVC_WEB_SHORTCUT_CLI: select cli\n
-- $MPVC_WEB_SHORTCUT_EQUALIZER: select equalizer\n
-- $MPVC_WEB_SHORTCUT_REFRESH: refresh\n
-- $MPVC_WEB_SHORTCUT_KILL: select kill\n
-- $MPVC_WEB_SHORTCUT_NEXT: next track\n
-- $MPVC_WEB_SHORTCUT_PREV: prev track\n
-- $MPVC_WEB_SHORTCUT_TRACK: select track\n
-- $MPVC_WEB_SHORTCUT_SEEK: select seek\n
-- $MPVC_WEB_SHORTCUT_PAUSE: select pause\n
-- $MPVC_WEB_SHORTCUT_VOL: select volume\n
-- $MPVC_WEB_SHORTCUT_MUTE: select mute\n
-- $MPVC_WEB_SHORTCUT_ARCHIVE: select archive\n
-\n
-*For more, Read The Source Luke!\n
 EOF
 }
 
@@ -368,8 +370,8 @@ mpvc_web_index()
             <a href="?cmd=mpvc --mute" ${MPVC_WEB_SHORTCUT_MUTE}>mute</a>
             <a href="?cmd=mpvc start 0">start</a>
             <a href="?cmd=mpvc start $">end</a>
-            <a href="?cmd=mpvc prev" title="prev" ${MPVC_WEB_SHORTCUT_PREV}>tr-</a>
-            <a href="?cmd=mpvc next" title="next" ${MPVC_WEB_SHORTCUT_NEXT}>tr+</a>
+            <a href="?cmd=mpvc prev" title="prev" ${MPVC_WEB_SHORTCUT_PREV}>prv</a>
+            <a href="?cmd=mpvc next" title="next" ${MPVC_WEB_SHORTCUT_NEXT}>nxt</a>
         </li>
         <li>
             mpvc
@@ -490,7 +492,7 @@ mpvc_web_index()
         <a href="$PROGURL">$PROGNAME</a>
         <a href="$PROGURL">$PROGVERSION</a>
         <a href="${PROGURL%/*}">$PROGAUTHOR</a> (c) 2025
-        <a href="javascript:alert('$(mpvc_web_help)')" title="help" ${MPVC_WEB_SHORTCUT_HELP}>/h</a>
+        <a href="javascript:Help()" title="help" ${MPVC_WEB_SHORTCUT_HELP}>/h</a>
     </body>
 </html>
 EOF
@@ -513,8 +515,9 @@ mpvc_web_mkcert()
 mpvc_web_https()
 {
     MPVC_WEB_LISTEN="bind=$MPVC_WEB_HOST,cert=$MPVC_WEB_SSL_PEM,cafile=$MPVC_WEB_SSL_PEM,verify=$MPVC_WEB_SSL_VERIFY"
+    MPVC_WEB_TCP=$([ "$MPVC_WEB_HOST" != "0" ] && echo "$MPVC_WEB_HOST" || echo "localhost")
 
-    socat "OPENSSL-LISTEN:$MPVC_WEB_SSL_PORT,$MPVC_WEB_LISTEN,reuseaddr,fork" "TCP:$MPVC_WEB_HOST:$MPVC_WEB_PORT" &
+    socat "OPENSSL-LISTEN:$MPVC_WEB_SSL_PORT,$MPVC_WEB_LISTEN,reuseaddr,fork" "TCP:$MPVC_WEB_TCP:$MPVC_WEB_PORT" &
     #echo "$$" > "$MPVC_WEB_SSL_PID"
 }
 

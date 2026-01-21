@@ -1,0 +1,117 @@
+#!/usr/bin/env sh
+#
+# @file mpvc-autopilot
+# @description mpvc auto pause/resume audio based on device presence
+# @author gmt4 <gmt4 at github.com> (c) Copyright 2022 GPLv2+
+# @url github.com/gmt4/mpvc
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+
+PROGNAME=${0##*/}
+PROGVERSION="v1.7"
+PROGAUTHOR=gmt4
+PROGURL="https://github.com/gmt4/mpvc"
+
+set -euf
+
+mpvcap_defaults()
+{
+    ARGS=${ARGS:-}
+
+    MPVC_AP_NCHECK=${MPVC_AP_NCHECK:-3}
+    MPVC_AP_PERIOD=${MPVC_AP_PERIOD:-300}
+    MPVC_AP_HOURMIN=${MPVC_AP_HOURMIN:-6}
+    MPVC_AP_HOURMAX=${MPVC_AP_HOURMAX:-20}
+    MPVC_AP_CMD=${MPVC_AP_CMD:-mpvcap_autostart}
+    MPVC_AP_CHECK=${MPVC_AP_CHECK:-mpvcap_pingcheck}
+}
+
+mpvcap_pingcheck() { ping -c 5 "$@" | awk 'NR == 2 && /time=/ { sub(":.*time=",": time="); print }'; }
+mpvcap_btcheck()   { hcitool scan | awk "/$@/ {print}"; }
+
+# autopilot play tracks at random from musicdir each PERIOD secs
+mpvcap_autopilot()
+{
+    echo "# $PROGNAME $@ $MPVC_AP_CMD $MPVC_AP_CHECK PERIOD=$MPVC_AP_PERIOD NCHECK=$MPVC_AP_NCHECK [$MPVC_AP_HOURMIN,$MPVC_AP_HOURMAX]"
+    outputdir=$(mpvc-fzf -OO)
+    while sleep ${MPVC_AP_PERIOD}
+    do
+        hour=$(date +%_H)
+        if [ "$hour" -ge ${MPVC_AP_HOURMIN} -a "$hour" -lt ${MPVC_AP_HOURMAX} ]
+        then
+            next=$(find $(mpvc-fzf -OO) -type f | shuf -n1)
+            echo "# $PROGNAME next $next"
+            mpvc -n "$next"
+        fi
+    done
+}
+
+# autostart checks for device/phone: if present resume audio, otherwise, pause.
+mpvcap_autostart()
+{
+    target="$1"
+    ncheck=0
+
+    echo "# $PROGNAME $@ $MPVC_AP_CMD $MPVC_AP_CHECK PERIOD=$MPVC_AP_PERIOD NCHECK=$MPVC_AP_NCHECK [$MPVC_AP_HOURMIN,$MPVC_AP_HOURMAX]"
+    while sleep ${MPVC_AP_PERIOD}
+    do
+        hour=$(date +%_H)
+        pause=$(mpvc -q get pause || true)
+        check=$($MPVC_AP_CHECK $target)
+        nsign=$(if [ -n "$check" ]; then echo +; else echo -; fi)
+        ncheck=$(( ( $ncheck $nsign 1 ) % ( $MPVC_AP_NCHECK + 1 ) ))
+        if [ "$hour" -ge ${MPVC_AP_HOURMIN} -a "$hour" -lt ${MPVC_AP_HOURMAX} ]
+        then
+            if [ "$ncheck" -gt 0 ]; then mpvc -q resume || true; fi       # n>0 pings up: resume
+            if [ "$ncheck" -le -$MPVC_AP_NCHECK ]; then mpvc -q pause || true; fi # n<0 pings down: pause
+        fi
+        echo "# $(date) PERIOD=$MPVC_AP_PERIOD NCHECK=$MPVC_AP_NCHECK pause=$pause c=${#check} n=${ncheck} $check" # $@
+    done
+}
+
+optflags="c:hi:n:p:m:M:"
+usage()
+{
+    cat <<EOF
+usage: $PROGNAME -[$optflags] args # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
+ -i : The IP of the device to detect ping presence for $PROGNAME (*required)
+ -c : The operation cmd to run $PROGNAME (default: $MPVC_AP_CMD)
+ -C : The presence check to run $PROGNAME (default: $MPVC_AP_CHECK)
+ -p : The number of seconds between ping presence checks (default: $MPVC_AP_PERIOD)
+ -n : The number of failed ping presence checks after which to pause mpvc (default: $MPVC_AP_NCHECK)
+ -m : The minimum hour when to start ping presence (default: ${MPVC_AP_HOURMIN}h AM)
+ -M : The maximum hour when to stop ping presence (default: ${MPVC_AP_HOURMAX}h PM)
+*tips: If unsure where to begin, run: $PROGNAME -i 192.168.0.2 # your tablet/phone LAN IP
+EOF
+    exit;
+}
+
+main()
+{
+    mpvcap_defaults
+    [ $# -lt 1 ] && usage
+
+    while getopts "$optflags" flag;
+    do
+        case "$flag" in
+        h) usage ;;
+        i) ARGS="$ARGS $OPTARG"; ;;
+        c) MPVC_AP_CMD="$OPTARG"; ;;
+        p) MPVC_AP_PERIOD="$OPTARG"; ;;
+        n) MPVC_AP_NCHECK="$OPTARG"; ;;
+        m) MPVC_AP_HOURMIN="$OPTARG" ;;
+        M) MPVC_AP_HOURMAX="$OPTARG" ;;
+        *) usage ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    [ -z "${ARGS:-}" ] && usage "Error: No -i option provided (required)"
+    case "$MPVC_AP_CMD" in
+    mpvcap_autostart) mpvcap_autostart "$ARGS" ;;
+    mpvcap_autopilot) mpvcap_autopilot "$ARGS" ;;
+    *) usage ;;
+    esac
+}
+
+main "$@"

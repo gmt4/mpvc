@@ -15,7 +15,13 @@ For more on the features of this fork check: [Git](#git) QuickStart, [LogBook](#
 
 ⏩ Skip directly to [Installation](#installation) to try mpvc!
 
-<details open>
+<details>
+<summary>mpvc-fzf running on macOS <i>(click to view screenshot)</i></summary>
+
+![mpvc-fzf on macOS](../../blob/master/docs/assets/mpvc-fzf-mac.jpg)
+</details>
+
+<details>
 <summary>mpvc-tui -T: running the mpvc TUI (with albumart) <i>(click to view screenshot)</i></summary>
 
 ![mpvc-tui -T screenshot](../../blob/master/docs/assets/mpvc-tui-new.png)
@@ -27,13 +33,13 @@ For more on the features of this fork check: [Git](#git) QuickStart, [LogBook](#
 ![mpvc-tui -T screenshot](../../blob/master/docs/assets/mpvc-tui.png)
 </details>
 
-<details>
+<details open>
 <summary>mpvc-fzf -f: running with fzf to manage the playlist <i>(click to view screenshot)</i></summary>
 
 ![mpvc-fzf screenshot](../../blob/master/docs/assets/mpvc-tui-arch.png)
 </details>
 
-<details>
+<details open>
 <summary>mpvc-tui -n: running with mpvc-fzf and desktop notifications on the upper-right corner <i>(click to view screenshot)</i></summary>
 
 ![mpvc tui+fzf+notifications screenshot](../../blob/master/docs/assets/mpvc-tui-fzf.png)
@@ -49,7 +55,7 @@ For more on the features of this fork check: [Git](#git) QuickStart, [LogBook](#
 - [extras/mpvc-web](../../blob/master/extras/mpvc-web): a hack to remotely control mpvc from web (handy on mobile)
 - [extras/mpvc-mpris](../../blob/master/extras/mpvc-mpris): speaks MPRIS to control mpv player through key-bindings.
 - [extras/mpvc-equalizer](../../blob/master/extras/mpvc-equalizer): provides a basic mpv equalizer for the CLI.
-- [extras/mpvc-autostart](../../blob/master/extras/mpvc-autostart): automatic mpv start/stop based on presence.
+- [extras/mpvc-autopilot](../../blob/master/extras/mpvc-autopilot): automatic mpv start/stop based on presence.
 - [extras/mpvc-installer](../../blob/master/extras/mpvc-installer): provides an installer to install/update mpvc.
 
 For more details on how to use the above tools have a look at the [Git](#git) QuickStart Guide, [LogBook](#logbook).
@@ -72,7 +78,8 @@ Recommended extras:
 - `yt-dlp`
 - `cava`
 
-⚠️ Note tools **must** be up to date, in special `yt-dlp` to play streaming services, run `mpvc-installer check-reqs|config-user` to check.
+>[!WARNING]
+> **Note tools must be up to date**, in special `yt-dlp` to play streaming services, run `mpvc-installer check-reqs|config-user` to check and update.
 
 ## Installation
 
@@ -116,7 +123,8 @@ This does git clone, and symlinks the mpvc scripts to `BINDIR` (default `~/bin`)
 
  # use mpvc to add/load/save media files or online YT URLs
  mpvc add /path/to/your/*.mp3 # or your URLs
- find . -type f -name | mpvc load
+ find . -type f -name '*.mp3' | mpvc load
+ fzf | mpvc load # even better than the above
  mpvc save my-playlist
 
  # use mpvc stash to store/recover current mpv state (see the logbook for more)
@@ -138,7 +146,7 @@ This does git clone, and symlinks the mpvc scripts to `BINDIR` (default `~/bin`)
  mpvc-tui -T
 ```
 
-For more  check the  [LogBook](#logbook) (remember your best chance is to try, play, and have fun).
+For more  check the  [LogBook](#logbook) (remember your best chance is to try, play, learn, and have fun).
 
 ### Curl
 
@@ -201,17 +209,30 @@ nix-env -i mpvc
 
 ## Configuration
 
-Running `mpvc-installer config-user`, just installs the default configuration files listed below under `~/.config/mpvc/`, afterwards, check and adjust them to suit your needs.
+Running `mpvc-installer config-user`, just installs the default configuration files from [config/](../../blob/master/docs/config/) listed below under `~/.config/mpvc/`, afterwards, check and adjust them to suit your needs.
 
-- `mpvc` configuration is performed on [docs/mpvc.conf](../../blob/master/docs/mpvc.conf).
+- `mpvc` configuration is performed on [config/mpvc.conf](../../blob/master/docs/config/mpvc.conf).
 
-- `mpv` configuration is performed on [docs/mpv.conf](../../blob/master/docs/mpv.conf).
+- `mpv` configuration is performed on [config/mpv.conf](../../blob/master/docs/config/mpv.conf).
 
-- `yt-dlp` configuration is performed on [docs/yt-dlp.conf](../../blob/master/docs/yt-dlp.conf).
+- `yt-dlp` configuration is performed on [config/yt-dlp.conf](../../blob/master/docs/config/yt-dlp.conf).
 
-- `shell` aliases to type less [docs/bash_aliases.mpvc](../../blob/master/docs/bash_aliases.mpvc).
+- `shell` aliases to type less [config/bash_aliases.mpvc](../../blob/master/docs/config/bash_aliases.mpvc).
 
 - `$TERM` configuration: A decent terminal with color/sixels support is recommended (`256color/vt340`), but outside of the scope of `mpvc` config.
+
+### QuickConfig
+
+For a quick config just copy/symlink docs/config/ to ~/.config/mpvc/
+
+```console
+# either use `mpvc-installer config-user` or do the cp/symlink by hand
+cd mpvc/
+ln -f -s $PWD/docs/config/mpv.conf ~/.config/mpv/
+ln -f -s $PWD/docs/config/mpvc.conf ~/.config/mpvc/
+ln -f -s $PWD/docs/config/yt-dlp.conf ~/.config/mpvc/
+
+```
 
 ## Documentation
 
@@ -221,7 +242,7 @@ The `mpc(1)` man page covers most of the functionality that mpc & mpvc have in c
 
 * [mpc(1): https://linux.die.net/man/1/mpc](https://linux.die.net/man/1/mpc)
 
-For the `mpv(1)` command read the mpv reference manual at: 
+For the `mpv(1)` command read the mpv reference manual at:
 
 * [https://mpv.io/manual/stable/](https://mpv.io/manual/stable/)
 
@@ -257,6 +278,8 @@ usage: mpvc opts # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
  -s | --stop | stop       : Always stop playback.
  -P | --play | play       : Always start playback.
  -p | --toggle            : Toggle playback.
+      --repeat | repeat   : Loop the playlist.
+      --single | single   : Loop a single file.
     | --next | next       : Jump to next entry in the playlist
     | --prev | prev       : Jump to previous entry in the playlist
  -i | --playlist          : Print filenames of tracks to fit within terminal.
@@ -264,6 +287,7 @@ usage: mpvc opts # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
  -v | --vol | vol         : Increase/decrease volume relative to current volume.
  -h | --help              : Prints the short help.
  -H | --help-long         : Prints the long help (tip: mpvc -H 2>&1 | less).
+
 *tips: If unsure about where to begin, have a look at https://gmt4.github.io/mpvc
 ```
 
@@ -272,52 +296,66 @@ usage: mpvc opts # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
 ```console
 usage: mpvc-tui opts # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
  -d|dir     : Set the WD to the media directory given as argument
+ -h|help    : This help you are reading
+ -H|history : Starts the mpvc-tui history
+ -k|kill    : Stop the running mpvc-tui
  -n|notify  : Desktop notification using notify on mpvc events (notify-send*)
+   |socket  : Set mpv socket [default: ].
  -s|suggest : Suggest a random media to play based on previous media played
  -S|scrobler: Starts the mpvc-tui scrobbler
- -H|history : Starts the mpvc-tui history
  -t|tui     : Starts the mpvc-tui to manage the mpv playlist (rlwrap*)
  -T|Tui     : Combo that starts mpvc-tui -t -n, and adds media given as args
  -x|launch  : Starts mpvc-tui in a new xterm ($MPVC_TUI_TERM) # combine with <opts>
  -v|version : Prints the mpvc-tui version.
+
 *tips: If unsure about where to begin, start with: mpvc-tui -d /path/to/media/ -T
 ````
 
 ### mpvc-fzf
 
 ```console
-usage: mpvc-fzf opts # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
- -a|stash    : Start fzf to manage mpvc stashes
- -b|browse   : Start fzf to manage the provided ytdl-archive URL
- -c|chapters : Start fzf to manage the current mpv chapterlist
- -d|dir      : Set the WD to the media directory given as argument
- -e|eqz      : Start fzf to manage the equalizer settings
- -f|playlist : Start fzf to manage the current mpv playist
- -g|fetch    : Fetch the given YT URL, and store locally
- -G|Fetch    : Search on Invidious, fetch, and store locally
- -i|lyrics   : Search given media lyrics on Invidious
- -k|dplay    : Search & play DuckDuckGo videos
- -K|dsearch  : Search DuckDuckGo videos
- -l|local    : Search & play local media
- -q|quality  : Select and change yt-dlp video quality (ytdl-format)
- -s|search   : Search on Invidious
- -t|thumbnail: Retrieve thumbnail_url from metadata of the current YT-URL
- -T|Thumbnail: Retrieve thumbnail_url from metadata of the provided YT-URL
- -p|splay    : Search & play media found using Invidious
- -u|url      : Search the given YT URL (supports vids,channels,playlist feeds)
- -U|Url      : Search & play the given YT URL
- -x|launch   : Starts mpvc-fzf in a new xterm (config $MPVC_TERM) [combine -x with other opts]
- -y|related  : Search related media on Invidious
- -Y|Related  : Search & play related media using Invidious
- -z|relatedo : Search current media-title on Invidious and return related media
- -v|version  : Return the mpvc-fzf version.
 
-    now      : Return a shareable URL to the "now listening" playlist
-    lofi     : Search & play Lo-Fi channels
-    somafm   : Search & play SomaFM channels
-    radioapi : Search & play Radio-Browser API channels
-    ntsradio : Search & play NTS-Radio API channels
-    custom   : Search & play your custom feeds (channels, playlists, ...)
+usage: mpvc-fzf opts # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
+  -a|stash      : Start fzf to manage mpvc stashes
+  -b|browse     : Start fzf to manage the provided ytdl-archive URL
+  -c|chapters   : Start fzf to manage the current mpv chapterlist
+  -C|cache      : Search cache by URL for remote media and return local file
+ -CC|cmds       : Search and run commands from stdin
+  -d|dir        : Set the WD to the media directory given as argument
+  -e|eqz        : Start fzf to manage the equalizer settings
+  -f|playlist   : Start fzf to manage the current mpv playist
+  -g|fetch      : Fetch the given YT URL, and store locally
+  -G|Fetch      : Search on Invidious, fetch, and store locally
+  -i|lyrics     : Search given media lyrics on Invidious
+  -I|Lyrics     : Search given media lyrics on DDG
+  -k|dplay      : Search & play DuckDuckGo videos
+  -K|dsearch    : Search DuckDuckGo videos
+  -l|local      : Search & play local media at $1
+  -q|quality    : Select and change yt-dlp video quality (ytdl-format)
+  -r|explorer   : Explore local media at ytdl-archive/
+  -s|search     : Search on Invidious
+  -S|socket     : Set mpv socket [default: ].
+ -SS|socklist   : Select and set the current mpv socket to operate
+  -t|thumbnail  : Retrieve thumbnail_url from metadata of the current YT-URL
+  -T|Thumbnail  : Display thumbnail_url from metadata of the provided YT-URL
+  -p|splay      : Search & play media found using Invidious
+  -u|url        : Search the given YT URL (supports vids,channels,playlist feeds)
+  -U|Url        : Search & play the given YT URL
+  -x|launch     : Starts mpvc-fzf in a new xterm (config $MPVC_TERM) [combine -x with other opts]
+  -y|related    : Search related media on Invidious
+  -Y|Related    : Search & play related media using Invidious
+  -z|relatedo   : Search current media-title on Invidious and return related media
+  -v|version    : Return the mpvc-fzf version.
+
+    now        : Return a shareable URL to the "now listening" playlist
+    lofi       : Search & play Lo-Fi channels
+    somafm     : Search & play SomaFM channels
+    radioapi   : Search & play Radio-Browser API channels
+    ntsradio   : Search & play NTS-Radio API channels
+    custom     : Search & play your custom feeds (channels, playlists, ...)
+    custom-gen : Generate a template for your custom feeds (channels, playlists, ...)
+    invid-list : List available Invidious instances (set MPVC_FZF_INVID_URL)
+
 *tips: If unsure about where to begin, start: mpvc-fzf -p 'kupla mirage'
 ```
 
@@ -336,6 +374,7 @@ usage: mpvc-installer args # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
   install-sys    : Install to BINDIR=/usr/local/bin
   uninstall-sys  : Uninstall from BINDIR=/usr/local/bin
   uninstall-user : Uninstall from BINDIR=/home/user/bin
+
 *tips: If unsure where to start, start with: mpvc-installer fetch-user
 ```
 

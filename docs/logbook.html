@@ -1,24 +1,22 @@
 <!DOCTYPE html>
-
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes" />
     <meta name="generator" content="#write-your-own-html" />
     <meta name="author" content="gmt4" />
     <meta name="description" content="gmt4 mpvc logbook" />
-    <title>gmt4.github.io/mpvc/logbook.html</title>
+    <title>🎧 gmt4.github.io/mpvc/ logbook</title>
     <!-- SOH -->
     <link rel="canonical" href="https://gmt4.github.io/mpvc" />
     <link href="atom.xml" type="application/atom+xml" rel="alternate" title="gmt4.github.io/mpvc"/>
     <!-- Open Graph tags -->
     <meta property="og:site_name" content="gmt4.github.io/mpvc/logbook.html" />
     <meta property="og:type" content="website"/>
-    <meta property="og:title" content="gmt4 mpvc logbook"/>
+    <meta property="og:title" content="🎧 gmt4 mpvc logbook"/>
     <meta property="og:url" content="https://gmt4.github.io/mpvc/logbook.html"/>
     <meta property="og:description" content="A minimal mpc-like CLI and TUI for controlling mpv from the shell"/>
-    <meta property="og:image" content="https://raw.githubusercontent.com/gmt4/mpvc/master/docs/mpvc-tui.png"/>
+    <meta property="og:image" content="https://raw.githubusercontent.com/gmt4/mpvc/master/docs/assets/mpvc-tui.png"/>
     <!-- GH stuff -->
     <script async="true" defer="true" src="https://buttons.github.io/buttons.js"></script>
     <style type="text/css" media="all">
@@ -34,7 +32,7 @@
     <!-- SOB -->
 </head>
 <body>
-<h1 id="gmt4-mpvc-fork"><a href="/">@gmt4</a> mpvc logbook</h1>
+<h1 id="gmt4-mpvc-fork"><a href="/">@gmt4</a> mpvc logbook 🎧</h1>
 <ul>
     <li><strong>about</strong> A minimal mpc-like interface for controlling <a href="https://mpv.io">mpv</a> from the shell.</li>
     <li><strong>goodies</strong> Support TUI, FZF, WEB, CLI, playing youtube &amp; streaming services (<a href="logbook.html#logbook-20221219">See #20221219</a>)</li>
@@ -86,7 +84,7 @@ Logbook Entries
     <li> <a href="#logbook-20230425">#20230425 Introducing mpvc-equalizer: a basic mpv equalizer for the CLI</a></li>
     <li> <a href="#logbook-20230602">#20230602 On applying ffmpeg AV filters using the MPV JSON IPC</a></li>
     <li> <a href="#logbook-20230721">#20230721 Introducing mpvc-web: a mpvc-tui like hack for the web/browser</a></li>
-    <li> <a href="#logbook-20230915">#20230915 Introducing mpvc-autostart: automatic start/stop based on presence</a></li>
+    <li> <a href="#logbook-20230915">#20230915 Introducing mpvc-autopilot: automatic start/stop based on presence</a></li>
     <li> <a href="#logbook-20230916">#20230916 On mpvc usage patterns for playing music/videos</a></li>
     <li> <a href="#logbook-20231026">#20231026 On observing mpv property changes</a></li>
     <li> <a href="#logbook-20231117">#20231117 On the security of mpvc-web</a></li>
@@ -102,6 +100,8 @@ Logbook Entries
 
     2025
     <li> <a href="#logbook-20250616">#20250616 On customizing mpvc-fzf key-bindings, 16 June 2025</a></li>
+    <li> <a href="#logbook-20251108">#20251108 On companion tools that go well with mpvc, 08 November 2025</a></li>
+    <li> <a href="#logbook-20251228">#20251228 On a sample setup using crontab(5) for mpvc, 28 December 2025</a></li>
 </ul>
 
 <hr />
@@ -232,6 +232,7 @@ Some usage examples of the above are:
 <li><code>mpvc idleloop</code>: send the mpv events to stdout.</li>
 <li><code>mpvc idleloop | awk '/playback-restart/ {print}'</code>: select only the "playback-restart" mpv events.</li>
 <li><code>mpvc idleloop | awk '/playback-restart/ {system("notify-send -u normal -i dialog-warning \"$(mpvc)\"");print}'</code>: Send a notification when the track changes.</li>
+<li><code>mpvc idleloop | awk '/end-file/{ if(i++%2==0)system("mpvc playrand") }'</code>: select a random track when the current one ends.</li>
 </ul>
 
 The <code>mpvc-tui -n</code> uses <code>mpvc idleloop</code> to raise desktop notifications, as shown above.
@@ -402,42 +403,52 @@ Check <a href="https://github.com/gmt4/mpvc/blob/master/extras/mpvc-web">extras/
 </p>
 
 <p>
-As a minor thing I've started aliasing <code>mpvc</code> commands that I use frequently to their "m" counterparts in bash, suchs as <code>alias m="mpvc"</code>, not perfect, but handy enough, and saves some typing: see the bash_aliases fulllist at <a href="bash_aliases.mpvc">.bash_alises.mpvc</a>.
+As a minor thing I've started aliasing <code>mpvc</code> commands that I use frequently to their "m" counterparts in sh(1), not perfect, but handy enough, and saves some typing: see the bash_aliases fulllist at <a href="bash_aliases.mpvc">bash_aliases.mpvc</a> (<a href="https://github.com/gmt4/mpvc/blob/master/docs/config/bash_aliases.mpvc">bash_aliases (github)</a>). Some handy examples are:
+
+<pre>
+alias m="mpvc"
+alias mx="mpvc-fzf"
+alias mff="mpvc-fzf"
+alias mtt="mpvc-tui"
+alias me="mpvc-equalizer"
+alias mw="mpvc-web"
+...
+</pre>
 </p>
 
 <p>
 Check the <a href="now/">Now Playing @ now/</a> that builds upon <code>mpvc-tui</code> scrobbling code to generate a simple list of the most played media. The <a href="https://en.wikipedia.org/wiki/Anti_EP">Anti EP</a> by <a href="https://en.wikipedia.org/wiki/Autechre">Autechre</a> has raised to the top position.
 </p>
 
-<h3 id="logbook-20230915">Introducing mpvc-autostart: automatic start/stop based on presence, 15 Sep 2023</h3>
+<h3 id="logbook-20230915">Introducing mpvc-autopilot: automatic start/stop based on presence, 15 Sep 2023</h3>
 <p>
 A simple need to have some background music automatically playing while I'm near the device where <code>mpvc</code> is running, lets say, in media center mode, and, pausing the audio when I'm away.
-A solution for this was to write a small script in <a href="https://github.com/gmt4/mpvc/blob/master/extras/mpvc-autostart">extras/mpvc-autostart</a> that periodically pings an IP (for example the LAN IP of your phone , or alternatively detecting the presence of a Bluetooth device you carry with yourself), then, if the presence of the device is detected, the audio is resumed, otherwise, the audio is paused.
+A solution for this was to write a small script in <a href="https://github.com/gmt4/mpvc/blob/master/extras/mpvc-autopilot">extras/mpvc-autopilot</a> that periodically pings an IP (for example the LAN IP of your phone , or alternatively detecting the presence of a Bluetooth device you carry with yourself), then, if the presence of the device is detected, the audio is resumed, otherwise, the audio is paused.
 </p>
 <p>
-For an example of its usage, just run <code>PERIOD=300 NCHECK=3 mpvc-autostart -i 192.168.0.2</code> where <code>192.168.0.2</code> must be replaced by the LAN IP of your phone. The listing below show the output <code>mpvc-autostart</code> doing periodic pings at 300 sec (5 minutes) intervals. When NCHECK=3 consecutive ping checks fail to detect the device, the audio is paused (pause=true). As soon as one ping check succeeds, the audio is resumed (pause=false). This means that each 300 * 3 seconds (15 minutes) the audio can be paused, and in 5 minutes resumed. Personally I prefer to raise NCHECKS=6, to have about 30 minutes of audio without pauses, anyway, the parameters are there for catter for your needs, just play with them.
+For an example of its usage, just run <code>PERIOD=300 NCHECK=3 mpvc-autopilot -i 192.168.0.2</code> where <code>192.168.0.2</code> must be replaced by the LAN IP of your phone. The listing below show the output <code>mpvc-autopilot</code> doing periodic pings at 300 sec (5 minutes) intervals. When NCHECK=3 consecutive ping checks fail to detect the device, the audio is paused (pause=true). As soon as one ping check succeeds, the audio is resumed (pause=false). This means that each 300 * 3 seconds (15 minutes) the audio can be paused, and in 5 minutes resumed. Personally I prefer to raise NCHECKS=6, to have about 30 minutes of audio without pauses, anyway, the parameters are there for catter for your needs, just play with them.
 <pre>
-user@box mpvc $ PERIOD=300 NCHECK=3 mpvc-autostart -i 192.168.0.2
-# mpvc-autostart mpvc pingscan PERIOD=300 NCHECK=3 192.168.0.2
-# 2023-09-15T19:26+00:00 mpvc-autostart PERIOD=300 NCHECK=6 pause=false c=0 n=0
-# 2023-09-15T19:31+00:00 mpvc-autostart PERIOD=300 NCHECK=6 pause=false c=0 n=-1
-# 2023-09-15T19:36+00:00 mpvc-autostart PERIOD=300 NCHECK=6 pause=false c=0 n=-2
-# 2023-09-15T19:42+00:00 mpvc-autostart PERIOD=300 NCHECK=6 pause=false c=0 n=-3
-# 2023-09-15T19:47+00:00 mpvc-autostart PERIOD=300 NCHECK=6 pause=true  c=0 n=0
-# 2023-09-15T19:52+00:00 mpvc-autostart PERIOD=300 NCHECK=6 pause=false c=59 n=0 64 bytes from 192.168.0.2: icmp_seq=1 ttl=64 time=104 ms
+user@box mpvc $ mpvc-autopilot -p 300 -n 3 -i 192.168.0.2
+# mpvc-autopilot mpvc pingscan PERIOD=300 NCHECK=3 192.168.0.2
+# 2023-09-15T19:26+00:00 mpvc-autopilot PERIOD=300 NCHECK=6 pause=false c=0 n=0
+# 2023-09-15T19:31+00:00 mpvc-autopilot PERIOD=300 NCHECK=6 pause=false c=0 n=-1
+# 2023-09-15T19:36+00:00 mpvc-autopilot PERIOD=300 NCHECK=6 pause=false c=0 n=-2
+# 2023-09-15T19:42+00:00 mpvc-autopilot PERIOD=300 NCHECK=6 pause=false c=0 n=-3
+# 2023-09-15T19:47+00:00 mpvc-autopilot PERIOD=300 NCHECK=6 pause=true  c=0 n=0
+# 2023-09-15T19:52+00:00 mpvc-autopilot PERIOD=300 NCHECK=6 pause=false c=59 n=0 64 bytes from 192.168.0.2: icmp_seq=1 ttl=64 time=104 ms
 </pre>
 
 </p>
 <p>
-This approach has some limitations, lets say, sometimes you want to fully disable mpvc-autostart for a time, because:
+This approach has some limitations, lets say, sometimes you want to fully disable mpvc-autopilot for a time, because:
 <ol>
     <li>
-    Disable mpvc-autostart from resuming audio, because you want to concentrate and don't want music messing around.
+    Disable mpvc-autopilot from resuming audio, because you want to concentrate and don't want music messing around.
     <br/>
     Solution: just use the phone to access <code>mpvc-web</code> and set <code>mpvc vol 0</code> for a time.
     </li>
     <li>
-    Disable mpvc-autostart from pausing audio, because your phone disables wifi, so the audio gets paused when you don't want.
+    Disable mpvc-autopilot from pausing audio, because your phone disables wifi, so the audio gets paused when you don't want.
     <br/>
     Solution: as explained above playing with PERIOD and NCHECK parameters, increase the time without pauses, for example NCHECK=6 or NCHECK=12 will pause audio when the device is not seen for 30 or 60 minutes, respectively.
     </li>
@@ -471,7 +482,7 @@ This approach has some limitations, lets say, sometimes you want to fully disabl
 
 <li>
     Storing URLs media locally, some URLs are played frequently that makes sense to cache them.
-    At this point, <code>yt-dlp</code> has <code>--download-archive</code> functionality that is useful (this can be enabled in <a href="https://github.com/gmt4/mpvc/blob/master/docs/mpv.conf">docs/mpv.conf</a>).
+    At this point, <code>yt-dlp</code> has <code>--download-archive</code> functionality that is useful (this can be enabled in <a href="https://github.com/gmt4/mpvc/blob/master/docs/config/mpv.conf">docs/config/mpv.conf</a>).
     This works as follows:
     <ul>
     <li>First, <code>mpvc-fzf -g URL</code>, with get the URL and download it where <code>mpv.conf</code> defines.</li>
@@ -659,7 +670,7 @@ And this is how it looks:
 <h3 id="logbook-20240704">Some notes on my current mpvc setup, 4 July 2024</h3>
 <p>
 
-Some notes on my current mpvc setup, I've setled on having the following commands continuosly running on background: mpvc-tui, mpvc-web, mpvc-autostart, and mpvc-osd:
+Some notes on my current mpvc setup, I've setled on having the following commands continuosly running on background: mpvc-tui, mpvc-web, mpvc-autopilot, and mpvc-osd:
 
 <ul>
     <li>
@@ -669,7 +680,7 @@ Some notes on my current mpvc setup, I've setled on having the following command
     mpvc-web: to manage from the WEB, to access from any browser in the LAN.
     </li>
     <li>
-    mpvc-autostart: to automatically start/stop mpvc when a personal device is detected (LAN).
+    mpvc-autopilot: to automatically start/stop mpvc when a personal device is detected (LAN).
     </li>
     <li>
     mpvc-osd: to have mpvc playing status updated on a USB LCD (see above entry)
@@ -681,7 +692,7 @@ For the record, this is the list of commands currently running:
 <pre>
 mpvc-tui -T
 mpvc-web -b 0 -s 1 -a 1 -R 60 -t dark -c start
-mpvc-autostart -p 600 -n 6 -i [local_ip]
+mpvc-autopilot -p 600 -n 6 -i [local_ip]
 # mpvc-osd mpvcosd
 </pre>
 
@@ -739,6 +750,41 @@ ctrl-space:execute-silent(mpvc toggle &amp;)\
 </pre>
 </p>
 
+<h3 id="logbook-20251108">On companion tools that go well with mpvc, 08 November 2025</h3>
+
+<p>
+The <a href="https://github.com/gmt4/mpvc/blob/master/docs/FAQ.md">docs/FAQ</a> has been updated to keep a list of companion tools that go well with mpvc, among these is <a href="https://github.com/9001/copyparty">copyparty</a>, that combined with `mpvc-fzf -b [browser-url]` to browse HTTP directory listings, is quite handy, to that end `mpvc-fzf custom-gen` generates a example `custom-channel.json` feed with a copyparty entry, that can be browsed with `mpvc-fzf custom`.
+Anyway any webserver providing HTML directory listings should do, but copyparty really makes things easy.
+Combine that with Tailscale or a cheap VPS and to have:
+<p><b>your music, your way, everywhere, without much hassle &amp; complicated setups</b>.</p>
+
+<pre>
+</pre>
+</p>
+
+<h3 id="logbook-20251228">On a sample setup using crontab(5) for mpvc, 28 December 2025</h3>
+<p>
+
+The commands below have been on my user crontab(5) for a long time, these take care of starting and stopping music on a daily basis, also taking care of controlling volume level, and un/muting audio output at night.
+
+The @reboot, @daily and @weekly crontab entries, take care of starting mpvc with wathever I have currently saved to the mpvc current stash.
+
+<pre>
+# crontab: enable audio/mpv in the morning, disable at night
+@reboot           mpvc -q quit stash apply current
+#@daily            mpvc -q quit stash apply current
+#@weekly           mpvc -q quit stash apply current
+
+#m  h d m w cmd
+ 0 21 * * * mpvc -q volume 20
+ 0 22 * * * mpvc -q pause volume 15
+ 0 23 * * * mpvc-mpris voloff
+ 0  7 * * * mpvc-mpris volon
+ 0  7 * * * mpvc -q resume "" volume 20
+30  7 * * * mpvc -q volume 30
+</pre>
+</p>
+
 <h2 id="gmt4-mpvc-logbook-the-end">The End</h2>
 
 Return to the <a href="#gmt4-mpvc-fork">Start</a>
@@ -748,7 +794,7 @@ Return to the <a href="#gmt4-mpvc-fork">Start</a>
 <hr/>
 <p>
 <span>
-    <em>📅 Mon, 16 Jun 2025 by <a href="https://gmt4.github.io">gmt4</a></em>
+    <em>📅 Sat, 08 Nov 2025 by <a href="https://gmt4.github.io">gmt4</a></em>
 </span>
 <span style="float: right;">
     <em>⚡ PoweredBy #HTML</em>
