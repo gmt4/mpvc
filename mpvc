@@ -8,7 +8,7 @@
 
 PROGNAME=${0##*/}
 PROGDIR=${0%/*}
-PROGVERSION="v1.7"
+PROGVERSION="v1.8"
 PROGAUTHOR=gmt4
 PROGURL="https://github.com/gmt4/mpvc"
 SITEURL="https://gmt4.github.io/mpvc"
