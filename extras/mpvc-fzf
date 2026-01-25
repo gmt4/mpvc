@@ -334,13 +334,21 @@ mpvcfzf_iplay()
             mpvcfzf_awk 1
 }
 
-mpvcfzf_local()
+mpvcfzf_localfind()
 {
     (
         cdir=./
         dir="${1:-}"; shift;
         cd "$dir" || return;
-        find $cdir -path "$cdir.*" -prune -o -print | sed "s|^$cdir||" | sort |
+        find $cdir -path "$cdir.*" -follow -prune -o -print | grep -v '/\.git/' | sed "s|^$cdir||" | sort
+    )
+}
+
+mpvcfzf_local()
+{
+    (
+        dir="${1:-}"; shift
+        mpvcfzf_localfind "$dir" "$@" |
             mpvcfzf_preview --prompt="(local) " "$@" | sed "s|^|$dir|"
     )
 }
@@ -662,6 +670,7 @@ main()
         -k|dplay)       shift; mpvcfzf_ddg_play "$arg1"; return ;;
         -K|dsearch)     shift; mpvcfzf_ddg "$arg1"; return ;;
         -l|local)       shift; mpvcfzf_local "${@:-.}"; return ;;
+        -L|localfind)   shift; mpvcfzf_localfind "${@:-.}"; return ;;
         -n|next)        shift; mpvcfzf_nextvideo "$arg1"; return ;;
 
         -o|osearch)     shift; mpvcfzf_isearch_once "$arg1" ;; # lucky
