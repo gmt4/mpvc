@@ -143,12 +143,12 @@ usage()
 {
     cat <<EOF
 usage: $PROGNAME args # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
+ list : List ffmetadata chapter-files
  file : Show current ffmetadata chapter-file
  info : Info current ffmetadata chapter-file
  reset: Reset current ffmetadata chapter-file
  load : Load current ffmetadata chapter-file
  gen  : Gen a ffmetadata chapter-file from a < chapterlist.txt
- list : List ffmetadata chapter-files
  merge: Merge ffmetadata chapter-file to audio file (args: in ffmeta out)
 EOF
     exit;
