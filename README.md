@@ -294,7 +294,7 @@ usage: mpvc opts # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
 ### mpvc-tui
 
 ```console
-usage: mpvc-tui opts # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
+usage: mpvc-tui opts # @version v1.8 (c) gmt4 https://github.com/gmt4/mpvc
  -d|dir     : Set the WD to the media directory given as argument
  -h|help    : This help you are reading
  -H|history : Starts the mpvc-tui history
@@ -379,4 +379,3 @@ usage: mpvc-installer args # @version v1.8 (c) gmt4 https://github.com/gmt4/mpvc
 ```
 
 [^install]: Skip directly to [Installation](#installation) to try mpvc
-
