@@ -362,7 +362,7 @@ usage: mpvc-fzf opts # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
 ### mpvc-installer
 
 ```console
-usage: mpvc-installer args # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
+usage: mpvc-installer args # @version v1.8 (c) gmt4 https://github.com/gmt4/mpvc
   check-update   : Check for updates
   check-reqs     : Check for required packages
   config         : Fetch mpv config
@@ -370,11 +370,12 @@ usage: mpvc-installer args # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
   config-sys     : Fetch mpv config to BINDIR=/usr/local/bin
   fetch-user     : Fetch to BINDIR=/home/user/bin
   link-user      : Symlink to BINDIR=/home/user/bin
+  install:       : Install to BINDIR=/usr/local/bin
+  uninstall:     : Uninstall from BINDIR=/usr/local/bin
   install-user   : Install to BINDIR=/home/user/bin
-  install-sys    : Install to BINDIR=/usr/local/bin
-  uninstall-sys  : Uninstall from BINDIR=/usr/local/bin
+  install-sys    : Install to BINDIR=/usr/local/bin (sets PREFIX=/usr/local)
   uninstall-user : Uninstall from BINDIR=/home/user/bin
-
+  uninstall-sys  : Uninstall from BINDIR=/usr/local/bin (sets PREFIX=/usr/local)
 *tips: If unsure where to start, start with: mpvc-installer fetch-user
 ```
 
