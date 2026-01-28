@@ -272,7 +272,7 @@ Check the FAQ for any questions left after reading the above docs.
 ### mpvc
 
 ```console
-usage: mpvc opts # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
+usage: mpvc opts # @version v1.8 (c) gmt4 https://github.com/gmt4/mpvc
  -a | --add | add         : Add media to playlist (see --load for stdin).
  -r | --remove | rm       : Remove media by id from playlist (see searchrm for rm by title)
  -s | --stop | stop       : Always stop playback.
