@@ -4,6 +4,8 @@ BINDIR ?= $(PREFIX)/bin
 DOCDIR ?= $(PREFIX)/doc
 INSTALLER=extras/mpvc-installer
 all:
+#help:
+#	${INSTALLER} help
 install:
 	BINDIR=${DESTDIR}/${PREFIX}/bin ${INSTALLER} install
 	DOCDIR=${DESTDIR}/${PREFIX}/share/doc/mpvc/ ${INSTALLER} docs
