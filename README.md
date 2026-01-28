@@ -371,9 +371,9 @@ usage: mpvc-installer args # @version v1.8 (c) gmt4 https://github.com/gmt4/mpvc
   link-user      : Symlink to BINDIR=/home/user/bin
   install:       : Install to BINDIR=/usr/local/bin
   uninstall:     : Uninstall from BINDIR=/usr/local/bin
-  install-user   : Install to BINDIR=/home/user/bin
+  install-user   : Install to BINDIR=/home/user/bin (sets PREFIX=/home/user)
   install-sys    : Install to BINDIR=/usr/local/bin (sets PREFIX=/usr/local)
-  uninstall-user : Uninstall from BINDIR=/home/user/bin
+  uninstall-user : Uninstall from BINDIR=/home/user/bin (sets PREFIX=/home/user)
   uninstall-sys  : Uninstall from BINDIR=/usr/local/bin (sets PREFIX=/usr/local)
 *tips: If unsure where to start, start with: mpvc-installer fetch-user
 ```
