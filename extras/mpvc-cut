@@ -73,6 +73,8 @@ mpvc_cut_info()
         case "$mode" in
         info) awk '/^Input/ {print} /Stream #/ {print} /Duration:/ {print}' ;;
         Info) awk '{print}' ;;
+        meta|Meta) awk '{print}' ;;
+        genre) awk '/^Input/ {print} /genre *:/ {print}' ;;
         esac
 }
 
@@ -134,6 +136,7 @@ main()
 
     -i|info)                 shift; mpvc_cut_info info "$@"; return ;;
     -I|Info)                 shift; mpvc_cut_info Info "$@"; return ;;
+    -I|genre)                shift; mpvc_cut_info genre "$@"; return ;;
     -a|asrc)                 shift; mpvc_cut_asrc "$@"; return ;;
     -c|cast)                 shift; mpvc_screencast "$@" ;;
     *)                       usage ;;
