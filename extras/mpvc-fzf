@@ -340,7 +340,7 @@ mpvcfzf_localfind()
         cdir=./
         dir="${1:-}"; shift;
         cd "$dir" || return;
-        find $cdir -path "$cdir.*" -follow -prune -o -print | grep -v '/\.git/' | sed "s|^$cdir||" | sort
+        find $cdir -path "$cdir.*" -follow -prune -o -print | grep -av '/\.git/' | sed "s|^$cdir||" | sort
     )
 }
 
