@@ -577,6 +577,7 @@ mpvc_stash() {
             echo "mpvc cmd playlist-remove 0"
             mpvc_get_playlist_once | awk '{ gsub("^[ 	]*|[ 	]*$", ""); print "mpvc add "$0 }'
             echo "mpvc set playlist-pos $(mpvc_get playlist-pos)"
+            echo "mpvc set prefetch-playlist $(mpvc_get prefetch-playlist)"
             echo "mpvc set loop-file $(mpvc_get loop-file)"
             echo "mpvc set loop-playlist $(mpvc_get loop-playlist)"
             echo "mpvc set ab-loop-a $(mpvc_get ab-loop-a)"
