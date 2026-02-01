@@ -71,6 +71,18 @@ mpvc_config()
             chmod a+rx "$file"
         fi
     done
+
+    for bin in "deno"
+    do
+        file="$BINDIR/$bin"
+        echo "Fetch $file"
+        if [ -e "$file" ]; then
+            echo "$PROGNAME: $file exists. Not overwriting."
+        else
+            curl -fsSL -o - "https://github.com/denoland/$bin/releases/download/v2.6.6/$bin-$(uname -m)-unknown-linux-gnu.zip" | unzip -p > "$file"
+            chmod a+rx "$file"
+        fi
+    done
 }
 
 mpvc_fetch()
@@ -185,9 +197,9 @@ usage: $PROGNAME args # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
   link-user      : Symlink to BINDIR=$HOME/bin
   install:       : Install to BINDIR=$PREFIX/bin
   uninstall:     : Uninstall from BINDIR=$PREFIX/bin
-  install-user   : Install to BINDIR=$HOME/bin (sets PREFIX=$HOME)
+  install-user   : Install to BINDIR=$HOME/bin
   install-sys    : Install to BINDIR=$PREFIX/bin (sets PREFIX=/usr/local)
-  uninstall-user : Uninstall from BINDIR=$HOME/bin (sets PREFIX=$HOME)
+  uninstall-user : Uninstall from BINDIR=$HOME/bin
   uninstall-sys  : Uninstall from BINDIR=$PREFIX/bin (sets PREFIX=/usr/local)
 *tips: If unsure where to start, start with: $PROGNAME fetch-user
 EOF
