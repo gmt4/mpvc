@@ -529,7 +529,7 @@ mpvc_stash() {
     QUIETFLAG="true"
     case "$cmd" in
         show|list|ls)
-            if [ -z "${1:-}" ]; then ls -ltr "$MPVC_STASH_DIR"; else cat "$MPVC_STASH_DIR/$1"; fi
+            if [ -z "${1:-}" ]; then ls -ltr "$MPVC_STASH_DIR" | tail -n +2; else cat "$MPVC_STASH_DIR/$1"; fi
             ;;
         edit|ed) ${EDITOR:-vi} "$MPVC_STASH_DIR/$1" ;;
         drop|rm) rm -i "$MPVC_STASH_DIR/$1" ;;
