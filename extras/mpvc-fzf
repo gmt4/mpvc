@@ -129,15 +129,15 @@ mpvcfzf_cparse()
     '
 }
 
-mpvcfzf_csearch()
+mpvcfzf_curlsearch()
 {
     echo "$@"
     mpvcfzf_curl "$@" | mpvcfzf_cparse
 }
 
-mpvcfzf_csearch_play()
+mpvcfzf_curlsearch_play()
 {
-    mpvcfzf_csearch "$1" |
+    mpvcfzf_curlsearch "$1" |
         mpvcfzf_preview --prompt="(csearch) " |
             mpvcfzf_awk 1
 }
@@ -153,7 +153,7 @@ mpvcfzf_isearch()
     url_query="q=$(for f in $@; do printf "%s+" "$f"; done)"
     url_search="https://${MPVC_FZF_INVID_URL}/search?$url_query&$url_opts"
 
-    mpvcfzf_csearch "$url_search&page=1" "$url_search&page=2"
+    mpvcfzf_curlsearch "$url_search&page=1" "$url_search&page=2"
 }
 
 mpvcfzf_related_search()
@@ -686,8 +686,8 @@ main()
        -SS|socklist)    shift; mpvcfzf_socklist ;;
         -t|thumbnail)   shift; mpvcfzf_thumbnail "$arg1"; return ;;
         -T|Thumbnail)   shift; mpvcfzf_thumbnail_preview "$arg1" ; return ;;
-        -u|url)         shift; mpvcfzf_csearch_play "$arg1"; return ;;
-        -U|Url)         shift; mpvcfzf_csearch "$arg1"; return ;;
+        -u|url)         shift; mpvcfzf_curlsearch_play "$arg1"; return ;;
+        -U|Url)         shift; mpvcfzf_curlsearch "$arg1"; return ;;
         -x|launch)      shift; mpvcfzf_launch_term "$@"; exit ;;
         -y|related)     shift; mpvcfzf_related_search "$arg1"; return ;;
         -Y|Related)     shift; mpvcfzf_related_play "$arg1"; return ;;
