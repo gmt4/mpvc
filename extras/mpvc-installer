@@ -79,7 +79,7 @@ mpvc_config()
         if [ -e "$file" ]; then
             echo "$PROGNAME: $file exists. Not overwriting."
         else
-            curl -fsSL -o - "https://github.com/denoland/$bin/releases/download/v2.6.6/$bin-$(uname -m)-unknown-linux-gnu.zip" | unzip -p > "$file"
+            curl -fsSL -o - "https://github.com/denoland/$bin/releases/download/v2.6.6/$bin-$(uname -m)-unknown-linux-gnu.zip" | gunzip > "$file"
             chmod a+rx "$file"
         fi
     done
