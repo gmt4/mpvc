@@ -231,6 +231,8 @@ mpvcfzf_thumbnail()
 
     yturl=$(mpvcfzf_getvideo_id_from_fd "$yturl")
     case "$yturl" in
+#    /*)                                     mpvc-cut thumb "$yturl" ;;
+
 #    *://stream.radioparadise.com/aac*)      mpvcfzf_thumbnail_rp chan=0 ;;
 #    *://stream.radioparadise.com/mellow*)   mpvcfzf_thumbnail_rp chan=1 ;;
 #    *://stream.radioparadise.com/rock*)     mpvcfzf_thumbnail_rp chan=2 ;;
