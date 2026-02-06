@@ -291,7 +291,8 @@ main()
     case "\$QUERY_STRING" in
         now-short)              mpvc_redir "\$($MPVC-fzf now short)" ;;
         lyrics)                 mpvc_redir "\$($MPVC-fzf Lyrics '')" ;;
-        thumbnail_url)          mpvc_redir "\$($MPVC-fzf thumbnail)" ;;
+        thumbnail)              mpvc_redir "\$($MPVC-fzf thumbnail)" ;;
+        thumbnail64)            mpvc_redir "\$($MPVC-fzf thumbnail64)" ;;
         filename)               mpvc_redir "\$($MPVC filename current full)" ;;
         metadata)               mpvc_plain "\$($MPVC metadata)" ;;
 
@@ -415,7 +416,7 @@ mpvc_web_index()
     <hr>
     <ul>
         <details>
-        <summary>mpvc extra (toggle open close)</summary>
+        <summary>mpvc extra (toggle open/close)</summary>
             <li>
             mpvc theme
                 <a href="#" title="theme 2" onclick="document.body.style.WebkitFilter='invert(0.2)';">t2</a>
@@ -483,7 +484,7 @@ mpvc_web_index()
         <details $(if [ -n "$MPVC_WEB_THUMBNAIL_ENABLE" ]; then echo open; fi)>
         <summary>mpvc thumb</summary>
         <a href=".">
-            <iframe src="/cgi-bin/mpvc?thumbnail_url" alt="thumbnail" title="thumbnail" style="$MPVC_WEB_THUMBNAIL_STYLE"></iframe>
+            <iframe src="/cgi-bin/mpvc?thumbnail64" alt="thumbnail" title="thumbnail" style="$MPVC_WEB_THUMBNAIL_STYLE"></iframe>
         </a>
         </details>
     </ul>
