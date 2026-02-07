@@ -223,7 +223,21 @@ mpvcfzf_getvideo_id_from_fd()
     echo "$ytfd"
 }
 
-mpvcfzf_thumbnail()
+mpvcfzf_thumbnail_attachment()
+{
+    png=$(mktemp -t --dry-run mpvc-thumb.XXXXXXXXXX.png)
+    ffmpeg -hide_banner -loglevel error -dump_attachment:t "" -i "$1" "$png"
+    echo "$png"
+}
+
+mpvcfzf_thumbnail_b64()
+{
+    yturl=$(mpvcfzf_thumbnail_url "$@")
+    base64="data:image/png;base64,$(mpvcfzf_curl -fsSL "$yturl" | base64 -w0)"
+    echo "$base64"
+}
+
+mpvcfzf_thumbnail_url()
 {
     yturl="${1:-}"
     yturl="${yturl:-$(mpvc filename current full)}"
@@ -231,14 +245,15 @@ mpvcfzf_thumbnail()
 
     yturl=$(mpvcfzf_getvideo_id_from_fd "$yturl")
     case "$yturl" in
-#    /*)                                     mpvc-cut thumb "$yturl" ;;
+    /*)                                     mpvcfzf_thumbnail_attachment "$yturl" ;;
 
-#    *://stream.radioparadise.com/aac*)      mpvcfzf_thumbnail_rp chan=0 ;;
-#    *://stream.radioparadise.com/mellow*)   mpvcfzf_thumbnail_rp chan=1 ;;
-#    *://stream.radioparadise.com/rock*)     mpvcfzf_thumbnail_rp chan=2 ;;
-#    *://stream.radioparadise.com/global*)   mpvcfzf_thumbnail_rp chan=3 ;;
-#    *://stream.radioparadise.com/beyond*)   mpvcfzf_thumbnail_rp chan=4 ;;
-#    *://stream.radioparadise.com/serenity*) mpvcfzf_thumbnail_rp chan=5 ;;
+    *://stream.radioparadise.com/aac*)      mpvcfzf_thumbnail_rp chan=0 ;;
+    *://stream.radioparadise.com/mellow*)   mpvcfzf_thumbnail_rp chan=1 ;;
+    *://stream.radioparadise.com/rock*)     mpvcfzf_thumbnail_rp chan=2 ;;
+    *://stream.radioparadise.com/global*)   mpvcfzf_thumbnail_rp chan=3 ;;
+    *://stream.radioparadise.com/beyond*)   mpvcfzf_thumbnail_rp chan=4 ;;
+    *://stream.radioparadise.com/serenity*) mpvcfzf_thumbnail_rp chan=5 ;;
+
     *://youtu.be*)                          mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
     *://yewtu.be*)                          mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
     *)                                      mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
@@ -247,7 +262,6 @@ mpvcfzf_thumbnail()
 
 mpvcfzf_thumbnail_rp()
 {
-    # radioparadise disabled, returns application/octet-stream which browsers refuse to display
     mpvcfzf_curl "https://api.radioparadise.com/api/now_playing?$1" | jq -j .cover
 }
 
@@ -686,7 +700,8 @@ main()
         -s|search)      shift; mpvcfzf_isearch "$arg1"; return;;
         -S|socket)      shift; export MPVC_SOCKET="${1:-}"; shift ;;
        -SS|socklist)    shift; mpvcfzf_socklist ;;
-        -t|thumbnail)   shift; mpvcfzf_thumbnail "$arg1"; return ;;
+        -t|thumbnail)   shift; mpvcfzf_thumbnail_url "$arg1"; return ;;
+           thumbnail64) shift; mpvcfzf_thumbnail_b64 "$arg1"; return ;;
         -T|Thumbnail)   shift; mpvcfzf_thumbnail_preview "$arg1" ; return ;;
         -u|url)         shift; mpvcfzf_curlsearch_play "$arg1"; return ;;
         -U|Url)         shift; mpvcfzf_curlsearch "$arg1"; return ;;
