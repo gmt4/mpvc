@@ -233,6 +233,7 @@ mpvcfzf_thumbnail_attachment()
 mpvcfzf_thumbnail_b64()
 {
     yturl=$(mpvcfzf_thumbnail_url "$@")
+    [ -z "$yturl" ] || [ "$yturl" = "null" ] && return
     base64="data:image/png;base64,$(mpvcfzf_curl -fsSL "$yturl" | base64 -w0)"
     echo "$base64"
 }
