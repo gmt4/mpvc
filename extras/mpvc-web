@@ -492,7 +492,7 @@ mpvc_web_index()
         🎧
         <a href="$PROGURL">$PROGNAME</a>
         <a href="$PROGURL">$PROGVERSION</a>
-        <a href="${PROGURL%/*}">$PROGAUTHOR</a> (c) 2025
+        <a href="${PROGURL%/*}">$PROGAUTHOR</a> (c) $(date +%Y)
         <a href="javascript:Help()" title="help" ${MPVC_WEB_SHORTCUT_HELP}>/h</a>
     </body>
 </html>
