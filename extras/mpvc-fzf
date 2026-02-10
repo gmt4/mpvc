@@ -258,6 +258,8 @@ mpvcfzf_thumbnail_url()
     *://stream.radioparadise.com/beyond*)   mpvcfzf_thumbnail_rp chan=4 ;;
     *://stream.radioparadise.com/serenity*) mpvcfzf_thumbnail_rp chan=5 ;;
 
+    https://tilderadio.org/listen)          mpvcfzf_thumbnail_tr ;;
+
     *://youtu.be*)                          mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
     *://yewtu.be*)                          mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
     *)                                      mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
@@ -267,6 +269,11 @@ mpvcfzf_thumbnail_url()
 mpvcfzf_thumbnail_rp()
 {
     mpvcfzf_curl "https://api.radioparadise.com/api/now_playing?$1" | jq -j .cover
+}
+
+mpvcfzf_thumbnail_tr()
+{
+    mpvcfzf_curl "https://azuracast.tilderadio.org/api/nowplaying" | jq -j '.[0] | .now_playing | .song | .art'
 }
 
 mpvcfzf_thumbnail_preview()
