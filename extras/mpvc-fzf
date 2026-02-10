@@ -234,7 +234,7 @@ mpvcfzf_thumbnail_b64()
 {
     yturl=$(mpvcfzf_thumbnail_url "$@")
     [ -z "$yturl" ] || [ "$yturl" = "null" ] && return
-    b64data=$(mpvcfzf_curl -fsSL "$yturl" | base64 -w0)
+    b64data=$(mpvc curlcache64 "$yturl")
     b64img="data:image/png;base64,$b64data"
     echo "$b64img"
 }
@@ -248,6 +248,8 @@ mpvcfzf_thumbnail_url()
     yturl=$(mpvcfzf_getvideo_id_from_fd "$yturl")
     case "$yturl" in
     /*)                                     mpvcfzf_thumbnail_attachment "$yturl" ;;
+
+    #*://ice1.somafm.com/*aac)              echo $yturl;; # mpvcfzf_thumbnail_rp chan=0 ;;
 
     *://stream.radioparadise.com/aac*)      mpvcfzf_thumbnail_rp chan=0 ;;
     *://stream.radioparadise.com/mellow*)   mpvcfzf_thumbnail_rp chan=1 ;;
