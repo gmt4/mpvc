@@ -197,7 +197,10 @@ mpvc_defaults()
     : "${MPVC_PLAYLIST_TRUNC:=1}"
     : "${MPVC_CONFIG:=$MPVC_CONFIG_DIR/mpvc.conf}"
     : "${MPVC_SOCKET:=$MPVC_CONFIG_DIR/mpvsocket0}"
-    : "${MPVC_CURL_CACHE:=$MPVC_CONFIG_DIR/curl-cache.txt}"
+
+    : "${MPVC_CURL_CACHE:=$MPVC_CACHE_DIR/curl-cache.txt}"
+    : "${MPVC_CURL_CACHE64:=$MPVC_CACHE_DIR/curl-cache-64.txt}"
+
     : "${MPVOPTIONS:=--no-audio-display --no-input-terminal}"
     : "${MPVC_MPV:=mpv}"
     : "${MPVC_SOCAT:=socat}"
@@ -232,6 +235,7 @@ mpvc_config()
     if [ ! -d "$MPVC_PLAYLIST" ]; then mkdir -p "$MPVC_PLAYLIST"; fi
     # if not present, create config files
     if [ ! -e "$MPVC_CURL_CACHE" ]; then true > "$MPVC_CURL_CACHE"; fi
+    if [ ! -e "$MPVC_CURL_CACHE64" ]; then true > "$MPVC_CURL_CACHE64"; fi
     # if present load user config
     if [ -r "$MPVC_CONFIG" ]; then
         . "$MPVC_CONFIG"
@@ -255,13 +259,28 @@ mpvc_isotime() { TZ=UTC date -u +"%Y-%m-%dT%H:%M:%SZ"; }
 
 mpvc_curl_cache()
 {
+    f="$MPVC_CURL_CACHE"
     k=$1
-    v="$( awk -F'\t' -v k="$k" '{ if ($1 == k) {print $2; exit} }' "$MPVC_CURL_CACHE" )"
+    v="$( awk -F'\t' -v k="$k" '{ if ($1 == k) {print $2; exit} }' "$f" )"
 
     if [ "${#v}" -eq 0 ]; then
         v=$(mpvc_curl "$@")
-        o=$(cat "$MPVC_CURL_CACHE") # append at the top in 2023 :-)
-        (echo "$k	$v"; echo "$o") > "$MPVC_CURL_CACHE"
+        o=$(cat "$f") # append at the top in 2023 :-)
+        (echo "$k	$v"; echo "$o") > "$f"
+    fi
+    echo "$v"
+}
+
+mpvc_curl_cache_b64()
+{
+    f="$MPVC_CURL_CACHE64"
+    k=$1
+    v="$( awk -F'\t' -v k="$k" '{ if ($1 == k) {print $2; exit} }' "$f" )"
+
+    if [ "${#v}" -eq 0 ]; then
+        v=$(mpvc_curl "$@" | base64 -w0)
+        o=$(cat "$f") # append at the top in 2026 :-)
+        (echo "$k	$v"; echo "$o") > "$f"
     fi
     echo "$v"
 }
@@ -1209,12 +1228,13 @@ main() {
             -C|--clear|clear)                mpvc_clear_playlist; QUIETFLAG=true;;
             --delay|delay)                   mpvc_delay;;
             --wait|wait)                     mpvc_wait;;
-            --tac|tac)                       mpvc_tac; exit 0;;
+            --tac|tac)                       mpvc_tac; exit $?;;
 
             --ttysize|ttysize)               mpvc_tty_size; QUIETFLAG=true;;
             --ttycols|ttycols)               mpvc_tty_cols; QUIETFLAG=true;;
             --ttylines|ttylines)             mpvc_tty_lines; QUIETFLAG=true;;
             --statussz|statussz)             mpvc_status_size; QUIETFLAG=true;;
+            --curlcache64|curlcache64)       shift; mpvc_curl_cache_b64 "$@"; exit $?;;
 
             --hifi|hifi)                     MPVC_FMTSTR="$MPVC_FMTSTR_DFLT" ;;
             --lowfi|lowfi)                   MPVC_FMTSTR="$MPVC_FMTSTR_LOFI" ;;
@@ -1231,8 +1251,8 @@ main() {
             -q|--quiet)                      QUIETFLAG=true;                ;;
             --color|color)                   unset NO_COLOR                 ;;
             --nocolor|nocolor)               export NO_COLOR=true           ;;
-            --version|version)               mpvc_get_version;      exit 0; ;;
-            --version-long|version-long)     mpvc_get_version "$@"; exit 0; ;;
+            --version|version)               mpvc_get_version;      exit $? ;;
+            --version-long|version-long)     mpvc_get_version "$@"; exit $? ;;
             --list-options)                  usage; exit 0;                 ;;
             -h|--help|h|help)                usage; exit 0;                 ;;
             -H|--help-long|help-long)        usage "$@"; exit 0;            ;;
