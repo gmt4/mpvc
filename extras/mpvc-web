@@ -453,7 +453,7 @@ mpvc_web_index()
         [
             <a href="#mpvc-web-status" name="mpvc-web-status">Status</a>
             <a href="/cgi-bin/mpvc?metadata">#me</a>
-            <a href="/cgi-bin/mpvc?thumbnail_url">#thumb</a>
+            <a href="/cgi-bin/mpvc?thumbnail64">#thumb</a>
             <a href="/cgi-bin/mpvc?lyrics">#lyric</a>
             <a href="/cgi-bin/mpvc?filename">#url</a>
         ]
