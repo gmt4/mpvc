@@ -249,7 +249,7 @@ mpvcfzf_thumbnail_url()
     case "$yturl" in
     /*)                                     mpvcfzf_thumbnail_attachment "$yturl" ;;
 
-    #*://ice1.somafm.com/*aac)              echo $yturl;; # mpvcfzf_thumbnail_rp chan=0 ;;
+    *://ice?.somafm.com/*-*-aac)            mpvcfzf_thumbnail_somafm "$yturl";;
 
     *://stream.radioparadise.com/aac*)      mpvcfzf_thumbnail_rp chan=0 ;;
     *://stream.radioparadise.com/mellow*)   mpvcfzf_thumbnail_rp chan=1 ;;
@@ -264,6 +264,15 @@ mpvcfzf_thumbnail_url()
     *://yewtu.be*)                          mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
     *)                                      mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
     esac
+}
+
+mpvcfzf_thumbnail_somafm()
+{
+    channel="${1##*/}"
+    channel=${channel%-*}
+    channel=${channel%-*}
+    mpvcfzf_curl "https://somafm.com/channels.json" |
+        jq -j '.channels | .[] | select(.id == "'"$channel"'") | .xlimage'
 }
 
 mpvcfzf_thumbnail_rp()
