@@ -151,8 +151,11 @@ mpvctui_watcher()
     then
         mpvctui_color $MPVC_TUI_COLOR0 ">> "
         printf "%s" "$(mpvc "${MPVC_TUI_CMD_STATUS}")"
+        if [ "$tuimode" = "ttt" ]; then
+            mpvctui_color $MPVC_TUI_COLOR1 " (mpvc)"
+        fi
         if [ "$tuimode" = "tt" ]; then
-            mpvctui_color $MPVC_TUI_COLOR2 " # $PROGNAME/$tuimode $PROGVERSION #"
+            mpvctui_color $MPVC_TUI_COLOR1 " (mpvc/$tuimode $PROGVERSION)"
         fi
         return
     fi
