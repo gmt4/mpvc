@@ -414,9 +414,53 @@ mpvc_web_index()
     </ul>
 
     <hr>
-    <ul>
+        <details open>
+        <summary>
+        [
+            <a href="#mpvc-web-status" name="mpvc-web-status">Status</a>
+            <a href="/cgi-bin/mpvc?metadata">#me</a>
+            <a href="/cgi-bin/mpvc?lyrics">#lyric</a>
+            <a href="/cgi-bin/mpvc?filename">#url</a>
+        ]
+        </summary>
+
+        <hr>
+        <iframe name="mpvc-status" width="100%" height="80" frameborder="0" allowtransparency="true" src="/cgi-bin/mpvc?mpvc+status" ></iframe>
+        </details>
+
         <details>
-        <summary>mpvc extra (toggle open/close)</summary>
+        <summary>
+        [
+            <a href="#mpvc-web-playlist" name="mpvc-web-playlist">Playlist</a>
+            <a href="#mpvc-web-fullplaylist" name="mpvc-web-fullplaylist">#full</a>
+            <a href="#mpvc-web-rawplaylist" name="mpvc-web-rawplaylist">#raw</a>
+            <a href="#mpvc-web-chapter-list-nr" name="mpvc-web-chapter-list-nr">#clist</a>
+        ]
+        </summary>
+        <hr>
+        <div style="display:flex">
+        <iframe name="mpvc-playlist" width="100%" frameborder="0" allowtransparency="true" style="margin:auto; float:auto" src="/cgi-bin/mpvc?mpvc+playlist" ></iframe>
+        <script type="text/javascript">
+        var pl = document.getElementsByName('mpvc-playlist')[0];
+        switch (window.location.hash) {
+        case '#mpvc-web-playlist':           { pl.src='/cgi-bin/mpvc?mpvc+playlist'; break; }
+        case '#mpvc-web-fullplaylist':       { pl.src='/cgi-bin/mpvc?mpvc+fullplaylist'; break; }
+        case '#mpvc-web-rawplaylist':        { pl.src='/cgi-bin/mpvc?mpvc+rawplaylist'; break; }
+        case '#mpvc-web-chapter-list-nr':    { pl.src='/cgi-bin/mpvc?mpvc+chapter-list-nr'; break; }
+        case '#mpvc-web-chapter-list-full':  { pl.src='/cgi-bin/mpvc?mpvc+chapter-list-full'; break; }
+        }
+        </script>
+        </div>
+        </details>
+        <hr>
+
+        <details>
+        <summary>
+        [
+            <a href="#mpvc-web-extras" name="mpvc-web-extras">Extras</a> (toggle open/close)
+        ]
+        </summary>
+        <ul>
             <li>
             mpvc theme
                 <a href="#" title="theme 2" onclick="document.body.style.WebkitFilter='invert(0.2)';">t2</a>
@@ -448,41 +492,16 @@ mpvc_web_index()
             <li>
                 $(if [ -n "$MPVC_WEB_ARCHIVE_ENABLE" ]; then find "ytdl-archive/" | awk -F/ '{print "https://"$NF}' | mpvc_web_select_form "mpvc -q add" "${MPVC_WEB_SHORTCUT_ARCHIVE}"; fi)
             </li>
+        </ul>
         </details>
-    </ul>
-        [
-            <a href="#mpvc-web-status" name="mpvc-web-status">Status</a>
-            <a href="/cgi-bin/mpvc?metadata">#me</a>
-            <a href="/cgi-bin/mpvc?thumbnail64">#thumb</a>
-            <a href="/cgi-bin/mpvc?lyrics">#lyric</a>
-            <a href="/cgi-bin/mpvc?filename">#url</a>
-        ]
-        <hr>
-        <iframe name="mpvc-status" width="100%" height="100%" frameborder="0" allowtransparency="true" src="/cgi-bin/mpvc?mpvc+status" ></iframe>
-        [
-            <a href="#mpvc-web-playlist" name="mpvc-web-playlist">Playlist</a>
-            <a href="#mpvc-web-fullplaylist" name="mpvc-web-fullplaylist">#full</a>
-            <a href="#mpvc-web-rawplaylist" name="mpvc-web-rawplaylist">#raw</a>
-            <a href="#mpvc-web-chapter-list-nr" name="mpvc-web-chapter-list-nr">#chapters</a>
-        ]
-        <hr>
-        <div style="display:flex">
-        <iframe name="mpvc-playlist" width="100%" frameborder="0" allowtransparency="true" style="margin:auto;" src="/cgi-bin/mpvc?mpvc+playlist" ></iframe>
-        <script type="text/javascript">
-        var pl = document.getElementsByName('mpvc-playlist')[0];
-        switch (window.location.hash) {
-        case '#mpvc-web-playlist':           { pl.src='/cgi-bin/mpvc?mpvc+playlist'; break; }
-        case '#mpvc-web-fullplaylist':       { pl.src='/cgi-bin/mpvc?mpvc+fullplaylist'; break; }
-        case '#mpvc-web-rawplaylist':        { pl.src='/cgi-bin/mpvc?mpvc+rawplaylist'; break; }
-        case '#mpvc-web-chapter-list-nr':    { pl.src='/cgi-bin/mpvc?mpvc+chapter-list-nr'; break; }
-        case '#mpvc-web-chapter-list-full':  { pl.src='/cgi-bin/mpvc?mpvc+chapter-list-full'; break; }
-        }
-        </script>
-        </div>
-        <hr>
-    <ul>
         <details $(if [ -n "$MPVC_WEB_THUMBNAIL_ENABLE" ]; then echo open; fi)>
-        <summary>mpvc thumb</summary>
+        <summary>
+        [
+            <a href="#mpvc-web-thumbnail" name="mpvc-web-thumbnail">Thumbnail</a>
+            <a href="/cgi-bin/mpvc?thumbnail">#url</a>
+            <a href="/cgi-bin/mpvc?thumbnail64">#img</a>
+        ]
+        </summary>
         <a href=".">
             <iframe src="/cgi-bin/mpvc?thumbnail64" alt="thumbnail" title="thumbnail" style="$MPVC_WEB_THUMBNAIL_STYLE"></iframe>
         </a>
