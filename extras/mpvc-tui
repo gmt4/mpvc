@@ -111,12 +111,17 @@ mpvctui_headerc()
     do
         hdr="$hdr$char"
     done
+    mpvctui_color "${ccolor}" "${hdr}"
+}
 
-    if [ -n "$NO_COLOR" ]; then
-        printf "%s" "${hdr}"
+mpvctui_color()
+{
+    ccolor=$1; shift;
+    if [ -n "$NO_COLOR" ]
+    then
+        printf "%s" "${@}"
     else
-        # not using printf "%s" here as sh displays raw escape sequences, instead of colored output
-        printf "${ccolor}${hdr}${MPVC_TUI_CRST}"
+        printf "${ccolor}$@${MPVC_TUI_CRST}"
     fi
 }
 
@@ -141,6 +146,15 @@ mpvctui_tips()
 
 mpvctui_watcher()
 {
+    tuimode=$1
+    if [ "$tuimode" = "tinytui" ]
+    then
+        mpvctui_color $MPVC_TUI_COLOR0 ">> "
+        printf "%s" "$(mpvc "${MPVC_TUI_CMD_STATUS}")"
+        mpvctui_color $MPVC_TUI_COLOR2 " # $PROGNAME/tt $PROGVERSION #"
+        return
+    fi
+
     chapters=$(equiet mpvc get chapters)
     mpvctui_header0 "${MPVC_TUI_HEADER0}$(mpvctui_tips)"
     if [ -n "$chapters" ] && [ "$chapters" != "null" ] && [ "$chapters" -ne 0 ]
@@ -180,14 +194,15 @@ mpvctui_input()
 
 mpvctui_watch()
 {
+    tuimode="${1:-}"
     mpvctui_count=0
     trap mpvctui_input INT
     while :
     do
-        output=$(mpvctui_watcher 2>&1)
+        output=$(mpvctui_watcher "$tuimode" 2>&1)
         if [ $(( mpvctui_count % MPVC_TUI_CLEARC )) -eq 0 ]; then printf "${MPVC_TUI_CLEAR}"; fi
         printf "${MPVC_TUI_CUP}"
-        echo "$output"
+        echo -n "$output"
         mpvctui_count=$(( mpvctui_count + 1 ))
         sleep "$MPVC_TUI_UPDATEC"
     done
@@ -362,6 +377,7 @@ usage: $PROGNAME opts # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
  -s|suggest : Suggest a random media to play based on previous media played
  -S|scrobler: Starts the $PROGNAME scrobbler
  -t|tui     : Starts the $PROGNAME to manage the mpv playlist (rlwrap*)
+ -tt|tinytui: Starts the $PROGNAME to manage the mpv playlist (rlwrap*)
  -T|Tui     : Combo that starts $PROGNAME -t -n, and adds media given as args
  -x|launch  : Starts $PROGNAME in a new $MPVC_TUI_TERM (\$MPVC_TUI_TERM) # combine with <opts>
  -v|version : Prints the $PROGNAME version.
@@ -388,6 +404,7 @@ mpvctui_main()
         -N|notify)   shift; mpvctui_notify "$@" ;;
         -k|kill)     shift; pkill -f "$PROGNAME" ;;
         -t|tui)      shift; mpvctui_watch ;;
+        -tt|tinytui) shift; mpvctui_watch "tinytui" ;;
         -T|Tui)      shift; mpvctui_watch_auto "$@" ;;
            socket)   shift; export MPVC_SOCKET="$arg1"; shift ;;
         -s|suggest)  shift; mpvctui_suggest ;;
