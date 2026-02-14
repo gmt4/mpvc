@@ -433,7 +433,6 @@ mpvc_web_index()
             <a href="#mpvc-web-playlist" name="mpvc-web-playlist">Playlist</a>
             <a href="#mpvc-web-fullplaylist" name="mpvc-web-fullplaylist">#full</a>
             <a href="#mpvc-web-rawplaylist" name="mpvc-web-rawplaylist">#raw</a>
-            <a href="#mpvc-web-chapter-list-nr" name="mpvc-web-chapter-list-nr">#clist</a>
         ]
         </summary>
         <hr>
@@ -445,12 +444,22 @@ mpvc_web_index()
         case '#mpvc-web-playlist':           { pl.src='/cgi-bin/mpvc?mpvc+playlist'; break; }
         case '#mpvc-web-fullplaylist':       { pl.src='/cgi-bin/mpvc?mpvc+fullplaylist'; break; }
         case '#mpvc-web-rawplaylist':        { pl.src='/cgi-bin/mpvc?mpvc+rawplaylist'; break; }
-        case '#mpvc-web-chapter-list-nr':    { pl.src='/cgi-bin/mpvc?mpvc+chapter-list-nr'; break; }
-        case '#mpvc-web-chapter-list-full':  { pl.src='/cgi-bin/mpvc?mpvc+chapter-list-full'; break; }
         }
         </script>
         </div>
         </details>
+
+        <details>
+        <summary>
+        [
+            <a href="#mpvc-web-chapter-list" name="mpvc-web-chapterlist">Chapterlist</a>
+            <a href="#mpvc-web-chapter-list-full" name="mpvc-web-chapter-list-full">#full</a>
+            <a href="#mpvc-web-chapter-list-raw" name="mpvc-web-chapter-list-raw">#raw</a>
+        ]
+        </summary>
+        <iframe name="mpvc-chapter-list" width="100%" frameborder="0" allowtransparency="true" src="/cgi-bin/mpvc?mpvc+chapter-list" ></iframe>
+        </details>
+
         <hr>
 
         <details>
