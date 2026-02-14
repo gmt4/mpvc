@@ -413,7 +413,6 @@ mpvc_web_index()
         </li>
     </ul>
 
-    <hr>
         <details open>
         <summary>
         [
@@ -494,6 +493,7 @@ mpvc_web_index()
             </li>
         </ul>
         </details>
+
         <details $(if [ -n "$MPVC_WEB_THUMBNAIL_ENABLE" ]; then echo open; fi)>
         <summary>
         [
