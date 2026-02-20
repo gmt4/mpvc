@@ -511,9 +511,7 @@ mpvc_web_index()
             <a href="/cgi-bin/mpvc?thumbnail64">#img</a>
         ]
         </summary>
-        <a href=".">
             <iframe src="/cgi-bin/mpvc?thumbnail64" alt="thumbnail" title="thumbnail" style="$MPVC_WEB_THUMBNAIL_STYLE"></iframe>
-        </a>
         </details>
     </ul>
         <hr>
