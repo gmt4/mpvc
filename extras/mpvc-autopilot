@@ -40,9 +40,12 @@ mpvcap_autopilot()
         hour=$(date +%_H)
         if [ "$hour" -ge ${MPVC_AP_HOURMIN} -a "$hour" -lt ${MPVC_AP_HOURMAX} ]
         then
+            pause=$(mpvc -q get pause || true)
             next=$(find $(mpvc-fzf -OO) -type f | shuf -n1)
             echo "# $(mpvcap_date) $PROGNAME next $next"
-            mpvc -n "$next"
+            if [ "$pause" != "yes" ]; then
+                mpvc -n "$next"
+            fi
         fi
     done
 }
