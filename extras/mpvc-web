@@ -457,10 +457,9 @@ mpvc_web_index()
             <a href="#mpvc-web-chapter-list-raw" name="mpvc-web-chapter-list-raw">#raw</a>
         ]
         </summary>
+        <hr>
         <iframe name="mpvc-chapter-list" width="100%" frameborder="0" allowtransparency="true" src="/cgi-bin/mpvc?mpvc+chapter-list" ></iframe>
         </details>
-
-        <hr>
 
         <details>
         <summary>
@@ -468,6 +467,7 @@ mpvc_web_index()
             <a href="#mpvc-web-extras" name="mpvc-web-extras">Extras</a> (toggle open/close)
         ]
         </summary>
+        <hr>
         <ul>
             <li>
             mpvc theme
