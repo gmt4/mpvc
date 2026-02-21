@@ -644,7 +644,7 @@ mpvc_web()
         /GET \/\?cmd=mpvc%20toggle/       { mpvc("toggle") }
         /GET \/\?cmd=mpvc%20play/         { mpvc("play") }
         /GET \/\?cmd=mpvc%20start%200/    { mpvc("start 0") }
-        /GET \/\?cmd=mpvc%20start%20$/    { mpvc("start $") }
+        /GET \/\?cmd=mpvc%20start%20\$/   { mpvc("start $") }
         /GET \/\?cmd=mpvc%20stop/         { mpvc("stop") }
         /GET \/\?cmd=mpvc%20prev/         { mpvc("prev") }
         /GET \/\?cmd=mpvc%20next/         { mpvc("next") }
