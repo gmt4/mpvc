@@ -147,12 +147,23 @@ mpvctui_tips()
 mpvctui_watcher()
 {
     tuimode=$1
+    chapters=$(equiet mpvc get chapters)
+    if [ $(($mpvctui_count % 3)) -eq 0 ] && [ -n "$chapters" ] && [ "$chapters" != "null" ] && [ "$chapters" -ne 0 ]
+    then
+        show_chapters=true
+    fi
+
     if [ "$tuimode" = "ttt" ] || [ "$tuimode" = "tt" ]
     then
         mpvctui_color $MPVC_TUI_COLOR0 ">> "
-        printf "%s" "$(mpvc "${MPVC_TUI_CMD_STATUS}")"
+        if [ -n "${show_chapters:-}" ]
+        then
+            printf "%s" "$(mpvc "${MPVC_TUI_CMD_CSTATUS}")"
+        else
+            printf "%s" "$(mpvc "${MPVC_TUI_CMD_STATUS}")"
+        fi
         if [ "$tuimode" = "ttt" ]; then
-            mpvctui_color $MPVC_TUI_COLOR1 " (mpvc)"
+            mpvctui_color $MPVC_TUI_COLOR1 " (m)"
         fi
         if [ "$tuimode" = "tt" ]; then
             mpvctui_color $MPVC_TUI_COLOR1 " (mpvc/$tuimode $PROGVERSION)"
@@ -160,9 +171,9 @@ mpvctui_watcher()
         return
     fi
 
-    chapters=$(equiet mpvc get chapters)
     mpvctui_header0 "${MPVC_TUI_HEADER0}$(mpvctui_tips)"
-    if [ -n "$chapters" ] && [ "$chapters" != "null" ] && [ "$chapters" -ne 0 ]
+
+    if [ -n "${show_chapters:-}" ]
     then
         mpvctui_header1 "Chapter Status"
         mpvc "${MPVC_TUI_CMD_CSTATUS}"
