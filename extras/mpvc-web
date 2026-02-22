@@ -295,6 +295,7 @@ main()
         thumbnail64)            mpvc_redir "\$($MPVC-fzf thumbnail64)" ;;
         filename)               mpvc_redir "\$($MPVC filename current full)" ;;
         metadata)               mpvc_plain "\$($MPVC metadata)" ;;
+        related)                mpvc_plain "\$($MPVC-fzf \"\$($MPVC get media-title)\")" ;;
 
         mpvc+status)            mpvc_cmd status | mpvc_strip ;;
         mpvc+playlist)          mpvc_cmd playlist | mpvc_strip ;;
@@ -509,6 +510,7 @@ mpvc_web_index()
             <a href="#mpvc-web-thumbnail" name="mpvc-web-thumbnail">Thumbnail</a>
             <a href="/cgi-bin/mpvc?thumbnail">#url</a>
             <a href="/cgi-bin/mpvc?thumbnail64">#img</a>
+            <a href="/cgi-bin/mpvc?related">#rel</a>
         ]
         </summary>
             <iframe src="/cgi-bin/mpvc?thumbnail64" alt="thumbnail" title="thumbnail" style="$MPVC_WEB_THUMBNAIL_STYLE"></iframe>
