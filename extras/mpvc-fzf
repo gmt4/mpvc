@@ -719,7 +719,7 @@ main()
         -r|explorer)    shift; mpvcfzf_local "$MPVC_YTDL_OUTPUT" "$@"; return ;;
         -s|search)      shift; mpvcfzf_isearch "$arg1"; return;;
         -S|socket)      shift; export MPVC_SOCKET="${1:-}"; shift ;;
-       -SS|socklist)    shift; mpvcfzf_socklist ;;
+       -SS|socklist)    shift; mpvcfzf_socklist $arg1; return ;;
         -t|thumbnail)   shift; mpvcfzf_thumbnail_url "$arg1"; return ;;
            thumbnail64) shift; mpvcfzf_thumbnail_b64 "$arg1"; return ;;
         -T|Thumbnail)   shift; mpvcfzf_thumbnail_preview "$arg1" ; return ;;
