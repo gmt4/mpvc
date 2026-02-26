@@ -23,6 +23,9 @@ mpvc() { "$PROGDIR/mpvc" "$@"; } # mpvc-web?
 # Set defaults
 mpvcfzf_defaults()
 {
+    : "${XDG_CACHE_HOME:="$HOME/.cache"}"
+    : "${MPVC_CACHE_DIR:=$XDG_CACHE_HOME/mpvc}"
+
     : "${XDG_CONFIG_HOME:="$HOME/.config"}"
     : "${MPVC_CONFIG_DIR:=$XDG_CONFIG_HOME/mpvc}"
     : "${MPVC_CONFIG:=$MPVC_CONFIG_DIR/mpvc.conf}"
@@ -58,6 +61,8 @@ mpvcfzf_config()
     mpvcfzf_defaults
     if [ ! -d "$MPVC_CONFIG_DIR" ]; then mkdir -p "$MPVC_CONFIG_DIR"; fi
     if [ ! -d "$MPVC_CONFIG_DIR/feeds/" ]; then mkdir -p "$MPVC_CONFIG_DIR/feeds/"; fi
+    if [ ! -d "$MPVC_CACHE_DIR" ]; then mkdir -p "$MPVC_CACHE_DIR"; fi
+    if [ ! -d "$MPVC_CACHE_DIR/thumbnail/" ]; then mkdir -p "$MPVC_CACHE_DIR/thumbnail/"; fi
     # if present load user config
     if [ -r "$MPVC_CONFIG" ]; then
         . "$MPVC_CONFIG";
@@ -212,7 +217,7 @@ mpvcfzf_getvideo_id_from_fd()
 {
     ytfd=$1
     ytout=$(mpvcfzf_icache_output_dir)
-    case "$yturl" in
+    case "$ytfd" in
         $ytout/*-???????????.???|$ytout/*-???????????.????)
             ytfd="${ytfd##*/}"     # basename
             ytfd="${ytfd%.*}"      # extension
@@ -225,9 +230,14 @@ mpvcfzf_getvideo_id_from_fd()
 
 mpvcfzf_thumbnail_attachment()
 {
-    png=$(mktemp -t --dry-run mpvc-thumb.XXXXXXXXXX.png)
-    ffmpeg -hide_banner -loglevel error -dump_attachment:t "" -i "$1" "$png"
-    echo "$png"
+    ytfd="$1"
+    ytfd="${ytfd##*/}"     # basename
+    ytfd="${ytfd%.*}"      # extension
+    thumb="$MPVC_CACHE_DIR/thumbnail/$ytfd.png"
+    if [ ! -r "$thumb" ]; then
+        ffmpeg -hide_banner -loglevel error -dump_attachment:t "" -i "$1" "$thumb"
+    fi
+    echo "$thumb"
 }
 
 mpvcfzf_thumbnail_b64()
