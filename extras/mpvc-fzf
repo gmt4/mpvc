@@ -297,7 +297,7 @@ mpvcfzf_thumbnail_tr()
 
 mpvcfzf_thumbnail_preview()
 {
-    $MPVC_FZF_IMGVIEWER "$(mpvcfzf_thumbnail "$@")"
+    $MPVC_FZF_IMGVIEWER "$(mpvcfzf_thumbnail_url "$@")"
 }
 
 mpvcfzf_nextvideo()
