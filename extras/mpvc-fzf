@@ -244,7 +244,11 @@ mpvcfzf_thumbnail_b64()
 {
     yturl=$(mpvcfzf_thumbnail_url "$@")
     [ -z "$yturl" ] || [ "$yturl" = "null" ] && return
-    b64data=$(mpvc curlcache64 "$yturl")
+    if [ -r "$yturl" ]; then
+        b64data=$(base64 -w0 < "$yturl")
+    else
+        b64data=$(mpvc curlcache64 "$yturl")
+    fi
     b64img="data:image/png;base64,$b64data"
     echo "$b64img"
 }
