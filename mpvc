@@ -278,7 +278,7 @@ mpvc_curl_cache_b64()
     v="$( awk -F'\t' -v k="$k" '{ if ($1 == k) {print $2; exit} }' "$f" )"
 
     if [ "${#v}" -eq 0 ]; then
-        v=$(mpvc_curl "$@" | base64 -w0)
+        v=$(mpvc_curl "$@" | base64 -w0) # base64
         o=$(cat "$f") # append at the top in 2026 :-)
         (echo "$k	$v"; echo "$o") > "$f"
     fi
