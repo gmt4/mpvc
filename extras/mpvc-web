@@ -289,6 +289,7 @@ main()
         exit;
     fi
     case "\$QUERY_STRING" in
+        volmute)                mpvc_redir "\$($MPVC-mpris volmute)" ;;
         now-short)              mpvc_redir "\$($MPVC-fzf now short)" ;;
         lyrics)                 mpvc_redir "\$($MPVC-fzf Lyrics '')" ;;
         thumbnail)              mpvc_redir "\$($MPVC-fzf thumbnail)" ;;
@@ -299,11 +300,7 @@ main()
 
         mpvc+status)            mpvc_cmd status | mpvc_strip ;;
         mpvc+playlist)          mpvc_cmd playlist | mpvc_strip ;;
-        mpvc+fullplaylist)      mpvc_cmd fullplaylist | mpvc_strip ;;
-        mpvc+rawplaylist)       mpvc_cmd saven | mpvc_strip ;;
         mpvc+chapter-list)      mpvc_cmd chapter-list | mpvc_strip ;;
-        mpvc+chapter-list-nr)   mpvc_cmd chapter-list-nr | mpvc_strip ;;
-        mpvc+chapter-list-full) mpvc_cmd chapter-list-full | mpvc_strip ;;
 
         mpvc-fzf[+\ ]*)         mpvc_plain "\$($PROGDIR/\$(mpvc_split "\$@"))" ;;
         mpvc-equalizer[+\ ]*)   mpvc_plain "\$($PROGDIR/\$(mpvc_split "\$@"))" ;;
@@ -346,9 +343,11 @@ mpvc_web_index()
         <summary>
         [
             <a href="." name="top" ${MPVC_WEB_SHORTCUT_REFRESH}>$PROGNAME</a>
-            <a href="#status">#s</a>
-            <a href="#mpvc-web-playlist">#l</a>
+            <a href="#mpvc-web-status">#s</a>
+            <a href="#mpvc-web-playlist">#p</a>
+            <a href="#mpvc-web-chapterlist">#c</a>
             <a title="#now" href="/cgi-bin/mpvc?now-short">#n</a>
+            <a title="#mute" href="/cgi-bin/mpvc?volmute">#m</a>
             $([ -n "$MPVC_WEB_ARCHIVE_ENABLE" ] && echo '<a title="#arc" href="ytdl-archive" >#a</a>'; )
             $(for x in $MPVC_WEB_EXTRAS_URL; do n=$((${n:-0} + 1)); echo "<a title=#extras-$n href=$x>#$n</a>"; done)
         ]
@@ -424,7 +423,6 @@ mpvc_web_index()
         [
             <a href="#mpvc-web-playlist" name="mpvc-web-playlist">Playlist</a>
             <a href="#mpvc-web-fullplaylist" name="mpvc-web-fullplaylist">#full</a>
-            <a href="#mpvc-web-rawplaylist" name="mpvc-web-rawplaylist">#raw</a>
         ]
         </summary>
         <hr>
@@ -435,7 +433,6 @@ mpvc_web_index()
         switch (window.location.hash) {
         case '#mpvc-web-playlist':           { pl.src='/cgi-bin/mpvc?mpvc+playlist'; break; }
         case '#mpvc-web-fullplaylist':       { pl.src='/cgi-bin/mpvc?mpvc+fullplaylist'; break; }
-        case '#mpvc-web-rawplaylist':        { pl.src='/cgi-bin/mpvc?mpvc+rawplaylist'; break; }
         }
         </script>
         </div>
