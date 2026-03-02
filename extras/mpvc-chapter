@@ -14,13 +14,23 @@ PROGURL="https://github.com/gmt4/mpvc"
 
 set -euf
 
+# Set defaults
+mpvc_defaults()
+{
+    : "${XDG_CONFIG_HOME:="$HOME/.config"}"
+    : "${MPVC_CONFIG_DIR:=$XDG_CONFIG_HOME/mpvc}"
+    : "${MPVC_CONFIG:=$MPVC_CONFIG_DIR/mpvc.conf}"
+
+    : "${MPVC_CHAPTERS_DIR:=$MPVC_CONFIG_DIR/chapters}"
+
+    [ ! -d "$MPVC_CHAPTERS_DIR" ] && mkdir -p "$MPVC_CHAPTERS_DIR" || true
+}
+
 # See https://ffmpeg.org/ffmpeg-formats.html#ffmetadata
 mpvc_chapter_file()
 {
-    chaptersdir="$HOME/.config/mpvc/chapters/"
-    chaptersfile="$chaptersdir/$(mpvc get path | sed 's/\//-/g; s/ /_/g; s/[&]//')"
-    mkdir -p "$chaptersdir"
-    echo "$chaptersfile"
+    file=$(mpvc get path | sed 's/\//-/g; s/ /_/g; s/[&]//')
+    echo "$MPVC_CHAPTERS_DIR/$file"
 }
 
 mpvc_chapter_info()
@@ -157,6 +167,8 @@ EOF
 main()
 {
     if [ $# -lt 1 ]; then usage; fi
+
+    mpvc_defaults
 
     case "$1" in
     file)   shift; mpvc_chapter_file "$@" ;;
