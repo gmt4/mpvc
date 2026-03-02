@@ -282,8 +282,9 @@ mpvcfzf_thumbnail_somafm()
     channel="${1##*/}"
     channel=${channel%-*}
     channel=${channel%-*}
-    mpvcfzf_curl "https://somafm.com/channels.json" |
-        jq -j '.channels | .[] | select(.id == "'"$channel"'") | .xlimage'
+
+    mpvcfzf_feeds_search "$MPVC_FZF_SOMAFM_FILE" "https://somafm.com/channels.json" '.' |
+        jq -j '.channels | .[] | select(.id == "'"$channel"'") | .largeimage'
 }
 
 mpvcfzf_thumbnail_rp()
