@@ -355,6 +355,9 @@ mpvc_web_index()
         <hr>
         <ul>
         <li>
+            $(mpvc stash list | awk 'NR>1{print $NF}' | mpvc tac | mpvc_web_select_form "mpvc -q stash apply" "${MPVC_WEB_SHORTCUT_APPLY}")
+        </li>
+        <li>
             <!--<a href="?cmd=mpvc status">status</a>-->
             <a href="?cmd=mpvc toggle" ${MPVC_WEB_SHORTCUT_PAUSE}>pause</a>
             <a href="?cmd=mpvc mpv">mpv</a>
@@ -400,6 +403,9 @@ mpvc_web_index()
             <a href="?cmd=mpvc cloop">cloop</a>
             <a href="?cmd=mpvc cprev" title="cprev">ch-</a>
             <a href="?cmd=mpvc cnext" title="cnext">ch+</a>
+        </li>
+        <li>
+            $(printf " -30\n-20\n-10\n-5\n0\n+5\n+10\n+20\n+30" | mpvc_web_select_form "mpvc -q vol" "${MPVC_WEB_SHORTCUT_VOL}")
         </li>
         </ul>
         </details>
@@ -467,12 +473,6 @@ mpvc_web_index()
                 <a href="#" title="toggle" onclick="toggleColorScheme()">tg</a>
                 <a href="." title="reset">rst</a>
                 <input type="color" id="link-color" name="link-color" onchange="toggleLinkColor()" style="width: 1em !important; height: 1em; padding:0 0;">
-            </li>
-            <li>
-                $(mpvc stash list | awk 'NR>1{print $NF}' | mpvc tac | mpvc_web_select_form "mpvc -q stash apply" "${MPVC_WEB_SHORTCUT_APPLY}")
-            </li>
-            <li>
-                $(printf " -30\n-20\n-10\n-5\n0\n+5\n+10\n+20\n+30" | mpvc_web_select_form "mpvc -q vol" "${MPVC_WEB_SHORTCUT_VOL}")
             </li>
             <li>
                 $([ -n "${MPVC_WEB_DEV:-}" ] && mpvc_web_cli)
