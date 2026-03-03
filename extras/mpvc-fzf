@@ -230,7 +230,8 @@ mpvcfzf_getvideo_id_from_fd()
 
 mpvcfzf_thumbnail_attachment()
 {
-    ytfd="$1"
+    yturl="$1"
+    ytfd="$yturl"
     ytfd="${ytfd##*/}"     # basename
     ytfd="${ytfd%.*}"      # extension
     thumb="$MPVC_CACHE_DIR/thumbnail/$ytfd.png"
@@ -242,12 +243,32 @@ mpvcfzf_thumbnail_attachment()
 
 mpvcfzf_thumbnail_b64()
 {
-    yturl=$(mpvcfzf_thumbnail_url "$@")
+    yturl=$(mpvcfzf_thumbnail_cache "$@")
     [ -z "$yturl" ] || [ "$yturl" = "null" ] && return
-    [ -r "$yturl" ] && yturl="file://$yturl"
-    b64data=$(mpvc curlcache64 "$yturl")
+    b64data=$(base64 -w0 "$yturl")
     b64img="data:image/png;base64,$b64data"
     echo "$b64img"
+}
+
+mpvcfzf_thumbnail_cache_url()
+{
+    yturl="$1"
+    ytfd="$(echo "$yturl" | sed 's/[:\/]/-/g')"
+    file="$MPVC_CACHE_DIR/thumbnail/$ytfd"
+    if [ ! -s "$file" ]; then
+        mpvcfzf_curl -o "$file" "$yturl"
+    fi
+    echo "$file"
+}
+
+mpvcfzf_thumbnail_cache()
+{
+    yturl=$(mpvcfzf_thumbnail_url "$1")
+    case "$yturl" in
+    ${MPVC_YTDL_OUTPUT}*)               mpvcfzf_thumbnail_attachment "$yturl" ;;
+    https://img.radioparadise.com/*)    mpvcfzf_thumbnail_cache_url "$yturl" ;;
+    https://i.ytimg.com/*)              mpvcfzf_thumbnail_cache_url "$yturl" ;;
+    esac
 }
 
 mpvcfzf_thumbnail_url()
@@ -258,7 +279,7 @@ mpvcfzf_thumbnail_url()
 
     yturl=$(mpvcfzf_getvideo_id_from_fd "$yturl")
     case "$yturl" in
-    ${MPVC_YTDL_OUTPUT}*)                       mpvcfzf_thumbnail_attachment "$yturl" ;;
+    ${MPVC_YTDL_OUTPUT}*)                       echo "$yturl" ;;
 
     http*://ice?.somafm.com/*-*-aac)            mpvcfzf_thumbnail_somafm "$yturl";;
 
@@ -299,7 +320,7 @@ mpvcfzf_thumbnail_tr()
 
 mpvcfzf_thumbnail_preview()
 {
-    $MPVC_FZF_IMGVIEWER "$(mpvcfzf_thumbnail_url "$@")"
+    $MPVC_FZF_IMGVIEWER "$(mpvcfzf_thumbnail_cache "$@")"
 }
 
 mpvcfzf_nextvideo()
