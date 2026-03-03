@@ -199,7 +199,6 @@ mpvc_defaults()
     : "${MPVC_SOCKET:=$MPVC_CONFIG_DIR/mpvsocket0}"
 
     : "${MPVC_CURL_CACHE:=$MPVC_CACHE_DIR/curl-cache.txt}"
-    : "${MPVC_CURL_CACHE64:=$MPVC_CACHE_DIR/curl-cache-64.txt}"
 
     : "${MPVOPTIONS:=--no-audio-display --no-input-terminal}"
     : "${MPVC_MPV:=mpv}"
@@ -235,7 +234,6 @@ mpvc_config()
     if [ ! -d "$MPVC_PLAYLIST" ]; then mkdir -p "$MPVC_PLAYLIST"; fi
     # if not present, create config files
     if [ ! -e "$MPVC_CURL_CACHE" ]; then true > "$MPVC_CURL_CACHE"; fi
-    if [ ! -e "$MPVC_CURL_CACHE64" ]; then true > "$MPVC_CURL_CACHE64"; fi
     # if present load user config
     if [ -r "$MPVC_CONFIG" ]; then
         . "$MPVC_CONFIG"
@@ -266,20 +264,6 @@ mpvc_curl_cache()
     if [ "${#v}" -eq 0 ]; then
         v=$(mpvc_curl "$@")
         o=$(cat "$f") # append at the top in 2023 :-)
-        (echo "$k	$v"; echo "$o") > "$f"
-    fi
-    echo "$v"
-}
-
-mpvc_curl_cache_b64()
-{
-    f="$MPVC_CURL_CACHE64"
-    k=$1
-    v="$( awk -F'\t' -v k="$k" '{ if ($1 == k) {print $2; exit} }' "$f" )"
-
-    if [ "${#v}" -eq 0 ]; then
-        v=$(mpvc_curl "$@" | base64 -w0) # base64
-        o=$(cat "$f") # append at the top in 2026 :-)
         (echo "$k	$v"; echo "$o") > "$f"
     fi
     echo "$v"
@@ -1234,7 +1218,6 @@ main() {
             --ttycols|ttycols)               mpvc_tty_cols; QUIETFLAG=true;;
             --ttylines|ttylines)             mpvc_tty_lines; QUIETFLAG=true;;
             --statussz|statussz)             mpvc_status_size; QUIETFLAG=true;;
-            --curlcache64|curlcache64)       shift; mpvc_curl_cache_b64 "$@"; exit $?;;
 
             --hifi|hifi)                     MPVC_FMTSTR="$MPVC_FMTSTR_DFLT" ;;
             --lowfi|lowfi)                   MPVC_FMTSTR="$MPVC_FMTSTR_LOFI" ;;
