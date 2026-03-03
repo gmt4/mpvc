@@ -293,9 +293,11 @@ mpvcfzf_thumbnail_url()
 
     https://tilderadio.org/listen)              mpvcfzf_thumbnail_tr ;;
 
-    http*://youtu.be*)                          mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
-    http*://yewtu.be*)                          mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
-    #*)                                          mpvc -q ytqueryfield thumbnail_url "$yturl" ;; # XXX
+    https://youtube.com/watch*)                 mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
+    https://www.youtube.com/watch*)             mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
+    https://youtu.be/watch*)                    mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
+    https://yewtu.be/watch*)                    mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
+    #*)                                         mpvc -q ytqueryfield thumbnail_url "$yturl" ;; # XXX
     esac
 }
 
