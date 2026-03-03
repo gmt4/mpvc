@@ -355,9 +355,6 @@ mpvc_web_index()
         <hr>
         <ul>
         <li>
-            $(mpvc stash list | awk 'NR>1{print $NF}' | mpvc tac | mpvc_web_select_form "mpvc -q stash apply" "${MPVC_WEB_SHORTCUT_APPLY}")
-        </li>
-        <li>
             <!--<a href="?cmd=mpvc status">status</a>-->
             <a href="?cmd=mpvc toggle" ${MPVC_WEB_SHORTCUT_PAUSE}>pause</a>
             <a href="?cmd=mpvc mpv">mpv</a>
@@ -465,14 +462,7 @@ mpvc_web_index()
         <hr>
         <ul>
             <li>
-            mpvc theme
-                <a href="#" title="theme 2" onclick="document.body.style.WebkitFilter='invert(0.2)';">t2</a>
-                <a href="#" title="theme 4" onclick="document.body.style.WebkitFilter='invert(0.4)';">t4</a>
-                <a href="#" title="theme 4" onclick="document.body.style.WebkitFilter='invert(0.6)';">t6</a>
-                <a href="#" title="theme 8" onclick="document.body.style.WebkitFilter='invert(0.8)';">t8</a>
-                <a href="#" title="toggle" onclick="toggleColorScheme()">tg</a>
-                <a href="." title="reset">rst</a>
-                <input type="color" id="link-color" name="link-color" onchange="toggleLinkColor()" style="width: 1em !important; height: 1em; padding:0 0;">
+                $(mpvc stash list | awk 'NR>1{print $NF}' | mpvc tac | mpvc_web_select_form "mpvc -q stash apply" "${MPVC_WEB_SHORTCUT_APPLY}")
             </li>
             <li>
                 $([ -n "${MPVC_WEB_DEV:-}" ] && mpvc_web_cli)
@@ -494,6 +484,16 @@ mpvc_web_index()
             </li>
             <li>
                 $(if [ -n "$MPVC_WEB_ARCHIVE_ENABLE" ]; then find "ytdl-archive/" | awk -F/ '{print "https://"$NF}' | mpvc_web_select_form "mpvc -q add" "${MPVC_WEB_SHORTCUT_ARCHIVE}"; fi)
+            </li>
+            <li>
+            theme
+                <a href="#" title="theme 2" onclick="document.body.style.WebkitFilter='invert(0.2)';">t2</a>
+                <a href="#" title="theme 4" onclick="document.body.style.WebkitFilter='invert(0.4)';">t4</a>
+                <a href="#" title="theme 4" onclick="document.body.style.WebkitFilter='invert(0.6)';">t6</a>
+                <a href="#" title="theme 8" onclick="document.body.style.WebkitFilter='invert(0.8)';">t8</a>
+                <a href="#" title="toggle" onclick="toggleColorScheme()">tg</a>
+                <a href="." title="reset">rst</a>
+                <input type="color" id="link-color" name="link-color" onchange="toggleLinkColor()" style="width: 1em !important; height: 1em; padding:0 0;">
             </li>
         </ul>
         </details>
