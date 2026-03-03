@@ -297,6 +297,8 @@ mpvcfzf_thumbnail_url()
     https://www.youtube.com/watch*)             mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
     https://youtu.be/watch*)                    mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
     https://yewtu.be/watch*)                    mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
+    https://youtu.be/???????????)               mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
+    https://yewtu.be/???????????)               mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
     #*)                                         mpvc -q ytqueryfield thumbnail_url "$yturl" ;; # XXX
     esac
 }
