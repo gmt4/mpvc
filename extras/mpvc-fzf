@@ -267,6 +267,7 @@ mpvcfzf_thumbnail_cache()
     case "$yturl" in
     ${MPVC_YTDL_OUTPUT}*)               mpvcfzf_thumbnail_attachment "$yturl" ;;
     https://img.radioparadise.com/*)    mpvcfzf_thumbnail_cache_url "$yturl" ;;
+    https://api.somafm.com/logos/*)     mpvcfzf_thumbnail_cache_url "$yturl" ;;
     https://i.ytimg.com/*)              mpvcfzf_thumbnail_cache_url "$yturl" ;;
     esac
 }
