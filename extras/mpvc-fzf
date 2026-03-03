@@ -283,14 +283,14 @@ mpvcfzf_thumbnail_url()
     case "$yturl" in
     ${MPVC_YTDL_OUTPUT}*)                       echo "$yturl" ;;
 
-    http*://ice?.somafm.com/*-*-aac)            mpvcfzf_thumbnail_somafm "$yturl";;
+    https://ice?.somafm.com/*-*-aac)            mpvcfzf_thumbnail_somafm "$yturl";;
 
-    http*://stream.radioparadise.com/aac*)      mpvcfzf_thumbnail_rp chan=0 ;;
-    http*://stream.radioparadise.com/mellow*)   mpvcfzf_thumbnail_rp chan=1 ;;
-    http*://stream.radioparadise.com/rock*)     mpvcfzf_thumbnail_rp chan=2 ;;
-    http*://stream.radioparadise.com/global*)   mpvcfzf_thumbnail_rp chan=3 ;;
-    http*://stream.radioparadise.com/beyond*)   mpvcfzf_thumbnail_rp chan=4 ;;
-    http*://stream.radioparadise.com/serenity*) mpvcfzf_thumbnail_rp chan=5 ;;
+    https://stream.radioparadise.com/aac*)      mpvcfzf_thumbnail_rp chan=0 ;;
+    https://stream.radioparadise.com/mellow*)   mpvcfzf_thumbnail_rp chan=1 ;;
+    https://stream.radioparadise.com/rock*)     mpvcfzf_thumbnail_rp chan=2 ;;
+    https://stream.radioparadise.com/global*)   mpvcfzf_thumbnail_rp chan=3 ;;
+    https://stream.radioparadise.com/beyond*)   mpvcfzf_thumbnail_rp chan=4 ;;
+    https://stream.radioparadise.com/serenity*) mpvcfzf_thumbnail_rp chan=5 ;;
 
     https://tilderadio.org/listen)              mpvcfzf_thumbnail_tr ;;
 
@@ -321,7 +321,8 @@ mpvcfzf_thumbnail_rp()
 
 mpvcfzf_thumbnail_tr()
 {
-    mpvcfzf_curl "https://azuracast.tilderadio.org/api/nowplaying" | jq -j '.[0] | .now_playing | .song | .art'
+    mpvcfzf_curl "https://azuracast.tilderadio.org/api/nowplaying" |
+        jq -j '.[0] | .now_playing | .song | .art'
 }
 
 mpvcfzf_thumbnail_preview()
@@ -363,7 +364,7 @@ mpvcfzf_icache()
 
     while read -r line
     do
-        url=$(echo "$line" | awk '/https:/ { gsub("watch\\?v=",""); print $1 }')
+        url=$(echo "$line" | awk '/^https:/ { gsub("watch\\?v=",""); print $1 }')
         vid=$(basename "$url")
         file=$(find "$ytdl_dir/" 2>/dev/null | awk "/$vid/ { print; exit }")
         if [ -n "$url" ] && [ -e "$file" ]; then
