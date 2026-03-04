@@ -1052,8 +1052,8 @@ mpvc_validate_socket() {
         die 2 "$PROGNAME: Error: Socket ${socket##"$HOME/"} has unsafe permissions: $perms."
     fi
     # test socket owner
-    owner=$(equiet stat -c '%U' "$socket" || equiet stat -f '%Su' "$socket")
-    if [ "$owner" != "$USER" ] && [ "$owner" != "root" ]; then
+    owner=$(equiet stat -c '%u' "$socket" || equiet stat -f '%Du' "$socket")
+    if [ "$owner" != "$(id -u)" ] && [ "$owner" != "0" ]; then
         die 2 "$PROGNAME: Error: Socket ${socket##"$HOME/"} unexpected owner: $owner"
     fi
     # test if socket is open
