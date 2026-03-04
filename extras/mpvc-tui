@@ -67,7 +67,7 @@ mpvctui_defaults()
     : "${MPVC_TUI_CMD_CHAPTERLIST:=chapter-list}"
     : "${MPVC_TUI_CMD_PROMPT:=}"
 
-    export MPVC_TUI_CLINE="${MPVC_TUI_CLINE:-$(( "$(mpvc statussz)" + 6 ))}"
+    export MPVC_TUI_CLINE="${MPVC_TUI_CLINE:-$(( $(mpvc statussz) + 6 ))}"
 }
 
 # Load user config
