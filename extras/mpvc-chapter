@@ -29,15 +29,15 @@ mpvc_defaults()
 # See https://ffmpeg.org/ffmpeg-formats.html#ffmetadata
 mpvc_chapter_file()
 {
-    file=$(mpvc get path | sed 's/\//-/g; s/ /_/g; s/[&]//')
-    echo "$MPVC_CHAPTERS_DIR/$file"
+    file=$(mpvc get path | sed 's/\//-/g; s/ /_/g; s/[&]//g')
+    echo "$MPVC_CHAPTERS_DIR/${file}"
 }
 
 mpvc_chapter_info()
 {
     chaptersfile=${1:-$(mpvc_chapter_file)}
 
-    if [ ! -e "$chaptersfile" ]; then echo "$PROGNAME: Not found $chaptersfile"; return; fi
+    if [ ! -e "$chaptersfile" ]; then usage; fi
 
     #echo "# $chaptersfile"
     awk '
@@ -57,9 +57,9 @@ mpvc_chapter_merge() # usage: merge in.opus ffmetadata.txt out.opus
     ffmetafile="${2:-}"
     dstfile="${3:-/tmp/$(basename "$srcfile")}"
 
-    if [ ! -e "$srcfile" ]; then usage; fi
+    if [ -z "$srcfile" ] || [ ! -e "$srcfile" ]; then usage; fi
 
-    if [ ! -e "$ffmetafile" ];
+    if [ -z "$dstfile" ] || [ ! -e "$ffmetafile" ];
     then
         # -map_metadata 0 -map_metadata:s:v 0:s:v -map_metadata:s:a 0:s:a
         ffmpeg -v quiet -i "$srcfile" -f ffmetadata - > "$ffmetafile"
@@ -76,6 +76,11 @@ mpvc_chapter_gen() # usage: gen < chapterlist.txt, generates a ffmpeg metadata c
 
     path=$(mpvc get path)
     mediatitle=$(mpvc get media-title)
+
+    if [ -z "$chaptersfile" ] || [ -z "$path" ] || [ -z "$mediatitle" ];
+    then
+        usage;
+    fi
 
     awk -v isabsolute="$isabsolute" -v mediatitle="$mediatitle" -v path="$path" '
         BEGIN {
@@ -141,12 +146,12 @@ mpvc_chapter_clear()
 
 mpvc_chapter_list()
 {
-    ls -ltr "$HOME/.config/mpvc/chapters/"
+    ls -ltr "${MPVC_CHAPTERS_DIR}"
 }
 
 mpvc_chapter_edit()
 {
-    ${EDITOR:-vi} "$HOME/.config/mpvc/chapters/"
+    ${EDITOR:-vi} "${MPVC_CHAPTERS_DIR}"
 }
 
 usage()
