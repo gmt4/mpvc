@@ -1034,6 +1034,7 @@ mpvc_handle_socket() {
 }
 
 mpvc_validate_socket() {
+    socket=$MPVC_SOCKET
     # validate deps
     if ! quiet command -v "$MPVC_MPV"; then
         die 4 "$PROGNAME: Error: No mpv found. Install to continue."
@@ -1042,8 +1043,18 @@ mpvc_validate_socket() {
         die 4 "$PROGNAME: Error: No socat found. Install to continue."
     fi
     # test if socket exists
-    if [ ! -S "$MPVC_SOCKET" ]; then
-        die 2 "$PROGNAME: Error: Socket ${MPVC_SOCKET##"$HOME/"} does not exist. Use mpvc --mpv to start one."
+    if [ ! -S "$socket" ]; then
+        die 2 "$PROGNAME: Error: Socket ${socket##"$HOME/"} does not exist. Use mpvc --mpv to start one."
+    fi
+    # test socket perms
+    perms=$(equiet stat -c '%a' "$socket" || equiet stat -f '%Lp' "$socket")
+    if [ "$perms" = "777" ] || [ "$perms" = "666" ]; then
+        die 2 "$PROGNAME: Error: Socket ${socket##"$HOME/"} has unsafe permissions: $perms."
+    fi
+    # test socket owner
+    owner=$(equiet stat -c '%U' "$socket" || equiet stat -f '%Su' "$socket")
+    if [ "$owner" != "$USER" ] && [ "$owner" != "root" ]; then
+        die 2 "$PROGNAME: Error: Socket ${socket##"$HOME/"} unexpected owner: $owner"
     fi
     # test if socket is open
     if [ "$(mpvc_get pause)" = "" ]; then
