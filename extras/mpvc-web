@@ -342,7 +342,7 @@ mpvc_web_index()
         <details open>
         <summary>
         [
-            <a href="." name="top" ${MPVC_WEB_SHORTCUT_REFRESH}>$PROGNAME</a>
+            <a href="." name="top" ${MPVC_WEB_SHORTCUT_REFRESH}>Home</a>
             <a href="#mpvc-web-status">#s</a>
             <a href="#mpvc-web-playlist">#p</a>
             <a href="#mpvc-web-chapterlist">#c</a>
