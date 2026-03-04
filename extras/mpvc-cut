@@ -14,6 +14,7 @@ PROGURL="https://github.com/gmt4/mpvc"
 
 set -euf
 
+PACTL=$(command -v pactl) || { echo "pactl not found"; exit 1; }
 FFMPEG=$(command -v ffmpeg) || { echo "ffmpeg not found"; exit 1; }
 FFPROBE=$(command -v ffprobe) || { echo "ffprobe not found"; exit 1; }
 
@@ -83,7 +84,7 @@ mpvc_cut_info()
 
 mpvc_cut_asrc()
 {
-    pactl list sources |
+    "$PACTL" list sources |
         awk '
         /^Source #.*/ { s=$2; sub("#","",s); }
         / *Description: Monitor of / {print s; exit }
