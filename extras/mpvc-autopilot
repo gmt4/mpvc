@@ -61,7 +61,7 @@ mpvcap_autostart()
     do
         hour=$(date +%_H)
         pause=$(mpvc -q get pause || true)
-        check=$($MPVC_AP_CHECK $target)
+        check="$($MPVC_AP_CHECK "$target")"
         nsign=$(if [ -n "$check" ]; then echo +; else echo -; fi)
         ncheck=$(( ( $ncheck $nsign 1 ) % ( $MPVC_AP_NCHECK + 1 ) ))
         if [ "$hour" -ge ${MPVC_AP_HOURMIN} -a "$hour" -lt ${MPVC_AP_HOURMAX} ]
