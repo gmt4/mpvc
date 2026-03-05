@@ -228,13 +228,14 @@ main()
     link)            shift; mpvc_link "$@";;
     install)         shift; mpvc_install "$@";;
     uninstall)       shift; mpvc_uninstall "$@";;
-
     config)          shift; mpvc_config "$@";;
+
     config-user)     shift; PREFIX=$HOME $SHELL "$0" config;;
     config-sys)      shift; PREFIX=/usr/local $SHELL "$0" config;;
 
     fetch-user)      shift; PREFIX=$HOME $SHELL "$0" fetch;;
     fetch-sys)       shift; PREFIX=/usr/local $SHELL "$0" fetch;;
+
     link-user)       shift; PREFIX=$HOME $SHELL "$0" link;;
     install-user)    shift; PREFIX=$HOME $SHELL "$0" install;;
     install-sys)     shift; PREFIX=/usr/local $SHELL "$0" install;;
