@@ -37,7 +37,7 @@ mpris_cmd()
     "$DBUS" \
         --print-reply \
         --type=method_call \
-        --dest="org.mpris.MediaPlayer2.$mpris_name" /org/mpris/MediaPlayer2 \
+        --dest="org.mpris.MediaPlayer2.${mpris_name}" /org/mpris/MediaPlayer2 \
         "$@"
 }
 
