@@ -99,7 +99,7 @@ main()
     do
         case "$flag" in
         h) usage ;;
-        i) ARGS="$ARGS $OPTARG"; ;;
+        i) ARGS="$OPTARG"; ;;
         c) MPVC_AP_CMD="$OPTARG"; ;;
         p) MPVC_AP_PERIOD="$OPTARG"; ;;
         n) MPVC_AP_NCHECK="$OPTARG"; ;;
