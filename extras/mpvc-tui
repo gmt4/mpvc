@@ -107,7 +107,7 @@ mpvctui_headerc()
     rem=$(( cols - ${#hdr} ))
     # when SHELL=/bin/dash, ${#hdr} is 4 chars smaller
     if [ "${MPVC_TUI_SHELL##*/}" = "dash" ]; then rem=$(( rem + 4 )); fi
-    for _ in $(seq 1 $rem)
+    for _ in $(seq 1 "$rem")
     do
         hdr="$hdr$char"
     done
@@ -117,8 +117,7 @@ mpvctui_headerc()
 mpvctui_color()
 {
     ccolor=$1; shift;
-    if [ -n "$NO_COLOR" ]
-    then
+    if [ -n "$NO_COLOR" ]; then
         printf "%s" "${@}"
     else
         printf "${ccolor}$@${MPVC_TUI_CRST}"
@@ -148,13 +147,11 @@ mpvctui_watcher()
 {
     tuimode=$1
     chapters=$(equiet mpvc get chapters)
-    if [ $(($mpvctui_count % 3)) -eq 0 ] && [ -n "$chapters" ] && [ "$chapters" != "null" ] && [ "$chapters" -ne 0 ]
-    then
+    if [ $(($mpvctui_count % 3)) -eq 0 ] && [ -n "$chapters" ] && [ "$chapters" != "null" ] && [ "$chapters" -ne 0 ]; then
         show_chapters=true
     fi
 
-    if [ "$tuimode" = "ttt" ] || [ "$tuimode" = "tt" ]
-    then
+    if [ "$tuimode" = "ttt" ] || [ "$tuimode" = "tt" ]; then
         mpvctui_color $MPVC_TUI_COLOR0 ">> "
         if [ -n "${show_chapters:-}" ]
         then
@@ -173,8 +170,7 @@ mpvctui_watcher()
 
     mpvctui_header0 "${MPVC_TUI_HEADER0}$(mpvctui_tips)"
 
-    if [ -n "${show_chapters:-}" ]
-    then
+    if [ -n "${show_chapters:-}" ]; then
         mpvctui_header1 "Chapter Status"
         mpvc "${MPVC_TUI_CMD_CSTATUS}"
         mpvctui_header1 "Chapterlist"
@@ -198,11 +194,11 @@ mpvctui_input()
         echo "$MPVC_TUI_PROMPT"; read -r cmd
     fi
     case "$cmd" in
-        '!!'*) "${SHELL}" -c "${cmd##!!}";;
-        #'!'*) eval "${cmd##!}";;
-        'mpvc '*) QUIETFLAG=true $cmd;;
-        'mpvc-tui '*) $cmd;;
-        'mpvc-fzf '*) $cmd;;
+        #'!'[a-zA-z0-9]*) not_eval "${cmd##!}";;
+        #'!!'[a-zA-z0-9]*) not_shell -c "${cmd##!!}";;
+        'mpvc '[a-zA-z0-9]*) QUIETFLAG=true mpvc ${cmd##mpvc } ;;
+        'mpvc-tui '[a-zA-z0-9]*) mpvc-tui ${cmd##mpvc-tui } ;;
+        'mpvc-fzf '[a-zA-z0-9]*) mpvc-fzf ${cmd##mpvc-fzf } ;;
         exit|quit|q) exit;;
         *) echo 'mpvc: Type commands at "mpvc:" prompt, "q" to quit';;
     esac
