@@ -8,15 +8,19 @@
 #
 
 PROGNAME=${0##*/}
-PROGVERSION="v1.7"
+PROGVERSION="v1.8"
 PROGAUTHOR=gmt4
 PROGURL="https://github.com/gmt4/mpvc"
 
 set -euf
 
+PACTL=$(command -v pactl) || { echo "pactl not found"; exit 1; }
+FFMPEG=$(command -v ffmpeg) || { echo "ffmpeg not found"; exit 1; }
+FFPROBE=$(command -v ffprobe) || { echo "ffprobe not found"; exit 1; }
+
 mpvc_cut_ffmpeg()
 {
-    ffmpeg -hide_banner -loglevel "$LOGLEVEL" -i "$path" -ss "$pointA" -to "$pointB" "$@"
+    "$FFMPEG" -hide_banner -loglevel "$LOGLEVEL" -i "$path" -ss "$pointA" -to "$pointB" -- "$@"
 }
 
 mpvc_cutfile()
@@ -26,14 +30,14 @@ mpvc_cutfile()
     pointA="$3"
     pointB="$4"
 
-    if [ -z "$path" ] || [ ! -e "$path" ]; then usage 1; fi
+    if [ -z "$path" ] || [ ! -f "$path" ]; then usage 1; fi
     if [ -z "$pointA" ] || [ "$pointA" = "no" ]; then usage 1; fi
     if [ -z "$pointB" ] || [ "$pointB" = "no" ]; then pointB="$(mpvc -f "%length%")"; fi
 
     fileExt="${path#*.}"
     infile="${path##*/}"
     infile="${infile##"$fileExt"}"
-    outfile="${outfile:-$infile.$pointA.$pointB}"
+    outfile="${outfile:-${infile}_${pointA}_${pointB}}"
     LOGLEVEL=${LOGLEVEL:-warning}
 
     echo "# $PROGNAME $operation $pointA $pointB $fileExt in $infile out $outfile"
@@ -60,7 +64,7 @@ mpvc_cut()
 
 mpvc_cut_vres()
 {
-    xrandr | awk '
+    $(command -v xrandr) | awk '
         /^Screen 0: .* current .*/ {
             r=$0; sub("^.* current ","",r); sub(", maximum .*$","",r); gsub(" ","",r); print r; exit
         }'
@@ -69,16 +73,18 @@ mpvc_cut_vres()
 mpvc_cut_info()
 {
     mode=$1; shift
-    ffprobe -hide_banner -loglevel info "$@" 2>&1 |
+    "$FFPROBE" -hide_banner -loglevel info "$@" 2>&1 |
         case "$mode" in
         info) awk '/^Input/ {print} /Stream #/ {print} /Duration:/ {print}' ;;
         Info) awk '{print}' ;;
+        meta|Meta) awk '{print}' ;;
+        genre) awk '/^Input/ {print} /genre *:/ {print}' ;;
         esac
 }
 
 mpvc_cut_asrc()
 {
-    pactl list sources |
+    "$PACTL" list sources |
         awk '
         /^Source #.*/ { s=$2; sub("#","",s); }
         / *Description: Monitor of / {print s; exit }
@@ -98,7 +104,7 @@ mpvc_screencast()
     if [ -z "$asrc" ]; then usage; fi
 
     echo "# $PROGNAME: recording vres $vres asrc $asrc to $fout (ctl+c to finish)"
-    ffmpeg -hide_banner -loglevel "$LOGLEVEL" -video_size "$vres" -framerate "$framerate" -f x11grab -i :0.0 -f pulse -ac 2 -i "$asrc" "$fout"
+    "$FFMPEG" -hide_banner -loglevel "$LOGLEVEL" -video_size "$vres" -framerate "$framerate" -f x11grab -i :0.0 -f pulse -ac 2 -i "$asrc" "$fout"
 }
 
 usage()
@@ -122,7 +128,7 @@ EOF
 
 main()
 {
-    if ! mpvc -q; then usage 1; fi
+    #if ! mpvc -q; then usage 1; fi
 
     case "${1:-}" in
     -h|--help|help)          usage ;;
@@ -134,6 +140,7 @@ main()
 
     -i|info)                 shift; mpvc_cut_info info "$@"; return ;;
     -I|Info)                 shift; mpvc_cut_info Info "$@"; return ;;
+    -g|genre)                shift; mpvc_cut_info genre "$@"; return ;;
     -a|asrc)                 shift; mpvc_cut_asrc "$@"; return ;;
     -c|cast)                 shift; mpvc_screencast "$@" ;;
     *)                       usage ;;

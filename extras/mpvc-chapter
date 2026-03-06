@@ -8,26 +8,36 @@
 #
 
 PROGNAME=${0##*/}
-PROGVERSION="v1.7"
+PROGVERSION="v1.8"
 PROGAUTHOR=gmt4
 PROGURL="https://github.com/gmt4/mpvc"
 
 set -euf
 
+# Set defaults
+mpvc_defaults()
+{
+    : "${XDG_CONFIG_HOME:="$HOME/.config"}"
+    : "${MPVC_CONFIG_DIR:=$XDG_CONFIG_HOME/mpvc}"
+    : "${MPVC_CONFIG:=$MPVC_CONFIG_DIR/mpvc.conf}"
+
+    : "${MPVC_CHAPTERS_DIR:=$MPVC_CONFIG_DIR/chapters}"
+
+    [ ! -d "$MPVC_CHAPTERS_DIR" ] && mkdir -p "$MPVC_CHAPTERS_DIR" || true
+}
+
 # See https://ffmpeg.org/ffmpeg-formats.html#ffmetadata
 mpvc_chapter_file()
 {
-    chaptersdir="$HOME/.config/mpvc/chapters/"
-    chaptersfile="$chaptersdir/$(mpvc get path | sed 's/\//-/g; s/ /_/g; s/[&]//')"
-    mkdir -p "$chaptersdir"
-    echo "$chaptersfile"
+    file=$(mpvc get path | sed 's/\//-/g; s/ /_/g; s/[&]//g')
+    echo "$MPVC_CHAPTERS_DIR/${file}"
 }
 
 mpvc_chapter_info()
 {
     chaptersfile=${1:-$(mpvc_chapter_file)}
 
-    if [ ! -e "$chaptersfile" ]; then echo "$PROGNAME: Not found $chaptersfile"; return; fi
+    if [ ! -e "$chaptersfile" ]; then usage; fi
 
     #echo "# $chaptersfile"
     awk '
@@ -47,9 +57,9 @@ mpvc_chapter_merge() # usage: merge in.opus ffmetadata.txt out.opus
     ffmetafile="${2:-}"
     dstfile="${3:-/tmp/$(basename "$srcfile")}"
 
-    if [ ! -e "$srcfile" ]; then usage; fi
+    if [ -z "$srcfile" ] || [ ! -e "$srcfile" ]; then usage; fi
 
-    if [ ! -e "$ffmetafile" ];
+    if [ -z "$dstfile" ] || [ ! -e "$ffmetafile" ];
     then
         # -map_metadata 0 -map_metadata:s:v 0:s:v -map_metadata:s:a 0:s:a
         ffmpeg -v quiet -i "$srcfile" -f ffmetadata - > "$ffmetafile"
@@ -66,6 +76,11 @@ mpvc_chapter_gen() # usage: gen < chapterlist.txt, generates a ffmpeg metadata c
 
     path=$(mpvc get path)
     mediatitle=$(mpvc get media-title)
+
+    if [ -z "$chaptersfile" ] || [ -z "$path" ] || [ -z "$mediatitle" ];
+    then
+        usage;
+    fi
 
     awk -v isabsolute="$isabsolute" -v mediatitle="$mediatitle" -v path="$path" '
         BEGIN {
@@ -131,24 +146,24 @@ mpvc_chapter_clear()
 
 mpvc_chapter_list()
 {
-    ls -ltr "$HOME/.config/mpvc/chapters/"
+    ls -ltr "${MPVC_CHAPTERS_DIR}"
 }
 
 mpvc_chapter_edit()
 {
-    ${EDITOR:-vi} "$HOME/.config/mpvc/chapters/"
+    ${EDITOR:-vi} "${MPVC_CHAPTERS_DIR}"
 }
 
 usage()
 {
     cat <<EOF
 usage: $PROGNAME args # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
+ list : List ffmetadata chapter-files
  file : Show current ffmetadata chapter-file
  info : Info current ffmetadata chapter-file
  reset: Reset current ffmetadata chapter-file
  load : Load current ffmetadata chapter-file
  gen  : Gen a ffmetadata chapter-file from a < chapterlist.txt
- list : List ffmetadata chapter-files
  merge: Merge ffmetadata chapter-file to audio file (args: in ffmeta out)
 EOF
     exit;
@@ -157,6 +172,8 @@ EOF
 main()
 {
     if [ $# -lt 1 ]; then usage; fi
+
+    mpvc_defaults
 
     case "$1" in
     file)   shift; mpvc_chapter_file "$@" ;;

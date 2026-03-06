@@ -8,7 +8,7 @@
 #
 
 PROGNAME=${0##*/}
-PROGVERSION="v1.7"
+PROGVERSION="v1.8"
 PROGAUTHOR=gmt4
 PROGURL="https://github.com/gmt4/mpvc"
 SITEURL="https://gmt4.github.io/mpvc"
@@ -107,16 +107,20 @@ mpvctui_headerc()
     rem=$(( cols - ${#hdr} ))
     # when SHELL=/bin/dash, ${#hdr} is 4 chars smaller
     if [ "${MPVC_TUI_SHELL##*/}" = "dash" ]; then rem=$(( rem + 4 )); fi
-    for _ in $(seq 1 $rem)
+    for _ in $(seq 1 "$rem")
     do
         hdr="$hdr$char"
     done
+    mpvctui_color "${ccolor}" "${hdr}"
+}
 
+mpvctui_color()
+{
+    ccolor=$1; shift;
     if [ -n "$NO_COLOR" ]; then
-        printf "%s" "${hdr}"
+        printf "%s" "${@}"
     else
-        # not using printf "%s" here as sh displays raw escape sequences, instead of colored output
-        printf "${ccolor}${hdr}${MPVC_TUI_CRST}"
+        printf "${ccolor}$@${MPVC_TUI_CRST}"
     fi
 }
 
@@ -141,10 +145,32 @@ mpvctui_tips()
 
 mpvctui_watcher()
 {
+    tuimode=$1
     chapters=$(equiet mpvc get chapters)
+    if [ $(($mpvctui_count % 3)) -eq 0 ] && [ -n "$chapters" ] && [ "$chapters" != "null" ] && [ "$chapters" -ne 0 ]; then
+        show_chapters=true
+    fi
+
+    if [ "$tuimode" = "ttt" ] || [ "$tuimode" = "tt" ]; then
+        mpvctui_color $MPVC_TUI_COLOR0 ">> "
+        if [ -n "${show_chapters:-}" ]
+        then
+            printf "%s" "$(mpvc "${MPVC_TUI_CMD_CSTATUS}")"
+        else
+            printf "%s" "$(mpvc "${MPVC_TUI_CMD_STATUS}")"
+        fi
+        if [ "$tuimode" = "ttt" ]; then
+            mpvctui_color $MPVC_TUI_COLOR1 " (m)"
+        fi
+        if [ "$tuimode" = "tt" ]; then
+            mpvctui_color $MPVC_TUI_COLOR1 " (mpvc/$tuimode $PROGVERSION)"
+        fi
+        return
+    fi
+
     mpvctui_header0 "${MPVC_TUI_HEADER0}$(mpvctui_tips)"
-    if [ -n "$chapters" ] && [ "$chapters" != "null" ] && [ "$chapters" -ne 0 ]
-    then
+
+    if [ -n "${show_chapters:-}" ]; then
         mpvctui_header1 "Chapter Status"
         mpvc "${MPVC_TUI_CMD_CSTATUS}"
         mpvctui_header1 "Chapterlist"
@@ -168,11 +194,11 @@ mpvctui_input()
         echo "$MPVC_TUI_PROMPT"; read -r cmd
     fi
     case "$cmd" in
-        '!!'*) "${SHELL}" -c "${cmd##!!}";;
-        '!'*) eval "${cmd##!}";;
-        'mpvc '*) QUIETFLAG=true $cmd;;
-        'mpvc-tui '*) $cmd;;
-        'mpvc-fzf '*) $cmd;;
+        #'!'[a-zA-z0-9]*) not_eval "${cmd##!}";;
+        #'!!'[a-zA-z0-9]*) not_shell -c "${cmd##!!}";;
+        'mpvc '[a-zA-z0-9-]*) QUIETFLAG=true mpvc ${cmd##mpvc } ;;
+        'mpvc-tui '[a-zA-z0-9-]*) mpvc-tui ${cmd##mpvc-tui } ;;
+        'mpvc-fzf '[a-zA-z0-9-]*) mpvc-fzf ${cmd##mpvc-fzf } ;;
         exit|quit|q) exit;;
         *) echo 'mpvc: Type commands at "mpvc:" prompt, "q" to quit';;
     esac
@@ -180,14 +206,15 @@ mpvctui_input()
 
 mpvctui_watch()
 {
+    tuimode="${1:-}"
     mpvctui_count=0
     trap mpvctui_input INT
     while :
     do
-        output=$(mpvctui_watcher 2>&1)
+        output=$(mpvctui_watcher "$tuimode" 2>&1)
         if [ $(( mpvctui_count % MPVC_TUI_CLEARC )) -eq 0 ]; then printf "${MPVC_TUI_CLEAR}"; fi
         printf "${MPVC_TUI_CUP}"
-        echo "$output"
+        echo -n "$output"
         mpvctui_count=$(( mpvctui_count + 1 ))
         sleep "$MPVC_TUI_UPDATEC"
     done
@@ -353,18 +380,20 @@ mpvctui_usage()
 {
     cat <<EOF
 usage: $PROGNAME opts # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
- -d|dir     : Set the WD to the media directory given as argument
- -h|help    : This help you are reading
- -H|history : Starts the $PROGNAME history
- -k|kill    : Stop the running $PROGNAME
- -n|notify  : Desktop notification using notify on mpvc events (notify-send*)
-   |socket  : Set mpv socket [default: ${MPVC_SOCKET:-}].
- -s|suggest : Suggest a random media to play based on previous media played
- -S|scrobler: Starts the $PROGNAME scrobbler
- -t|tui     : Starts the $PROGNAME to manage the mpv playlist (rlwrap*)
- -T|Tui     : Combo that starts $PROGNAME -t -n, and adds media given as args
- -x|launch  : Starts $PROGNAME in a new $MPVC_TUI_TERM (\$MPVC_TUI_TERM) # combine with <opts>
- -v|version : Prints the $PROGNAME version.
+ -d|dir         : Set the WD to the media directory given as argument
+ -h|help        : This help you are reading
+ -H|history     : Starts the $PROGNAME history
+ -k|kill        : Stop the running $PROGNAME
+ -n|notify      : Desktop notification using notify on mpvc events (notify-send*)
+   |socket      : Set mpv socket [default: ${MPVC_SOCKET:-}].
+ -s|suggest     : Suggest a random media to play based on previous media played
+ -S|scrobler    : Starts the $PROGNAME scrobbler
+ -t|tui         : Starts the $PROGNAME TUI
+ -tt|tinytui    : Starts the $PROGNAME TUI (tiny mode)
+ -ttt|ttinytui  : Starts the $PROGNAME TUI (ttiny mode)
+ -T|Tui         : Combo that starts $PROGNAME -t -n, and adds media given as args
+ -x|launch      : Starts $PROGNAME in a new $MPVC_TUI_TERM (\$MPVC_TUI_TERM) # combine with <opts>
+ -v|version     : Prints the $PROGNAME version.
 *tips: If unsure about where to begin, start with: $PROGNAME -d /path/to/media/ -T
 EOF
     exit;
@@ -379,21 +408,23 @@ mpvctui_main()
     do
         arg1="${2:-}"
         case "$arg" in
-        -d|dir)      shift; MPVC_TUI_DIR="$arg1"; cd "$MPVC_TUI_DIR" || return;;
-        -h|help)     shift; mpvctui_usage ;;
-        -H|history)  shift; cat "$MPVC_TUI_SCROBBLER" ;;
-        -M|Mouse)    shift; mpvctui_launch "-m$arg1"; exit ;; # -g 15x1
-        -m|mouse)    shift; mpvctui_mouse "$arg1" ;;
-        -n|Notify)   shift; mpvctui_notify_loop "${1:-}" ;;
-        -N|notify)   shift; mpvctui_notify "$@" ;;
-        -k|kill)     shift; pkill -f "$PROGNAME" ;;
-        -t|tui)      shift; mpvctui_watch ;;
-        -T|Tui)      shift; mpvctui_watch_auto "$@" ;;
-           socket)   shift; export MPVC_SOCKET="$arg1"; shift ;;
-        -s|suggest)  shift; mpvctui_suggest ;;
-        -S|scrobler) shift; mpvctui_notify_loop_cli "${1:-}" ;;
-        -u|updatec)  shift; MPVC_TUI_UPDATEC="$arg1"; shift ;;
-        -x|launch)   shift; mpvctui_launch "$@"; exit ;;
+        -d|dir)          shift; MPVC_TUI_DIR="$arg1"; cd "$MPVC_TUI_DIR" || return;;
+        -h|help)         shift; mpvctui_usage ;;
+        -H|history)      shift; cat "$MPVC_TUI_SCROBBLER" ;;
+        -M|Mouse)        shift; mpvctui_launch "-m$arg1"; exit ;; # -g 15x1
+        -m|mouse)        shift; mpvctui_mouse "$arg1" ;;
+        -n|Notify)       shift; mpvctui_notify_loop "${1:-}" ;;
+        -N|notify)       shift; mpvctui_notify "$@" ;;
+        -k|kill)         shift; pkill -f "$PROGNAME" ;;
+        -t|tui)          shift; mpvctui_watch ;;
+        -tt|tinytui)     shift; mpvctui_watch "tt" ;;
+        -ttt|ttinytui)   shift; mpvctui_watch "ttt" ;;
+        -T|Tui)          shift; mpvctui_watch_auto "$@" ;;
+           socket)       shift; export MPVC_SOCKET="$arg1"; shift ;;
+        -s|suggest)      shift; mpvctui_suggest ;;
+        -S|scrobler)     shift; mpvctui_notify_loop_cli "${1:-}" ;;
+        -u|updatec)      shift; MPVC_TUI_UPDATEC="$arg1"; shift ;;
+        -x|launch)       shift; mpvctui_launch "$@"; exit ;;
 
         #*) mpvctui_usage;;
         esac

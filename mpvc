@@ -8,7 +8,7 @@
 
 PROGNAME=${0##*/}
 PROGDIR=${0%/*}
-PROGVERSION="v1.7"
+PROGVERSION="v1.8"
 PROGAUTHOR=gmt4
 PROGURL="https://github.com/gmt4/mpvc"
 SITEURL="https://gmt4.github.io/mpvc"
@@ -197,7 +197,9 @@ mpvc_defaults()
     : "${MPVC_PLAYLIST_TRUNC:=1}"
     : "${MPVC_CONFIG:=$MPVC_CONFIG_DIR/mpvc.conf}"
     : "${MPVC_SOCKET:=$MPVC_CONFIG_DIR/mpvsocket0}"
-    : "${MPVC_CURL_CACHE:=$MPVC_CONFIG_DIR/curl-cache.txt}"
+
+    : "${MPVC_CURL_CACHE:=$MPVC_CACHE_DIR/curl-cache.txt}"
+
     : "${MPVOPTIONS:=--no-audio-display --no-input-terminal}"
     : "${MPVC_MPV:=mpv}"
     : "${MPVC_SOCAT:=socat}"
@@ -255,13 +257,14 @@ mpvc_isotime() { TZ=UTC date -u +"%Y-%m-%dT%H:%M:%SZ"; }
 
 mpvc_curl_cache()
 {
+    f="$MPVC_CURL_CACHE"
     k=$1
-    v="$( awk -F'\t' -v k="$k" '{ if ($1 == k) {print $2; exit} }' "$MPVC_CURL_CACHE" )"
+    v="$( awk -F'\t' -v k="$k" '{ if ($1 == k) {print $2; exit} }' "$f" )"
 
     if [ "${#v}" -eq 0 ]; then
         v=$(mpvc_curl "$@")
-        o=$(cat "$MPVC_CURL_CACHE") # append at the top in 2023 :-)
-        (echo "$k	$v"; echo "$o") > "$MPVC_CURL_CACHE"
+        o=$(cat "$f") # append at the top in 2023 :-)
+        (echo "$k	$v"; echo "$o") > "$f"
     fi
     echo "$v"
 }
@@ -529,7 +532,7 @@ mpvc_stash() {
     QUIETFLAG="true"
     case "$cmd" in
         show|list|ls)
-            if [ -z "${1:-}" ]; then ls -ltr "$MPVC_STASH_DIR"; else cat "$MPVC_STASH_DIR/$1"; fi
+            if [ -z "${1:-}" ]; then ls -ltr "$MPVC_STASH_DIR" | tail -n +2; else cat "$MPVC_STASH_DIR/$1"; fi
             ;;
         edit|ed) ${EDITOR:-vi} "$MPVC_STASH_DIR/$1" ;;
         drop|rm) rm -i "$MPVC_STASH_DIR/$1" ;;
@@ -577,6 +580,7 @@ mpvc_stash() {
             echo "mpvc cmd playlist-remove 0"
             mpvc_get_playlist_once | awk '{ gsub("^[ 	]*|[ 	]*$", ""); print "mpvc add "$0 }'
             echo "mpvc set playlist-pos $(mpvc_get playlist-pos)"
+            echo "mpvc set prefetch-playlist $(mpvc_get prefetch-playlist)"
             echo "mpvc set loop-file $(mpvc_get loop-file)"
             echo "mpvc set loop-playlist $(mpvc_get loop-playlist)"
             echo "mpvc set ab-loop-a $(mpvc_get ab-loop-a)"
@@ -1030,6 +1034,7 @@ mpvc_handle_socket() {
 }
 
 mpvc_validate_socket() {
+    socket=$MPVC_SOCKET
     # validate deps
     if ! quiet command -v "$MPVC_MPV"; then
         die 4 "$PROGNAME: Error: No mpv found. Install to continue."
@@ -1038,8 +1043,18 @@ mpvc_validate_socket() {
         die 4 "$PROGNAME: Error: No socat found. Install to continue."
     fi
     # test if socket exists
-    if [ ! -S "$MPVC_SOCKET" ]; then
-        die 2 "$PROGNAME: Error: Socket ${MPVC_SOCKET##"$HOME/"} does not exist. Use mpvc --mpv to start one."
+    if [ ! -S "$socket" ]; then
+        die 2 "$PROGNAME: Error: Socket ${socket##"$HOME/"} does not exist. Use mpvc --mpv to start one."
+    fi
+    # test socket perms
+    perms=$(equiet stat -c '%a' "$socket" || equiet stat -f '%Lp' "$socket")
+    if [ "$perms" = "777" ] || [ "$perms" = "666" ]; then
+        die 2 "$PROGNAME: Error: Socket ${socket##"$HOME/"} has unsafe permissions: $perms."
+    fi
+    # test socket owner
+    owner=$(equiet stat -c '%u' "$socket" || equiet stat -f '%Du' "$socket")
+    if [ "$owner" != "$(id -u)" ] && [ "$owner" != "0" ]; then
+        die 2 "$PROGNAME: Error: Socket ${socket##"$HOME/"} unexpected owner: $owner"
     fi
     # test if socket is open
     if [ "$(mpvc_get pause)" = "" ]; then
@@ -1208,7 +1223,7 @@ main() {
             -C|--clear|clear)                mpvc_clear_playlist; QUIETFLAG=true;;
             --delay|delay)                   mpvc_delay;;
             --wait|wait)                     mpvc_wait;;
-            --tac|tac)                       mpvc_tac; exit 0;;
+            --tac|tac)                       mpvc_tac; exit $?;;
 
             --ttysize|ttysize)               mpvc_tty_size; QUIETFLAG=true;;
             --ttycols|ttycols)               mpvc_tty_cols; QUIETFLAG=true;;
@@ -1230,8 +1245,8 @@ main() {
             -q|--quiet)                      QUIETFLAG=true;                ;;
             --color|color)                   unset NO_COLOR                 ;;
             --nocolor|nocolor)               export NO_COLOR=true           ;;
-            --version|version)               mpvc_get_version;      exit 0; ;;
-            --version-long|version-long)     mpvc_get_version "$@"; exit 0; ;;
+            --version|version)               mpvc_get_version;      exit $? ;;
+            --version-long|version-long)     mpvc_get_version "$@"; exit $? ;;
             --list-options)                  usage; exit 0;                 ;;
             -h|--help|h|help)                usage; exit 0;                 ;;
             -H|--help-long|help-long)        usage "$@"; exit 0;            ;;

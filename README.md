@@ -272,7 +272,7 @@ Check the FAQ for any questions left after reading the above docs.
 ### mpvc
 
 ```console
-usage: mpvc opts # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
+usage: mpvc opts # @version v1.8 (c) gmt4 https://github.com/gmt4/mpvc
  -a | --add | add         : Add media to playlist (see --load for stdin).
  -r | --remove | rm       : Remove media by id from playlist (see searchrm for rm by title)
  -s | --stop | stop       : Always stop playback.
@@ -294,7 +294,7 @@ usage: mpvc opts # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
 ### mpvc-tui
 
 ```console
-usage: mpvc-tui opts # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
+usage: mpvc-tui opts # @version v1.8 (c) gmt4 https://github.com/gmt4/mpvc
  -d|dir     : Set the WD to the media directory given as argument
  -h|help    : This help you are reading
  -H|history : Starts the mpvc-tui history
@@ -314,8 +314,7 @@ usage: mpvc-tui opts # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
 ### mpvc-fzf
 
 ```console
-
-usage: mpvc-fzf opts # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
+usage: mpvc-fzf opts # @version v1.8 (c) gmt4 https://github.com/gmt4/mpvc
   -a|stash      : Start fzf to manage mpvc stashes
   -b|browse     : Start fzf to manage the provided ytdl-archive URL
   -c|chapters   : Start fzf to manage the current mpv chapterlist
@@ -330,9 +329,9 @@ usage: mpvc-fzf opts # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
   -I|Lyrics     : Search given media lyrics on DDG
   -k|dplay      : Search & play DuckDuckGo videos
   -K|dsearch    : Search DuckDuckGo videos
-  -l|local      : Search & play local media at $1
+  -l|local      : Search & play local media at $1 (handy to pipe to m load)
   -q|quality    : Select and change yt-dlp video quality (ytdl-format)
-  -r|explorer   : Explore local media at ytdl-archive/
+  -r|explorer   : Shortcut to search local media at ytdl-archive/
   -s|search     : Search on Invidious
   -S|socket     : Set mpv socket [default: ].
  -SS|socklist   : Select and set the current mpv socket to operate
@@ -362,7 +361,7 @@ usage: mpvc-fzf opts # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
 ### mpvc-installer
 
 ```console
-usage: mpvc-installer args # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
+usage: mpvc-installer args # @version v1.8 (c) gmt4 https://github.com/gmt4/mpvc
   check-update   : Check for updates
   check-reqs     : Check for required packages
   config         : Fetch mpv config
@@ -370,13 +369,13 @@ usage: mpvc-installer args # @version v1.7 (c) gmt4 https://github.com/gmt4/mpvc
   config-sys     : Fetch mpv config to BINDIR=/usr/local/bin
   fetch-user     : Fetch to BINDIR=/home/user/bin
   link-user      : Symlink to BINDIR=/home/user/bin
-  install-user   : Install to BINDIR=/home/user/bin
-  install-sys    : Install to BINDIR=/usr/local/bin
-  uninstall-sys  : Uninstall from BINDIR=/usr/local/bin
-  uninstall-user : Uninstall from BINDIR=/home/user/bin
-
+  install:       : Install to BINDIR=/usr/local/bin
+  uninstall:     : Uninstall from BINDIR=/usr/local/bin
+  install-user   : Install to BINDIR=/home/user/bin (sets PREFIX=/home/user)
+  install-sys    : Install to BINDIR=/usr/local/bin (sets PREFIX=/usr/local)
+  uninstall-user : Uninstall from BINDIR=/home/user/bin (sets PREFIX=/home/user)
+  uninstall-sys  : Uninstall from BINDIR=/usr/local/bin (sets PREFIX=/usr/local)
 *tips: If unsure where to start, start with: mpvc-installer fetch-user
 ```
 
 [^install]: Skip directly to [Installation](#installation) to try mpvc
-

@@ -9,7 +9,7 @@
 
 PROGNAME=${0##*/}
 PROGDIR=${0%/*}
-PROGVERSION="v1.7"
+PROGVERSION="v1.8"
 PROGAUTHOR=gmt4
 PROGURL="https://github.com/gmt4/mpvc"
 
@@ -23,6 +23,11 @@ mpvc() { "$PROGDIR/mpvc" "$@"; } # mpvc-web?
 
 mpvc_genfilter()
 {
+    # Validate gain inputs are numeric
+    for i in $*; do
+        case "$i" in -[.0-9]*|[.0-9]*) ;; *) usage ;; esac
+    done
+
     awk -v quote="'" -v gain_curr="$*" -v freq_table_str="MPVC_FREQ_TABLE" -v gain_table_str="$MPVC_GAIN_TABLE" \
     '
     BEGIN {

@@ -8,7 +8,7 @@
 #
 
 PROGNAME=${0##*/}
-PROGVERSION="v1.7"
+PROGVERSION="v1.8"
 PROGAUTHOR=gmt4
 PROGURL="https://github.com/gmt4/mpvc"
 
@@ -39,7 +39,7 @@ mpvc_config()
         file="$MPV_CONFDIR/${config##*/}"
         url="$PROGURL/raw/master/$config"
         echo "Fetch $file"
-        if [ -e "$file" ]; then
+        if [ -f "$file" ]; then
             echo "$PROGNAME: $file exists. Not overwriting."
         else
             curl -fsSL -o "$file" "$url"
@@ -48,12 +48,12 @@ mpvc_config()
 
     mkdir -p "$MPVC_CONFIG_DIR"
     echo "Fetching $MPVC_CONFIG from $PROGURL"
-    for config in $MPVC_CONFIG;
+    for config in ${MPVC_CONFIG};
     do
         file="$MPVC_CONFIG_DIR/${config##*/}"
         url="$PROGURL/raw/master/$config"
         echo "Fetch $file"
-        if [ -e "$file" ]; then
+        if [ -f "$file" ]; then
             echo "$PROGNAME: $file exists. Not overwriting."
         else
             curl -fsSL -o "$file" "$url"
@@ -64,11 +64,25 @@ mpvc_config()
     do
         file="$BINDIR/$bin"
         echo "Fetch $file"
-        if [ -e "$file" ]; then
+        if [ -f "$file" ]; then
             echo "$PROGNAME: $file exists. Not overwriting."
         else
-            curl -fsSL -o "$file" "https://github.com/$bin/$bin/releases/latest/download/$bin"
-            chmod a+rx "$file"
+            if curl -fsSL -o "$file" "https://github.com/$bin/$bin/releases/latest/download/$bin"; then
+                chmod a+rx "$file"
+            fi
+        fi
+    done
+
+    for bin in "deno"
+    do
+        file="$BINDIR/$bin"
+        echo "Fetch $file"
+        if [ -f "$file" ]; then
+            echo "$PROGNAME: $file exists. Not overwriting."
+        else
+            if curl -fsSL -o - "https://github.com/denoland/$bin/releases/download/v2.6.6/$bin-$(uname -m)-unknown-linux-gnu.zip" | gunzip > "$file"; then
+                chmod a+rx "$file"
+            fi
         fi
     done
 }
@@ -77,14 +91,15 @@ mpvc_fetch()
 {
     mkdir -p "$BINDIR"
     echo "Fetching mpvc from $PROGURL"
-    for script in $SCRIPT;
+    for script in ${SCRIPT};
     do
         file="$BINDIR/${script##*/}"
         url="$PROGURL/raw/master/$script"
         echo "Fetch $file"
-        #if [ -e "$file" ]; then echo "$PROGNAME: $file exists, overwriting."; fi
-        curl -fsSL -o "$file" "$url"
-        chmod u+x "$file"
+        #if [ -f "$file" ]; then echo "$PROGNAME: $file exists, overwriting."; fi
+        if curl -fsSL -o "$file" "$url"; then
+            chmod u+x "$file"
+        fi
     done
 }
 
@@ -120,7 +135,7 @@ mpvc_install()
 {
     echo 'Installing mpvc...'
     mkdir -p "$BINDIR"
-    for script in $SCRIPT;
+    for script in ${SCRIPT};
     do
         install -Dvm755 "$(pwd)/$script" "$BINDIR";
     done
@@ -129,7 +144,7 @@ mpvc_install()
 mpvc_uninstall()
 {
     echo 'Un-installing mpvc...'
-    for script in $SCRIPT;
+    for script in ${SCRIPT};
     do
         rm -v "$BINDIR/${script##*/}";
     done
@@ -140,7 +155,7 @@ mpvc_check_requirements()
     # attempt at listing packages required by mpvc & extras/ to work
     echo "# Checking required deps:"
     for cmd in sh mpv fzf socat awk sed; do
-        command -v "$cmd" | sed 's/^/  /' || echo "$PROGNAME: Error: No $cmd found. Install to continue"
+        (command -v "$cmd" || echo "$PROGNAME: Error: No $cmd found. Install to continue") | sed 's/^/  /'
     done
     # recommened, and good to have, but not required
     echo "# Checking recommended deps:"
@@ -183,10 +198,12 @@ usage: $PROGNAME args # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
   config-sys     : Fetch mpv config to BINDIR=$PREFIX/bin
   fetch-user     : Fetch to BINDIR=$HOME/bin
   link-user      : Symlink to BINDIR=$HOME/bin
+  install        : Install to BINDIR=$PREFIX/bin
+  uninstall      : Uninstall from BINDIR=$PREFIX/bin
   install-user   : Install to BINDIR=$HOME/bin
-  install-sys    : Install to BINDIR=$PREFIX/bin
-  uninstall-sys  : Uninstall from BINDIR=$PREFIX/bin
+  install-sys    : Install to BINDIR=$PREFIX/bin (sets PREFIX=/usr/local)
   uninstall-user : Uninstall from BINDIR=$HOME/bin
+  uninstall-sys  : Uninstall from BINDIR=$PREFIX/bin (sets PREFIX=/usr/local)
 *tips: If unsure where to start, start with: $PROGNAME fetch-user
 EOF
     exit
@@ -211,13 +228,14 @@ main()
     link)            shift; mpvc_link "$@";;
     install)         shift; mpvc_install "$@";;
     uninstall)       shift; mpvc_uninstall "$@";;
-
     config)          shift; mpvc_config "$@";;
+
     config-user)     shift; PREFIX=$HOME $SHELL "$0" config;;
     config-sys)      shift; PREFIX=/usr/local $SHELL "$0" config;;
 
     fetch-user)      shift; PREFIX=$HOME $SHELL "$0" fetch;;
     fetch-sys)       shift; PREFIX=/usr/local $SHELL "$0" fetch;;
+
     link-user)       shift; PREFIX=$HOME $SHELL "$0" link;;
     install-user)    shift; PREFIX=$HOME $SHELL "$0" install;;
     install-sys)     shift; PREFIX=/usr/local $SHELL "$0" install;;
