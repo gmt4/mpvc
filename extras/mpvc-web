@@ -296,7 +296,7 @@ main()
         thumbnail64)            mpvc_redir "\$($MPVC-fzf thumbnail64)" ;;
         filename)               mpvc_redir "\$($MPVC filename current full)" ;;
         metadata)               mpvc_plain "\$($MPVC metadata)" ;;
-        related)                mpvc_plain "\$($MPVC-fzf \"\$($MPVC get media-title)\")" ;;
+        #related)               mpvc_plain "\$($MPVC-fzf \"\$($MPVC get media-title)\")" ;;
 
         mpvc+status)            mpvc_cmd status | mpvc_strip ;;
         mpvc+playlist)          mpvc_cmd playlist | mpvc_strip ;;
