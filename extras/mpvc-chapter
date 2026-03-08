@@ -24,18 +24,20 @@ mpvc_defaults()
     : "${MPVC_CHAPTERS_DIR:=$MPVC_CONFIG_DIR/chapters}"
 
     [ ! -d "$MPVC_CHAPTERS_DIR" ] && mkdir -p "$MPVC_CHAPTERS_DIR" || true
+
+    FFMPEG=$(command -v ffmpeg) || { echo "ffmpeg not found"; exit 1; }
 }
 
 # See https://ffmpeg.org/ffmpeg-formats.html#ffmetadata
 mpvc_chapter_file()
 {
-    file=$(mpvc get path | sed 's/\//-/g; s/ /_/g; s/[&]//g')
+    local file=$(mpvc get path | sed 's/\//-/g; s/ /_/g; s/[&]//g')
     echo "$MPVC_CHAPTERS_DIR/${file}"
 }
 
 mpvc_chapter_info()
 {
-    chaptersfile=${1:-$(mpvc_chapter_file)}
+    local chaptersfile=${1:-$(mpvc_chapter_file)}
 
     if [ ! -e "$chaptersfile" ]; then usage; fi
 
@@ -53,29 +55,29 @@ mpvc_chapter_info()
 
 mpvc_chapter_merge() # usage: merge in.opus ffmetadata.txt out.opus
 {
-    srcfile="${1:-}"
-    ffmetafile="${2:-}"
-    dstfile="${3:-/tmp/$(basename "$srcfile")}"
+    local srcfile="${1:-}"
+    local ffmetafile="${2:-}"
+    local dstfile="${3:-/tmp/$(basename "$srcfile")}"
 
     if [ -z "$srcfile" ] || [ ! -e "$srcfile" ]; then usage; fi
 
     if [ -z "$dstfile" ] || [ ! -e "$ffmetafile" ];
     then
         # -map_metadata 0 -map_metadata:s:v 0:s:v -map_metadata:s:a 0:s:a
-        ffmpeg -v quiet -i "$srcfile" -f ffmetadata - > "$ffmetafile"
+        "$FFMPEG" -v quiet -i "$srcfile" -f ffmetadata - > "$ffmetafile"
         cat "$(mpvc_chapter_file)" >> "$ffmetafile"
     fi
-    ffmpeg -i "$srcfile" -i "$ffmetafile" -map_metadata 1 -codec copy "$dstfile"
+    "$FFMPEG" -i "$srcfile" -i "$ffmetafile" -map_metadata 1 -codec copy "$dstfile"
 }
 
 # usage: mpvc_chapter_gen [chapter-file] < chapterlist.txt with entries format: (HH:MM:SS) title (time can be relative or absolute)
 mpvc_chapter_gen() # usage: gen < chapterlist.txt, generates a ffmpeg metadata chapters file
 {
-    chaptersfile=${1:-$(mpvc_chapter_file)}
-    isabsolute=${2:-1}
+    local chaptersfile=${1:-$(mpvc_chapter_file)}
+    local isabsolute=${2:-1}
 
-    path=$(mpvc get path)
-    mediatitle=$(mpvc get media-title)
+    local path=$(mpvc get path)
+    local mediatitle=$(mpvc get media-title)
 
     if [ -z "$chaptersfile" ] || [ -z "$path" ] || [ -z "$mediatitle" ];
     then
@@ -123,8 +125,8 @@ mpvc_chapter_gen() # usage: gen < chapterlist.txt, generates a ffmpeg metadata c
 # usage mpvc_chapter_load chapters.txt ffmetadata chapter-file
 mpvc_chapter_load()
 {
-    track=$(mpvc get playlist-pos)
-    tpos=$(mpvc get time-pos)
+    local track=$(mpvc get playlist-pos)
+    local tpos=$(mpvc get time-pos)
     mpvc set chapters-file "$(mpvc_chapter_file)"
     mpvc play "$track"
     mpvc delay set time-pos "$tpos"
@@ -137,8 +139,8 @@ mpvc_chapter_reset()
 
 mpvc_chapter_clear()
 {
-    track=$(mpvc get playlist-pos)
-    tpos=$(mpvc get time-pos)
+    local track=$(mpvc get playlist-pos)
+    local tpos=$(mpvc get time-pos)
     mpvc set chapters-file ''
     mpvc play "$track"
     mpvc delay set time-pos "$tpos"
@@ -151,7 +153,7 @@ mpvc_chapter_list()
 
 mpvc_chapter_edit()
 {
-    ${EDITOR:-vi} "${MPVC_CHAPTERS_DIR}"
+    "${EDITOR:-vi}" "${MPVC_CHAPTERS_DIR}"
 }
 
 usage()
