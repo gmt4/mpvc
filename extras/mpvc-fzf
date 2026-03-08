@@ -191,7 +191,8 @@ mpvcfzf_related_play()
 
 mpvcfzf_related_once()
 {
-    mpvcfzf_related_search "$(MPVC_FZF_PARSE_PLAYLIST=0 mpvcfzf_isearch_once "${1:-$(mpvc get media-title)}" | mpvcfzf_awk 1)"
+    title=$(echo "${1:-$(mpvc get media-title)}" | mpvcfzf_alnum)
+    mpvcfzf_related_search "$(MPVC_FZF_PARSE_PLAYLIST=0 mpvcfzf_isearch_once "$title" | mpvcfzf_awk 1)"
 
 }
 
