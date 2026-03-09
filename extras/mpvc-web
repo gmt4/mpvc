@@ -474,6 +474,9 @@ mpvc_web_index()
                 $(mpvc-equalizer preset | awk '/ #preset:/ {print $NF}' | mpvc_web_select_form "mpvc-equalizer load" "${MPVC_WEB_SHORTCUT_EQUALIZER}")
             </li>
             <li>
+                $("$MPVC_WEB_CGI" mpvc save | mpvc_web_select_form "mpvc-fzf -g" "${MPVC_WEB_SHORTCUT_SEEK}")
+            </li>
+            <li>
                 $(printf " +15\n+10\n+5\n+2\n+1\n0\n-1\n-2\n-5\n-10\n-15" | mpvc_web_select_form "mpvc -q track" "${MPVC_WEB_SHORTCUT_TRACK}")
             </li>
             <li>
