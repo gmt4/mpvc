@@ -134,12 +134,14 @@ mpvc_bars()
     function mpvc_bar_line(val)
     {
         valf=val
+        div_val=4
         min_val=-360
         max_val=770
-        inc_val=(max_val - min_val) / cols
+        off_val=div_val*cols
+        inc_val=(max_val - min_val) / (div_val*off_val)
 
         inc=inc_val
-        val=valf - min_val
+        val=valf - min_val - off_val
         x=inc
 
         str=""
