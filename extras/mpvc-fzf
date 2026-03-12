@@ -426,7 +426,13 @@ mpvcfzf_localfind()
     )
 }
 
-mpvcfzf_local()
+mpvcfzf_local_search()
+{
+    dir="${1:-}"; shift
+    mpvcfzf_localfind "$dir" "$@" | sed "s|^|$dir|"
+}
+
+mpvcfzf_local_play()
 {
     (
         dir="${1:-}"; shift
@@ -692,7 +698,8 @@ usage: $PROGNAME opts # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
   -K|dsearch    : Search DuckDuckGo videos
   -l|local      : Search & play local media at \$1 (handy to pipe to m load)
   -q|quality    : Select and change yt-dlp video quality (ytdl-format)
-  -r|explorer   : Shortcut to search local media at ytdl-archive/
+  -r|explorer   : Shortcut to search & play local media at ytdl-archive/
+  -R|Explorer   : Shortcut to search local media at ytdl-archive/
   -s|search     : Search on Invidious
   -S|socket     : Set mpv socket [default: ${MPVC_SOCKET:-}].
  -SS|socklist   : Select and set the current mpv socket to operate
@@ -751,7 +758,7 @@ main()
         -I|Lyrics)      shift; mpvcfzf_lyrics_ddg; return ;;
         -k|dplay)       shift; mpvcfzf_ddg_play "$arg1"; return ;;
         -K|dsearch)     shift; mpvcfzf_ddg "$arg1"; return ;;
-        -l|local)       shift; mpvcfzf_local "${@:-.}"; return ;;
+        -l|local)       shift; mpvcfzf_local_play "${@:-.}"; return ;;
         -L|localfind)   shift; mpvcfzf_localfind "${@:-.}"; return ;;
         -n|next)        shift; mpvcfzf_nextvideo "$arg1"; return ;;
 
@@ -762,7 +769,8 @@ main()
         -p|splay)       shift; mpvcfzf_iplay "$arg1" | mpvc load; return ;;
         -P|Splay)       shift; mpvcfzf_iplay "$arg1" | mpvc loadc; return ;;
         -q|quality)     shift; mpvcfzf_quality; return ;;
-        -r|explorer)    shift; mpvcfzf_local "$MPVC_YTDL_OUTPUT" "$@"; return ;;
+        -r|explorer)    shift; mpvcfzf_local_play "$MPVC_YTDL_OUTPUT" "$@"; return ;;
+        -R|Explorer)    shift; mpvcfzf_local_search "$MPVC_YTDL_OUTPUT" "$@"; return ;;
         -s|search)      shift; mpvcfzf_isearch "$arg1"; return;;
         -S|socket)      shift; export MPVC_SOCKET="${1:-}"; shift ;;
        -SS|socklist)    shift; mpvcfzf_socklist $arg1; return ;;
