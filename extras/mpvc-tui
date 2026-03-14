@@ -182,7 +182,7 @@ mpvctui_watcher()
         mpvc "${MPVC_TUI_CMD_PLAYLIST}"
     fi
     mpvctui_header1 "Prompt"
-    ${MPVC_TUI_CMD_PROMPT}
+    [ -n "${MPVC_TUI_CMD_PROMPT}" ] && "${MPVC_TUI_CMD_PROMPT}"
 }
 
 mpvctui_input()
