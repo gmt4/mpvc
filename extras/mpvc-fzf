@@ -64,7 +64,7 @@ mpvcfzf_config()
     if [ ! -d "$MPVC_CACHE_DIR" ]; then mkdir -p "$MPVC_CACHE_DIR"; fi
     if [ ! -d "$MPVC_CACHE_DIR/thumbnail/" ]; then mkdir -p "$MPVC_CACHE_DIR/thumbnail/"; fi
     # if present load user config
-    if [ -r "$MPVC_CONFIG" ]; then
+    if [ -r "$MPVC_CONFIG" -a -O "$MPVC_CONFIG" ]; then
         . "$MPVC_CONFIG";
     fi
     if ! quiet command -v fzf; then
