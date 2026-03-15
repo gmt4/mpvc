@@ -68,7 +68,7 @@ mpvc_web_defaults()
     MPVC_WEB_CGI="$MPVC_WEB_ROOT/cgi-bin/mpvc"
 
     # if present load user config
-    if [ -r "$MPVC_CONFIG" ]; then
+    if [ -r "$MPVC_CONFIG" -a -O "$MPVC_CONFIG" ]; then
         . "$MPVC_CONFIG"
     fi
 }
