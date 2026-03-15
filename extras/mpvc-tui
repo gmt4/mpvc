@@ -79,7 +79,7 @@ mpvctui_config()
     mkdir -p "$MPVC_CONFIG_DIR"
     touch "$MPVC_TUI_HISTORY"
     # if present load user config
-    if [ -r "$MPVC_CONFIG" ]; then
+    if [ -r "$MPVC_CONFIG" -a -O "$MPVC_CONFIG" ]; then
         . "$MPVC_CONFIG"
     fi
     if ! quiet command -v rlwrap; then
