@@ -562,8 +562,8 @@ mpvc_web_setup()
         fi
 
         mpvc_web_index > "$MPVC_WEB_ROOT/index.html"
-        touch > "$MPVC_WEB_ROOT/favicon.ico"
-        touch > "$MPVC_WEB_ROOT/apple-touch-icon.svg"
+        echo > "$MPVC_WEB_ROOT/favicon.ico"
+        echo > "$MPVC_WEB_ROOT/apple-touch-icon.svg"
         if [ -n "$MPVC_WEB_CSS_STYLE" ]; then
             cat "$MPVC_WEB_CSS_STYLE" > "$MPVC_WEB_ROOT/style.css"
         else
