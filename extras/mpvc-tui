@@ -194,8 +194,6 @@ mpvctui_input()
         echo "$MPVC_TUI_PROMPT"; read -r cmd
     fi
     case "$cmd" in
-        #'!'[a-zA-z0-9]*) not_eval "${cmd##!}";;
-        #'!!'[a-zA-z0-9]*) not_shell -c "${cmd##!!}";;
         'mpvc '[a-zA-z0-9-]*) QUIETFLAG=true mpvc ${cmd##mpvc } ;;
         'mpvc-tui '[a-zA-z0-9-]*) mpvc-tui ${cmd##mpvc-tui } ;;
         'mpvc-fzf '[a-zA-z0-9-]*) mpvc-fzf ${cmd##mpvc-fzf } ;;
