@@ -525,13 +525,6 @@ mpvc_web_index()
 EOF
 }
 
-mpvc_web_favicon()
-{
-    # <svg viewBox="0 0 192 80" xmlns="http://www.w3.org/2000/svg" > <text x="0" y="30" font-size="45px" >🎧</text> </svg> <!-- mpvc -->
-    cat <<EOF
-EOF
-}
-
 mpvc_web_mkcert()
 {
     MPVC_WEB_SSL_SUBJ="/C=CN/ST=ST/O=$PROGNAME/CN=$PROGNAME-$MPVC_WEB_HOSTNAME"
@@ -569,8 +562,8 @@ mpvc_web_setup()
         fi
 
         mpvc_web_index > "$MPVC_WEB_ROOT/index.html"
-        mpvc_web_favicon > "$MPVC_WEB_ROOT/favicon.ico"
-        mpvc_web_favicon > "$MPVC_WEB_ROOT/apple-touch-icon.svg"
+        touch > "$MPVC_WEB_ROOT/favicon.ico"
+        touch > "$MPVC_WEB_ROOT/apple-touch-icon.svg"
         if [ -n "$MPVC_WEB_CSS_STYLE" ]; then
             cat "$MPVC_WEB_CSS_STYLE" > "$MPVC_WEB_ROOT/style.css"
         else
