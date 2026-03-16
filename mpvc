@@ -270,7 +270,7 @@ mpvc_curl_cache()
 }
 
 mpvc_curl_cache_json() { mpvc_curl_cache "https://youtube.com/oembed?url=$1"; }
-mpvc_curl() { curl -sL -A 'Mozilla/5.0' "$@"; }
+mpvc_curl() { curl -s --location --proto =https -A 'Mozilla/5.0' "$@"; }
 
 mpvc_ytquery_json() {
     for i in "$@"
