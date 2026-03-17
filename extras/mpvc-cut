@@ -17,6 +17,7 @@ set -euf
 PACTL=$(command -v pactl) || { echo "pactl not found"; exit 1; }
 FFMPEG=$(command -v ffmpeg) || { echo "ffmpeg not found"; exit 1; }
 FFPROBE=$(command -v ffprobe) || { echo "ffprobe not found"; exit 1; }
+FFMPEG_LOGLEVEL=${FFMPEG_LOGLEVEL:-warning}
 
 mpvc_cut_ffmpeg()
 {
@@ -43,17 +44,26 @@ mpvc_cutfile()
     echo "# $PROGNAME $operation $pointA $pointB $fileExt in $infile out $outfile"
 
     case "$operation" in
-    vidcord) # perform lossy transcode to x264
+    vidcord)
+        # perform lossy transcode to x264
         mpvc_cut_ffmpeg \
                -max_muxing_queue_size 1024 \
                -sws_flags lanczos -vf "scale=-1:720" \
                -c:v libx264 -crf 25 -preset fast \
                -c:a copy -map 0 -f mp4 "$outfile.mp4"
-    ;;
-    lossless) mpvc_cut_ffmpeg -c:v libx265 -x265-params lossless=1 "$outfile.mp4" ;;
-    lossy)    mpvc_cut_ffmpeg "$outfile.mp4" ;;
-    dryrun)   mpvc_cut_ffmpeg -f null /dev/null ;;
-    *)        mpvc_cut_ffmpeg -c copy -map 0 "$outfile.$fileExt" ;;
+        ;;
+    lossless)
+        mpvc_cut_ffmpeg -c:v libx265 -x265-params lossless=1 "$outfile.mp4"
+        ;;
+    lossy)
+        mpvc_cut_ffmpeg "$outfile.mp4"
+        ;;
+    dryrun)
+        mpvc_cut_ffmpeg -f null /dev/null
+        ;;
+    *)
+        mpvc_cut_ffmpeg -c copy -map 0 "$outfile.$fileExt"
+        ;;
     esac
 }
 
@@ -72,7 +82,7 @@ mpvc_cut_vres()
 
 mpvc_cut_info()
 {
-    local mode=$1; shift
+    local mode="$1"; shift
     "$FFPROBE" -hide_banner -loglevel info "$@" 2>&1 |
         case "$mode" in
         info) awk '/^Input/ {print} /Stream #/ {print} /Duration:/ {print}' ;;
@@ -93,18 +103,17 @@ mpvc_cut_asrc()
 
 mpvc_screencast()
 {
-    local vres=$(mpvc_cut_vres)
-    local asrc=$(mpvc_cut_asrc)
+    local vres="$(mpvc_cut_vres)"
+    local asrc="$(mpvc_cut_asrc)"
 
     local fout="${fout:-mpvc-cast-$(date -Iseconds | sed 's/:/-/g').mkv}"
-    local framerate=${framerate:-25}
-    LOGLEVEL=${LOGLEVEL:-warning}
+    local framerate="${framerate:-25}"
 
     if [ -z "$vres" ]; then usage; fi
     if [ -z "$asrc" ]; then usage; fi
 
     echo "# $PROGNAME: recording vres $vres asrc $asrc to $fout (ctl+c to finish)"
-    "$FFMPEG" -hide_banner -loglevel "$LOGLEVEL" -video_size "$vres" -framerate "$framerate" -f x11grab -i :0.0 -f pulse -ac 2 -i "$asrc" "$fout"
+    "$FFMPEG" -hide_banner -loglevel "$FFMPEG_LOGLEVEL" -video_size "$vres" -framerate "$framerate" -f x11grab -i :0.0 -f pulse -ac 2 -i "$asrc" "$fout"
 }
 
 usage()
