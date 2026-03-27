@@ -835,32 +835,20 @@ mpvc_chapter_list()
             split(firstlast, flarray, " ")
             first=flarray[1]; last=flarray[2]
         }
-
         {
             chapternr = NR-1
             if (!(first <= chapternr && chapternr <= last) && (mode == "short"))
-            {
                 next
+
+            prefix = ""; suffix = ""
+            if (chapter_pos == chapternr && !ENVIRON["NO_COLOR"]) {
+                prefix = "\033[7m"; suffix = "\033[0m"
             }
 
-            if (chapter_pos == chapternr)
-            {
-                if (ENVIRON["NO_COLOR"])
-                {
-                    if (mode == "numbered") printf("%2d  %s\n", chapternr, $0);
-                    else printf("%s\n", $0);
-                }
-                else
-                {
-                    if (mode == "numbered") printf("%2d  \033[7m%s\033[0m\n", chapternr, $0);
-                    else printf("\033[7m%s\033[0m\n", $0);
-                }
-            }
+            if (mode == "numbered")
+                printf("%2d  %s%s%s\n", chapternr, prefix, $0, suffix)
             else
-            {
-                if (mode == "numbered") printf("%2d  %s\n", chapternr, $0);
-                else printf("%s\n", $0);
-            }
+                printf("%s%s%s\n", prefix, $0, suffix)
         }'
         QUIETFLAG=true
 }
