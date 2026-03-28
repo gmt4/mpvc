@@ -819,31 +819,31 @@ mpvc_chapter_list_json()
 mpvc_chapter_list()
 {
     mode="${1:-}"
-    chapter_pos=$(mpvc_get "chapter")
-    chapter_count=$(mpvc_get "chapter-list/count")
+    ch_pos=$(mpvc_get "chapter")
+    ch_count=$(mpvc_get "chapter-list/count")
 
-    firstlast=$(mpvc_get_terminal_height "$chapter_pos" "$chapter_count")
+    firstlast=$(mpvc_get_terminal_height "$ch_pos" "$ch_count")
     mpvc_chapter_list_json |
         grep -o '"title":".*' | sed 's/"title":"//; s/","time":.*$//' |
-        awk -v mode="$mode" -v chapter_pos="$chapter_pos" -v firstlast="$firstlast" \
+        awk -v mode="$mode" -v ch_pos="$ch_pos" -v firstlast="$firstlast" \
         '
         BEGIN {
             split(firstlast, flarray, " ")
             first=flarray[1]; last=flarray[2]
         }
         {
-            chapternr = NR-1
-            if (!(first <= chapternr && chapternr <= last) && (mode == "short"))
+            ch_nr = NR-1
+            if (!(first <= ch_nr && ch_nr <= last) && (mode == "short"))
                 next
 
             prefix = ""; suffix = ""
-            color_entry = (chapter_pos == chapternr && !ENVIRON["NO_COLOR"])
+            color_entry = (ch_pos == ch_nr && !ENVIRON["NO_COLOR"])
             if (color_entry) {
                 prefix = "\033[7m"; suffix = "\033[0m"
             }
 
             if (mode == "numbered")
-                printf("%2d  %s%s%s\n", chapternr, prefix, $0, suffix)
+                printf("%2d  %s%s%s\n", ch_nr, prefix, $0, suffix)
             else
                 printf("%s%s%s\n", prefix, $0, suffix)
         }'
