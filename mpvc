@@ -836,16 +836,14 @@ mpvc_chapter_list()
             if (!(first <= ch_nr && ch_nr <= last) && (mode == "short"))
                 next
 
-            prefix = ""; suffix = ""
+            fmtstr="%s"
             color_entry = (ch_pos == ch_nr && !ENVIRON["NO_COLOR"])
-            if (color_entry) {
-                prefix = "\033[7m"; suffix = "\033[0m"
-            }
-
+            if (color_entry)
+                fmtstr="\033[7m%s\033[0m"
+            line=sprintf(fmtstr, $0)
             if (mode == "numbered")
-                printf("%2d  %s%s%s\n", ch_nr, prefix, $0, suffix)
-            else
-                printf("%s%s%s\n", prefix, $0, suffix)
+               line=sprintf("%2d  "fmtstr, ch_nr, $0)
+            print line
         }'
         QUIETFLAG=true
 }
