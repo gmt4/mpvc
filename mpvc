@@ -456,9 +456,7 @@ mpvc_get_playlist() {
         {
             lid = NR - 1
             if (!(first <= lid && lid <= last))
-            {
                 next
-            }
             sub("^ ","",$0)
             lines[++nlines]=$0
             urls=urls" \""$0"\""
@@ -473,15 +471,13 @@ mpvc_get_playlist() {
                title=titles[nr]
 
                fmtstr="%2d  %s"
-               if (lpos == lid)
+               color_entry = (lpos == lid && !ENVIRON["NO_COLOR"])
+               if (color_entry)
                {
-                   if (!ENVIRON["NO_COLOR"])
-                   {
-                       ytcmd=sprintf("%s cmd expand-text \\${percent-pos}", mpvc)
-                       ytcmd | getline pct
-                       nchars=int((cols-(length(lid)+1+1+1)) * (pct/100))
-                       fmtstr="\033[7m%2d  %-"nchars"s\033[0m"
-                   }
+                   ytcmd=sprintf("%s cmd expand-text \\${percent-pos}", mpvc)
+                   ytcmd | getline pct
+                   nchars=int((cols-(length(lid)+1+1+1)) * (pct/100))
+                   fmtstr="\033[7m%2d  %-"nchars"s\033[0m"
                }
                line=sprintf(fmtstr, lid, truncate(title))
                print line
@@ -841,7 +837,8 @@ mpvc_chapter_list()
                 next
 
             prefix = ""; suffix = ""
-            if (chapter_pos == chapternr && !ENVIRON["NO_COLOR"]) {
+            color_entry = (chapter_pos == chapternr && !ENVIRON["NO_COLOR"])
+            if (color_entry) {
                 prefix = "\033[7m"; suffix = "\033[0m"
             }
 
