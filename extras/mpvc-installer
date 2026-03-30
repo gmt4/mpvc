@@ -43,6 +43,7 @@ mpvc_config()
             echo "$PROGNAME: $file exists. Not overwriting."
         else
             curl -fsSL -o "$file" "$url"
+            chmod u+rw,go-w "$file"
         fi
     done
 
