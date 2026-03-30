@@ -235,7 +235,7 @@ mpvc_config()
     # if not present, create config files
     if [ ! -e "$MPVC_CURL_CACHE" ]; then true > "$MPVC_CURL_CACHE"; fi
     # if present load user config
-    if [ -r "$MPVC_CONFIG" -a -O "$MPVC_CONFIG" ]; then
+    if [ -r "$MPVC_CONFIG" -a -O "$MPVC_CONFIG" ] && mpvc_check_user_perms "$MPVC_CONFIG"; then
         . "$MPVC_CONFIG"
     else
         warn "# $PROGNAME Warning: ${MPVC_CONFIG##"$HOME/"} not found, see docs/mpvc.conf for defaults"
@@ -1016,6 +1016,19 @@ mpvc_handle_socket() {
     fi
 }
 
+mpvc_check_user_perms() {
+    # check file perms
+    perms=$(equiet stat -Lc '%a' "$1" || equiet stat -Lf '%Lp' "$1")
+    if [ "$perms" != "600" ] && [ "$perms" != "644" ]; then
+        die 2 "$PROGNAME: Error: File ${1##"$HOME/"} has unsafe permissions: $perms."
+    fi
+    # check file owner
+    owner=$(equiet stat -c '%u' "$1" || equiet stat -f '%Du' "$1")
+    if [ "$owner" != "$(id -u)" ] && [ "$owner" != "0" ]; then
+        die 2 "$PROGNAME: Error: File ${1##"$HOME/"} unexpected owner: $owner"
+    fi
+}
+
 mpvc_validate_socket() {
     socket=$MPVC_SOCKET
     # validate deps
@@ -1030,15 +1043,7 @@ mpvc_validate_socket() {
         die 2 "$PROGNAME: Error: Socket ${socket##"$HOME/"} does not exist. Use mpvc --mpv to start one."
     fi
     # test socket perms
-    perms=$(equiet stat -c '%a' "$socket" || equiet stat -f '%Lp' "$socket")
-    if [ "$perms" = "777" ] || [ "$perms" = "666" ]; then
-        die 2 "$PROGNAME: Error: Socket ${socket##"$HOME/"} has unsafe permissions: $perms."
-    fi
-    # test socket owner
-    owner=$(equiet stat -c '%u' "$socket" || equiet stat -f '%Du' "$socket")
-    if [ "$owner" != "$(id -u)" ] && [ "$owner" != "0" ]; then
-        die 2 "$PROGNAME: Error: Socket ${socket##"$HOME/"} unexpected owner: $owner"
-    fi
+    mpvc_check_user_perms "$socket"
     # test if socket is open
     if [ "$(mpvc_get pause)" = "" ]; then
         die 3 "$PROGNAME: Error: No files added to ${MPVC_SOCKET##"$HOME/"}."
