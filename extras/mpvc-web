@@ -300,7 +300,7 @@ main()
 
         mpvc+status)            mpvc_cmd status | mpvc_strip ;;
         mpvc+playlist)          mpvc_cmd playlist | mpvc_strip ;;
-        mpvc+chapter-list)      mpvc_cmd chapter-list | mpvc_strip ;;
+        mpvc+chapter-list)      mpvc_cmd chapter-list-nr | mpvc_strip ;;
 
         mpvc-fzf[+\ ]*)         mpvc_plain "\$($PROGDIR/\$(mpvc_split "\$@"))" ;;
         mpvc-equalizer[+\ ]*)   mpvc_plain "\$($PROGDIR/\$(mpvc_split "\$@"))" ;;
