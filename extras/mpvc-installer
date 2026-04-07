@@ -43,8 +43,8 @@ mpvc_config()
             echo "$PROGNAME: $file exists. Not overwriting."
         else
             curl -fsSL -o "$file" "$url"
-            chmod u+rw,go-w "$file"
         fi
+        chmod 644 "$file"
     done
 
     mkdir -p "$MPVC_CONFIG_DIR"
@@ -59,6 +59,7 @@ mpvc_config()
         else
             curl -fsSL -o "$file" "$url"
         fi
+        chmod 644 "$file"
     done
 
     for bin in "yt-dlp"
