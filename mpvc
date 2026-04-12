@@ -1022,7 +1022,7 @@ mpvc_handle_socket() {
 mpvc_check_user_perms() {
     # check file perms
     perms=$(equiet stat -Lc '%a' "$1" || equiet stat -Lf '%Lp' "$1")
-    if [ "$perms" != "600" ] && [ "$perms" != "644" ]; then
+    if [ "$perms" != "600" ] && [ "$perms" != "644" ] && [ "$perms" != "664" ]; then
         die 2 "$PROGNAME: Error: File ${1##"$HOME/"} has unsafe permissions: $perms."
     fi
     # check file owner
