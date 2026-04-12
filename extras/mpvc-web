@@ -462,7 +462,10 @@ mpvc_web_index()
         <hr>
         <ul>
             <li>
-                $(mpvc stash list | awk 'NR>1{print $NF}' | mpvc tac | mpvc_web_select_form "mpvc -q stash apply" "${MPVC_WEB_SHORTCUT_APPLY}")
+                $(mpvc stash list | mpvc tac | mpvc-fzf -0 | mpvc_web_select_form "mpvc -q stash apply" "${MPVC_WEB_SHORTCUT_APPLY}")
+            </li>
+            <li>
+                $(mpvc stash list | mpvc tac | mpvc-fzf -0 | mpvc_web_select_form "mpvc -q stash append" "${MPVC_WEB_SHORTCUT_APPLY}")
             </li>
             <li>
                 $([ -n "${MPVC_WEB_DEV:-}" ] && mpvc_web_cli)
