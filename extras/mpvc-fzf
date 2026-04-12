@@ -285,10 +285,10 @@ mpvcfzf_thumb_url()
     yturl="${yturl:-$(mpvc filename current full)}"
     [ -z "$yturl" ] || [ "$yturl" = "null" ] && return
 
+    case "$yturl" in ${MPVC_YTDL_OUTPUT}*) echo "$yturl"; return ;; esac
+
     yturl=$(mpvcfzf_getvideo_id_from_fd "$yturl")
     case "$yturl" in
-    ${MPVC_YTDL_OUTPUT}*)                       echo "$yturl" ;;
-
     https://ice?.somafm.com/*-*-aac)            mpvcfzf_thumb_somafm "$yturl";;
 
     https://stream.radioparadise.com/aac*)      mpvcfzf_thumb_rp chan=0 ;;
