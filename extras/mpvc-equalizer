@@ -28,7 +28,7 @@ mpvc_genfilter()
         case "$i" in -[.0-9]*|[.0-9]*) ;; *) usage ;; esac
     done
 
-    awk -v quote="'" -v gain_curr="$*" -v freq_table_str="MPVC_FREQ_TABLE" -v gain_table_str="$MPVC_GAIN_TABLE" \
+    awk -v quote="'" -v gain_curr="$*" -v freq_table_str="$MPVC_FREQ_TABLE" -v gain_table_str="$MPVC_GAIN_TABLE" \
     '
     BEGIN {
       num_entry=15
@@ -190,18 +190,18 @@ mpvc_json()   { mpvc getr af | jq -C .data | sed '/graph/ s/:/:\n\t/g'; }
 
 mpvc_add()
 {
-    mpvc-equalizer save |
+    mpvc_save |
         awk -v f="$1" -v g="$2" '
             BEGIN {
                 n=split("0  65 157 288 472 733 1k1 1k6 2k4 3k4 4k9 7k0 10k 14k 20k", freq_table)
-                for (i=0; i < n; i++) if (freq_table[i] == f) break;
+                for (i=1; i < n; i++) if (freq_table[i] == f) break;
             }
             {
                 nr=(i+1)
                 if (length($0)) print $0 + ((NR == nr) ? g : 0)
             }
             ' |
-            mpvc-equalizer load
+            mpvc_load
 }
 
 usage()
