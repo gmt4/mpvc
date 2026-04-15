@@ -21,6 +21,11 @@ Contribute answers in a `Q: A:` format to your favorite Frequently Asked Questio
 
 * Check the [logbook](https://gmt4.github.io/mpvc/logbook.html#logbook-20240214) for howto setup.
 
+## Manage chapters metadata in media files
+
+1. mpvc-chapter gen ffmetadata.xml 0 < tracklist.txt, to generate the ffmetadata.xml from a tracklist.txt with relative track duration
+2. mpvc-chapter merge media-in.opus ffmetadata.xml media-out.opus, to merge the ffmpeg-metadata.xml into the media-in.opus file, and save it to media-out.opus
+
 ## BSD support?
 
 The current focus is on GNU/Linux OSes, however, as BSDs as Open/Free/Net BSD are UNIX with POSIX-sh, support is easy thanks to [pkg(1)](https://man.freebsd.org/cgi/man.cgi?pkg):
