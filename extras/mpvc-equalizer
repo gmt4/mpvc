@@ -131,7 +131,7 @@ mpvc_bars()
     freq_table="$MPVC_FREQ_TABLE"
     gain_table="$(printf "$mpvc_values")"
     pattern=$(echo "$gain_table" | awk 'NR<10{s=s" *"$0} END{sub(" $","",s); print s}')
-    preset=$(awk "/$pattern/"' {print $NF}' "$0")
+    preset=$(awk "/$pattern/"' {p=$NF} BEGIN{p="custom"} END{print p}' "$0")
     gain_table=$(echo $gain_table)
 
     awk -v freq="$freq_table" -v gain="$gain_table" -v cols="$(mpvc ttycols)" -v preset="$preset" '
