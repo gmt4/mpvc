@@ -16,8 +16,9 @@ PROGURL="https://github.com/gmt4/mpvc"
 set -euf
 
 MPVC_LABEL="${MPVC_LABEL:-mpvc-equalizer}"
-MPVC_FREQ_TABLE="0  65 157 288 472 733 1k1 1k6 2k4 3k4 4k9 7k0 10k 14k 20k"
-MPVC_GAIN_TABLE="0   0   0   0   0   0   0   0   0   0   0   0   0   0   0"
+#MPVC_FREQ_TABLE="0  65 157 288 472 733 1k1 1k6 2k4 3k4 4k9 7k0 10k 14k 20k"
+MPVC_FREQ_TABLE="0  65  157  288  472  733 1100 1600 2400 3400 4900  7000 10000 14000 20000"
+MPVC_GAIN_TABLE="0   0    0    0    0    0    0    0    0    0    0     0     0     0     0"
 
 mpvc() { "$PROGDIR/mpvc" "$@"; } # mpvc-web?
 
@@ -48,8 +49,10 @@ mpvc_genfilter()
         str = ""
         for (x=1; x<=num_entry; x++)
         {
-            v = min(max(gain_table[x], min_val), max_val)
-            str = str sprintf("entry(%d,%.1f)", x-1, v)
+            f = freq_table[x]
+            g = min(max(gain_table[x], min_val), max_val)
+            str = str sprintf("entry(%d,%.1f)", x-1, g)
+            #str = str sprintf("entry(%d,%d,%.1f)", x-1, f, g)
             if (x < num_entry) str = str ";"
         }
         return str
@@ -81,6 +84,7 @@ mpvc_presets()
 {
     cmd=${1:-list}
     case "$cmd" in
+    #                   0   65  157  288  472  733 1100 1600 2400 3400
     reset)      echo "0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0" ;; #preset: flat
     fullbass)   echo "4.8  5.7  5.7  3.3  1.0  -2.4 -4.8 -6.3 -6.7 -6.7";; #preset: fullbass
     fulltreble) echo "5.8  -5.8 -5.8 -2.4 1.4  6.7  9.6  9.6  9.6  10.1";; #preset: fulltreble
@@ -162,7 +166,7 @@ mpvc_bars()
         for (i=1; i <= 15; i++)
         {
             bar=mpvc_bar_line(ga[i])
-            printf "%3s Hz: %6.1f dB %s\n", fa[i], ga[i], bar
+            printf "%5s Hz: %6.1f dB %s\n", fa[i], ga[i], bar
         }
     }
     ' /dev/null
