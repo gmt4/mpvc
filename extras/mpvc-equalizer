@@ -163,7 +163,7 @@ mpvc_bars()
         printf "# Linear Phase 15-Bands Equalizer (%s)\n", preset
         nf=split(freq, fa)
         ng=split(gain, ga)
-        for (i=1; i <= 15; i++)
+        for (i=1; i <= nf; i++)
         {
             bar=mpvc_bar_line(ga[i])
             printf "%5s Hz: %6.1f dB %s\n", fa[i], ga[i], bar
@@ -200,7 +200,7 @@ mpvc_add()
                 n=split(freq_table_str, freq_table)
                 m=split(gain_table_str, gain_table)
 
-                for (nr=1; nr < n; nr++)
+                for (nr=1; nr <= n; nr++)
                     if (freq_table[nr] == f) break;
             }
             {
