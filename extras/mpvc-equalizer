@@ -131,7 +131,7 @@ mpvc_bars()
     freq_table="$MPVC_FREQ_TABLE"
     gain_table="$(printf "$mpvc_values")"
     pattern=$(echo "$gain_table" | awk 'NR<10{s=s" *"$0} END{sub(" $","",s); print s}')
-    preset=$(awk "/$pattern/"' {p=$NF} BEGIN{p="custom"} END{print p}' "$0")
+    preset=$(awk "/$pattern/"' {p=$NF} END { print p ? p : "custom" }' "$0")
     gain_table=$(echo $gain_table)
 
     awk -v freq="$freq_table" -v gain="$gain_table" -v cols="$(mpvc ttycols)" -v preset="$preset" '
@@ -180,7 +180,7 @@ mpvc_save()
 mpvc_load()
 {
     case "${1:-}" in
-    '') mpvc_setvals "$(cat)" ;;
+    '') mpvc_setvals "$(echo $(cat))" ;;
     *)  mpvc_setvals "$(mpvc_presets "$1")" ;;
     esac
 }
@@ -195,14 +195,17 @@ mpvc_json()   { mpvc getr af | jq -C .data | sed '/graph/ s/:/:\n\t/g'; }
 mpvc_add()
 {
     mpvc_save |
-        awk -v f="$1" -v g="$2" '
+        awk -v f="$1" -v g="$2" -v freq_table_str="$MPVC_FREQ_TABLE" -v gain_table_str="$MPVC_GAIN_TABLE" ' \
             BEGIN {
-                n=split("0  65 157 288 472 733 1k1 1k6 2k4 3k4 4k9 7k0 10k 14k 20k", freq_table)
-                for (i=1; i < n; i++) if (freq_table[i] == f) break;
+                n=split(freq_table_str, freq_table)
+                m=split(gain_table_str, gain_table)
+
+                for (nr=1; nr < n; nr++)
+                    if (freq_table[nr] == f) break;
             }
             {
-                nr=(i+1)
-                if (length($0)) print $0 + ((NR == nr) ? g : 0)
+                if (length($0))
+                    print $0 + ((NR == nr) ? g : 0)
             }
             ' |
             mpvc_load
@@ -243,8 +246,8 @@ main()
     bars)   shift; mpvc_bars;;
     json)   shift; mpvc_json;;
 
-    inc) shift; mpvc_add "$1"  "${2:-0.1}" ;;
-    dec) shift; mpvc_add "$1" "-${2:-0.1}" ;;
+    inc)    shift; mpvc_add "$1"  "${2:-0.1}" ;;
+    dec)    shift; mpvc_add "$1" "-${2:-0.1}" ;;
 
     help)  usage;;
     *)     usage;;
