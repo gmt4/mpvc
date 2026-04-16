@@ -16,7 +16,7 @@ PROGURL="https://github.com/gmt4/mpvc"
 set -euf
 
 MPVC_LABEL="${MPVC_LABEL:-mpvc-equalizer}"
-#MPVC_FREQ_TABLE="0  65 157 288 472 733 1k1 1k6 2k4 3k4 4k9 7k0 10k 14k 20k"
+#MPVC_FREQ_TABLE="0 65  157  288  472  733  1k1  1k6  2k4  3k4  4k9   7k0   10k   14k   20k"
 MPVC_FREQ_TABLE="0  65  157  288  472  733 1100 1600 2400 3400 4900  7000 10000 14000 20000"
 MPVC_GAIN_TABLE="0   0    0    0    0    0    0    0    0    0    0     0     0     0     0"
 
@@ -84,30 +84,29 @@ mpvc_presets()
 {
     cmd=${1:-list}
     case "$cmd" in
-    #bands)             0   65  157  288  472  733 1100 1600 2400 3400  ;; #preset: frequency (Hz)
-    reset)      echo "0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0" ;; #preset: flat
-    fullbass)   echo "4.8  5.7  5.7  3.3  1.0  -2.4 -4.8 -6.3 -6.7 -6.7";; #preset: fullbass
-    fulltreble) echo "5.8  -5.8 -5.8 -2.4 1.4  6.7  9.6  9.6  9.6  10.1";; #preset: fulltreble
-    fullbastre) echo "4.3  3.3  0.0  -4.4 -2.9 1.0  4.8  6.7  7.2  7.2" ;; #preset: fullbastre
-    headphones) echo "2.8  6.7  3.3  -2.0 -1.4 1.0  2.8  5.7  7.7  8.6" ;; #preset: headphones
-    largehall)  echo "6.2  6.2  3.3  3.3  0.0  -2.9 -2.9 -2.9 0.0  0.0" ;; #preset: largehall
-    live)       echo "2.9  0.0  2.4  3.3  3.3  3.3  2.4  1.4  1.4  1.4" ;; #preset: live
-    party)      echo "4.3  4.3  0.0  0.0  0.0  0.0  0.0  0.0  4.3  4.3" ;; #preset: party
-    soft)       echo "2.8  1.0  0.0  -1.4 0.0  2.4  4.8  5.7  6.7  7.2" ;; #preset: soft
-    classical)  echo "0.0  0.0  0.0  0.0  0.0  -4.4 -4.4 -4.4 -5.8 0.0" ;; #preset: classical
-    club)       echo "0.0  0.0  4.8  3.3  3.3  3.3  1.9  0.0  0.0  0.0" ;; #preset: club
-    dance)      echo "5.7  4.3  1.4  0.0  0.0  -3.4 -4.4 -4.3 0.0  0.0" ;; #preset: dance
-    pop)        echo "1.0  2.8  4.3  4.8  3.3  0.0  -1.4 -1.4 -1.0 -1.0";; #preset: pop
-    reggae)     echo "0.0  0.0  0.0  -3.4 0.0  3.8  3.8  0.0  0.0  0.0" ;; #preset: reggae
-    ska)        echo "1.4  -2.9 -2.4 0.0  2.4  3.3  5.3  5.7  6.7  5.8" ;; #preset: ska
-    softrock)   echo "2.4  2.4  1.4  0.0  -2.4 -3.4 -2.0 0.0  1.4  5.3" ;; #preset: softrock
-    rock)       echo "4.8  2.8  -3.4 -4.8 -2.0 2.4  5.3  6.7  6.7  6.7" ;; #preset: rock
-    techno)     echo "4.8  3.3  0.0  -3.4 -2.9 0.0  4.8  5.7  5.8  5.3" ;; #preset: techno
+    #bands)             0   65  157  288  472  733 1100 1600 2400 3400 4900  7000 10000 14000 20000 ;; #preset: freq (Hz)
+    reset)      echo "0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   0.0   0.0  0.0   0.0" ;; #preset: flat
+    fullbass)   echo "4.8  5.7  5.7  3.3  1.0 -2.4 -4.8 -6.3 -6.7 -6.7  -6.7 -5.8  -4.0 -2.0   0.0" ;; #preset: fullbass
+    fulltreble) echo "5.8 -5.8 -5.8 -2.4  1.4  6.7  9.6  9.6  9.6 10.1  10.1 10.1   9.6  8.6   7.6" ;; #preset: fulltreble
+    fullbastre) echo "4.3  3.3  0.0 -4.4 -2.9 1.0   4.8  6.7  7.2  7.2   6.7  5.7   4.0  2.4   1.0" ;; #preset: fullbastre
+    headphones) echo "2.8  6.7  3.3 -2.0 -1.4 1.0   2.8  5.7  7.7  8.6   8.6  8.1   7.2  6.2   5.2" ;; #preset: headphones
+    largehall)  echo "6.2  6.2  3.3  3.3  0.0 -2.9 -2.9 -2.9  0.0  0.0   0.0  0.0   0.0  0.0   0.0" ;; #preset: largehall
+    live)       echo "2.9  0.0  2.4  3.3  3.3  3.3  2.4  1.4  1.4  1.4   1.4  1.0   0.5  0.0   0.0" ;; #preset: live
+    party)      echo "4.3  4.3  0.0  0.0  0.0  0.0  0.0  0.0  4.3  4.3   4.3  4.3   3.3  2.4   1.0" ;; #preset: party
+    soft)       echo "2.8  1.0  0.0  -1.4 0.0  2.4  4.8  5.7  6.7  7.2   7.2  6.7   5.8  4.8   3.8" ;; #preset: soft
+    classical)  echo "0.0  0.0  0.0  0.0  0.0 -4.4 -4.4 -4.4 -5.8  0.0   0.0  0.0   0.0  0.0   0.0" ;; #preset: classical
+    club)       echo "0.0  0.0  4.8  3.3  3.3  3.3  1.9  0.0  0.0  0.0   0.0  0.0   0.0  0.0   0.0" ;; #preset: club
+    dance)      echo "5.7  4.3  1.4  0.0  0.0 -3.4 -4.4 -4.3  0.0  0.0   0.0  0.0   0.0  0.0   0.0" ;; #preset: dance
+    pop)        echo "1.0  2.8  4.3  4.8  3.3  0.0 -1.4 -1.4 -1.0 -1.0  -1.4 -1.4  -0.5  0.0   0.5" ;; #preset: pop
+    reggae)     echo "0.0  0.0  0.0  -3.4 0.0  3.8  3.8  0.0  0.0  0.0   0.0  0.0   0.0  0.0   0.0" ;; #preset: reggae
+    ska)        echo "1.4  -2.9 -2.4 0.0  2.4  3.3  5.3  5.7  6.7  5.8   5.3  4.8   4.0  3.3   2.4" ;; #preset: ska
+    softrock)   echo "2.4  2.4  1.4  0.0  -2.4 -3.4 -2.0 0.0  1.4  5.3   5.3  4.3   3.0  1.5   0.0" ;; #preset: softrock
+    rock)       echo "4.8  2.8  -3.4 -4.8 -2.0 2.4  5.3  6.7  6.7  6.7   6.2  5.3   4.0  2.4   1.0" ;; #preset: rock
+    techno)     echo "4.8  3.3  0.0  -3.4 -2.9 0.0  4.8  5.7  5.8  5.3   5.0  4.8   4.0  3.3   2.4" ;; #preset: techno
 
     ''|help|list) awk '/#preset: [a-z]/ { sub("^ *",""); print }' "$0";;
     esac
 }
-
 
 mpvc_values()
 {
