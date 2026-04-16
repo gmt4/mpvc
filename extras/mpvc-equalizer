@@ -84,7 +84,7 @@ mpvc_presets()
 {
     cmd=${1:-list}
     case "$cmd" in
-#   bands)              0   65  157  288  472  733 1100 1600 2400 3400  ;; #preset: frequency (Hz)
+    #bands)             0   65  157  288  472  733 1100 1600 2400 3400  ;; #preset: frequency (Hz)
     reset)      echo "0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0" ;; #preset: flat
     fullbass)   echo "4.8  5.7  5.7  3.3  1.0  -2.4 -4.8 -6.3 -6.7 -6.7";; #preset: fullbass
     fulltreble) echo "5.8  -5.8 -5.8 -2.4 1.4  6.7  9.6  9.6  9.6  10.1";; #preset: fulltreble
@@ -104,7 +104,7 @@ mpvc_presets()
     rock)       echo "4.8  2.8  -3.4 -4.8 -2.0 2.4  5.3  6.7  6.7  6.7" ;; #preset: rock
     techno)     echo "4.8  3.3  0.0  -3.4 -2.9 0.0  4.8  5.7  5.8  5.3" ;; #preset: techno
 
-    ''|help|list) awk '/#preset: [a-z]/ { print }' "$0";;
+    ''|help|list) awk '/#preset: [a-z]/ { sub("^ *",""); print }' "$0";;
     esac
 }
 
