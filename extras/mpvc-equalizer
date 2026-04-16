@@ -84,7 +84,7 @@ mpvc_presets()
 {
     cmd=${1:-list}
     case "$cmd" in
-    #                   0   65  157  288  472  733 1100 1600 2400 3400
+#   bands)              0   65  157  288  472  733 1100 1600 2400 3400  ;; #preset: frequency (Hz)
     reset)      echo "0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0" ;; #preset: flat
     fullbass)   echo "4.8  5.7  5.7  3.3  1.0  -2.4 -4.8 -6.3 -6.7 -6.7";; #preset: fullbass
     fulltreble) echo "5.8  -5.8 -5.8 -2.4 1.4  6.7  9.6  9.6  9.6  10.1";; #preset: fulltreble
