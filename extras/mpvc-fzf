@@ -43,6 +43,8 @@ mpvcfzf_defaults()
     : "${MPVC_FZF_PARSE_CHANNEL:=0}"
     : "${MPVC_FZF_PARSE_PLAYLIST:=0}"
     : "${MPVC_FZF_INVID_URL:=https://inv.nadeko.net}"
+    : "${MPVC_CURL_CONFIG:=$MPVC_CONFIG_DIR/curlrc}"
+#    : "${MPVC_FZF_CURLOPTS:=--config $MPVC_CURL_CONFIG}"
     : "${MPVC_FZF_CURLOPTS:=-fsSL -A Mozilla/5.0 --retry 1}"
     : "${MPVC_FZF_IMGVIEWER:=lsix}"
 
