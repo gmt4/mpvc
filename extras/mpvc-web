@@ -92,7 +92,7 @@ mpvc_web_style()
 {
     cat <<-EOF
 :root { --body-font-family: monospace,monospace; --body-color: #222; --body-background: #fff; --link-color: #a0a; }
-@media (max-width: 768px) { :root { --body-font-size: 0.95em; } }
+@media (max-width: 768px) { :root { --body-font-size: 0.99em; } }
 @media (min-width: 768px) { :root { --body-font-size: 1.00em; } }
 
 @media (prefers-color-scheme: light) { html { filter: invert(0.0);  } :root { } }
@@ -442,7 +442,8 @@ mpvc_web_index()
         <details>
         <summary>
         [
-            <a href="#mpvc-web-extras" name="mpvc-web-extras">Extras</a> (toggle open/close)
+            <a href="#mpvc-web-extras" name="mpvc-web-extras">Extras</a>
+            <a href="#mpvc-web-extras-full" name="mpvc-web-extras-full">#full</a>
         ]
         </summary>
         <hr>
@@ -521,7 +522,7 @@ mpvc_web_index()
         🎧
         <a href="$PROGURL">$PROGNAME</a>
         <a href="$PROGURL">$PROGVERSION</a>
-        <a href="${PROGURL%/*}">$PROGAUTHOR</a> (c) $(date +%Y)
+        <a href="${PROGURL%/*}">$PROGAUTHOR</a> © $(date +%Y)
         <a href="javascript:Help()" title="help" ${MPVC_WEB_SHORTCUT_HELP}>/h</a>
     </body>
 </html>
