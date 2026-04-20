@@ -5,6 +5,11 @@
 # @author gmt4 <gmt4 at github.com> (c) Copyright 2022 GPLv2+
 # @url github.com/gmt4/mpvc
 # SPDX-License-Identifier: GPL-2.0-or-later
+
+#
+# Other handy mpvc symlinks:
+# ln -s $(which mpvc) ~/bin/m
+# ln -s $(which mpvc-fzf) ~/bin/mx
 #
 
 alias m="mpvc"
