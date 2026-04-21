@@ -97,6 +97,7 @@ EOF
  setr                     : Set JSON MPV property from $PROGNAME socket.
  cmd                      : Send command to $PROGNAME socket.
  cmdr                     : Send command to $PROGNAME socket & retrieve raw JSON.
+ sockrepl                 : mpv socket REPL (just socat)
  sockcmd                  : Send MPV JSON IPC command to $PROGNAME socket.
  socklist                 : List $PROGNAME sockets.
  socklista                : List $PROGNAME sockets (active).
