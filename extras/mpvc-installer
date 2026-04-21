@@ -17,12 +17,14 @@ set -euf
 SHELL="${SHELL:-/bin/sh}"
 PREFIX="${PREFIX:-/usr/local}"
 BINDIR="${BINDIR:-$PREFIX/bin}"
+MANDIR="${MANDIR:-$PREFIX/man}"
 DOCDIR="${DOCDIR:-$PREFIX/docs}"
 LICDIR="${LICDIR:-$PREFIX/licenses}"
 
 MPV_CONFDIR="${MPV_CONFIGDIR:-$HOME/.config/mpv}"
 MPVC_CONFIG_DIR="${MPVC_CONFIGDIR:-$HOME/.config/mpvc}"
 
+MANS="docs/man/mpvc.1"
 DOCS="README.md docs/config/mpv.conf docs/logbook.html"
 LICENSES="LICENSE.md"
 SCRIPT="mpvc extras/mpvc-tui extras/mpvc-fzf extras/mpvc-cut extras/mpvc-chapter extras/mpvc-mpris extras/mpvc-equalizer extras/mpvc-web extras/mpvc-autopilot extras/mpvc-installer"
@@ -102,6 +104,15 @@ mpvc_fetch()
         if curl -fsSL -o "$file" "$url"; then
             chmod u+x "$file"
         fi
+    done
+}
+
+mpvc_man()
+{
+    mkdir -p "$MANDIR"
+    for man in ${MANS};
+    do
+        install -Dvm644 "$(pwd)/$man" "$MANDIR";
     done
 }
 
@@ -224,6 +235,7 @@ main()
     version)         shift; mpvc_version;;
     check-reqs)      shift; mpvc_check_requirements;;
     check-update)    shift; mpvc_check_update;;
+    man)             shift; mpvc_man "$@";;
     docs)            shift; mpvc_docs "$@";;
     licenses)        shift; mpvc_licenses "$@";;
     fetch)           shift; mpvc_fetch "$@";;
