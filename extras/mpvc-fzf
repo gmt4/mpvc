@@ -476,7 +476,7 @@ mpvcfzf_quality()
         --bind='ctrl-o:execute-silent(mpvc set ytdl-format {+} &)' \
         --bind='ctrl-r:reload(mpvc-fzf -q)' <<EOF
 bestvideo+bestaudio/best
-bestvideo[vcodec!=vp9]+bestaudio/best"
+bestvideo[vcodec!=vp9]+bestaudio/best
 bestvideo[height<=?4320p]+bestaudio/best
 bestvideo[height<=?2160]+bestaudio/best
 bestvideo[height<=?1440]+bestaudio/best
