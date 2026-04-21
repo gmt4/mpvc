@@ -67,6 +67,8 @@ mpvc_chapter_merge() # usage: merge in.opus ffmetadata.txt out.opus
         "$FFMPEG" -v quiet -i "$srcfile" -f ffmetadata - > "$ffmetafile"
         cat "$(mpvc_chapter_file)" >> "$ffmetafile"
     fi
+
+    # "$FFMPEG" -i "$srcfile" -map_chapters -1 -codec copy "$dstfile" # to clear chapters
     "$FFMPEG" -i "$srcfile" -i "$ffmetafile" -map_metadata 1 -codec copy "$dstfile"
 }
 
