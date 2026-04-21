@@ -17,8 +17,8 @@ set -euf
 SHELL="${SHELL:-/bin/sh}"
 PREFIX="${PREFIX:-/usr/local}"
 BINDIR="${BINDIR:-$PREFIX/bin}"
-MANDIR="${MANDIR:-$PREFIX/man}"
 DOCDIR="${DOCDIR:-$PREFIX/docs}"
+MANDIR="${MANDIR:-$PREFIX/man/man1}"
 LICDIR="${LICDIR:-$PREFIX/licenses}"
 
 MPV_CONFDIR="${MPV_CONFIGDIR:-$HOME/.config/mpv}"
