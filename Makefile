@@ -8,6 +8,7 @@ help:
 	${INSTALLER} help
 install:
 	BINDIR=${DESTDIR}/${PREFIX}/bin ${INSTALLER} install
+	#MANDIR=${DESTDIR}/${PREFIX}/share/man/mpvc/ ${INSTALLER} man
 	DOCDIR=${DESTDIR}/${PREFIX}/share/doc/mpvc/ ${INSTALLER} docs
 	LICDIR=${DESTDIR}/${PREFIX}/share/licenses/mpvc/ ${INSTALLER} licenses
 link uninstall:
