@@ -24,7 +24,7 @@ LICDIR="${LICDIR:-$PREFIX/licenses}"
 MPV_CONFDIR="${MPV_CONFIGDIR:-$HOME/.config/mpv}"
 MPVC_CONFIG_DIR="${MPVC_CONFIGDIR:-$HOME/.config/mpvc}"
 
-MANS="docs/man/man1/mpvc.1 docs/man/man1/mpvc-fzf.1"
+MANS="docs/man/man1/mpvc.1 docs/man/man1/mpvc-fzf.1 docs/man/man1/mpvc-tui.1"
 DOCS="README.md docs/config/mpv.conf docs/logbook.html"
 LICENSES="LICENSE.md"
 SCRIPT="mpvc extras/mpvc-tui extras/mpvc-fzf extras/mpvc-cut extras/mpvc-chapter extras/mpvc-mpris extras/mpvc-equalizer extras/mpvc-web extras/mpvc-autopilot extras/mpvc-installer"
