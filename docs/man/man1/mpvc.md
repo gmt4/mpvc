@@ -13,7 +13,7 @@ SYNOPSIS
 ========
 
     mpvc [options] [file|URL|PLAYLIST|-]
-    mpvc [options] files
+    mpvc [options] [files]
 
 DESCRIPTION
 ===========
@@ -128,7 +128,8 @@ Remove track with ID 3:
 ENVIRONMENT
 ===========
 
-MPV_SOCKET : Path to the mpv Unix socket. If not set, mpvc will attempt
+MPV_SOCKET
+: Path to the mpv Unix socket. If not set, mpvc will attempt
 to locate the default socket automatically.
 
 FILES
@@ -146,7 +147,7 @@ FILES
 SEE ALSO
 ========
 
-mpv(1), mpc(1), mpvc-tui(1), mpvc-fzf(1)
+mpv(1), mpc(1), mpvc-fzf(1), mpvc-web(1), mpvc-tui(1), mpvc-equalizer(1)
 
 AUTHOR
 ======
