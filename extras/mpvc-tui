@@ -411,8 +411,8 @@ mpvctui_main()
         -H|history)      shift; cat "$MPVC_TUI_SCROBBLER" ;;
         -M|Mouse)        shift; mpvctui_launch "-m$arg1"; exit ;; # -g 15x1
         -m|mouse)        shift; mpvctui_mouse "$arg1" ;;
-        -n|Notify)       shift; mpvctui_notify_loop "${1:-}" ;;
-        -N|notify)       shift; mpvctui_notify "$@" ;;
+        -n|notify)       shift; mpvctui_notify_loop "${1:-}" ;;
+        -N|Notify)       shift; mpvctui_notify "$@" ;;
         -k|kill)         shift; pkill -f "$PROGNAME" ;;
         -t|tui)          shift; mpvctui_watch ;;
         -tt|tinytui)     shift; mpvctui_watch "tt" ;;
