@@ -1,7 +1,7 @@
 ---
 title: mpvc-fzf(1)
 section: 1
-date: April 21, 2026
+date: April, 2026
 ---
 
 NAME
@@ -236,28 +236,11 @@ FILES
 ~/.cache/mpvc/
 : Cache directory for downloaded media and metadata.
 
-DEPENDENCIES
-============
-
-fzf(1)
-: Fuzzy finder for interactive selection.
-
-yt-dlp(1)
-: YouTube downloader and media extractor.
-
-curl(1)
-: HTTP client for downloading content.
-
-jq(1)
-: JSON processor for parsing metadata.
-
-mpv(1)
-: Media player backend.
-
 SEE ALSO
 ========
 
-mpvc(1), mpvc-tui(1), fzf(1), yt-dlp(1), mpv(1)
+mpvc-fzf(1), mpvc-web(1), mpvc-tui(1), mpvc-equalizer(1)
+mpv(1), fzf(1), yt-dlp(1), mpv(1)
 
 AUTHOR
 ======

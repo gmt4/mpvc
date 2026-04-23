@@ -1,7 +1,7 @@
 ---
 title: mpvc-tui(1)
 section: 1
-date: April 21, 2026
+date: April, 2026
 ---
 
 NAME
@@ -94,25 +94,17 @@ MPV_SOCKET
 XDG_CONFIG_HOME
 : Directory where mpvc configuration is stored. Defaults to ~/.config/ if not set.
 
-DEPENDENCIES
-============
 
-mpv(1)
-: Media player engine
+FILES
+=====
 
-mpvc(1)
-: mpv client
-
-notify-send(1)
-: Desktop notifications (Linux/Unix)
-
-rlwrap(1)
-: Readline wrapper for TUI input
+~/.config/mpvc/mpvc.conf
+: mpvc-specific configuration file.
 
 SEE ALSO
 ========
 
-mpvc(1), mpvc-fzf(1), mpv(1)
+mpv(1), mpc(1), mpvc-fzf(1), mpvc-web(1), mpvc-tui(1), mpvc-equalizer(1)
 
 AUTHOR
 ======

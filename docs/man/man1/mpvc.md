@@ -1,7 +1,7 @@
 ---
 title: mpvc(1)
 section: 1
-date: April 21, 2026
+date: April, 2026
 ---
 
 NAME
@@ -12,8 +12,7 @@ mpvc - mpc-like command-line control interface for mpv
 SYNOPSIS
 ========
 
-    mpvc [options] [file|URL|PLAYLIST|-]
-    mpvc [options] [files]
+mpvc [options] [file|url|playlist|-]
 
 DESCRIPTION
 ===========
@@ -158,3 +157,4 @@ REPORTING BUGS
 ==============
 
 Report bugs at: https://github.com/gmt4/mpvc/issues
+
