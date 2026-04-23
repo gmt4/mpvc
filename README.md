@@ -238,15 +238,17 @@ ln -f -s $PWD/docs/config/yt-dlp.conf ~/.config/mpvc/
 
 ### Manuals
 
-The `mpc(1)` man page covers most of the functionality that mpc & mpvc have in common.
 
-* [mpc(1): https://linux.die.net/man/1/mpc](https://linux.die.net/man/1/mpc)
+* [docs/man/](../../blob/master/docs/man/)
+: For the `mpvc(1)` command read the mpvc manual page.
 
-For the `mpv(1)` command read the mpv reference manual at:
 
 * [https://mpv.io/manual/stable/](https://mpv.io/manual/stable/)
+: For the `mpv(1)` command read the mpv reference manual.
 
-For functionality specific of this [fork](https://github.com/gmt4/mpvc) your best aim are the [logbook](#logbook) & [screencasts](#screencasts).
+
+* [logbook](#logbook)
+: For the functionality specific of this [fork](https://github.com/gmt4/mpvc) your best aim is the [logbook](#logbook)
 
 ### Logbook
 

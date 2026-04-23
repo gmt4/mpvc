@@ -68,7 +68,7 @@ mpvc_web_defaults()
     MPVC_WEB_CGI="$MPVC_WEB_ROOT/cgi-bin/mpvc"
 
     # if present load user config
-    if [ -r "$MPVC_CONFIG" ]; then
+    if [ -r "$MPVC_CONFIG" -a -O "$MPVC_CONFIG" ]; then
         . "$MPVC_CONFIG"
     fi
 }
@@ -92,7 +92,7 @@ mpvc_web_style()
 {
     cat <<-EOF
 :root { --body-font-family: monospace,monospace; --body-color: #222; --body-background: #fff; --link-color: #a0a; }
-@media (max-width: 768px) { :root { --body-font-size: 0.95em; } }
+@media (max-width: 768px) { :root { --body-font-size: 0.99em; } }
 @media (min-width: 768px) { :root { --body-font-size: 1.00em; } }
 
 @media (prefers-color-scheme: light) { html { filter: invert(0.0);  } :root { } }
@@ -296,11 +296,11 @@ main()
         thumbnail64)            mpvc_redir "\$($MPVC-fzf thumbnail64)" ;;
         filename)               mpvc_redir "\$($MPVC filename current full)" ;;
         metadata)               mpvc_plain "\$($MPVC metadata)" ;;
-        related)                mpvc_plain "\$($MPVC-fzf \"\$($MPVC get media-title)\")" ;;
+        #related)               mpvc_plain "\$($MPVC-fzf \"\$($MPVC get media-title)\")" ;;
 
         mpvc+status)            mpvc_cmd status | mpvc_strip ;;
         mpvc+playlist)          mpvc_cmd playlist | mpvc_strip ;;
-        mpvc+chapter-list)      mpvc_cmd chapter-list | mpvc_strip ;;
+        mpvc+chapter-list)      mpvc_cmd chapter-list-nr | mpvc_strip ;;
 
         mpvc-fzf[+\ ]*)         mpvc_plain "\$($PROGDIR/\$(mpvc_split "\$@"))" ;;
         mpvc-equalizer[+\ ]*)   mpvc_plain "\$($PROGDIR/\$(mpvc_split "\$@"))" ;;
@@ -328,7 +328,7 @@ mpvc_web_index()
     <meta http-equiv="pragma" content="no-cache" />
     <meta http-equiv="Cache-Control" content="no-store" />
 
-    $(if [ -n "$MPVC_WEB_HTML_REFRESH" ]; then echo "<meta http-equiv=refresh content=$MPVC_WEB_HTML_REFRESH;url=.> ⟳ ${MPVC_WEB_HTML_REFRESH}s"; fi)
+    $(if [ -n "$MPVC_WEB_HTML_REFRESH" ]; then echo "<meta http-equiv=refresh content=$MPVC_WEB_HTML_REFRESH> <!-- <span>⟳ ${MPVC_WEB_HTML_REFRESH}</span> -->"; fi)
     <link rel="IconFile" href="apple-touch-icon.svg" sizes="64x64">
     <link rel="apple-touch-icon" href="apple-touch-icon.svg">
     <title> 🎧$MPVC_WEB_HOSTNAME mpvc</title>
@@ -388,20 +388,6 @@ mpvc_web_index()
             <a href="?cmd=mpvc playrand">rnd</a>
         </li>
         <li>
-            <a href="?cmd=mpvc togglev" title="togglev">video</a>
-            <a href="?cmd=mpvc aspect"  title="togglea">aspect</a>
-            <a href="?cmd=mpvc togglew" title="togglew">win</a>
-            <a href="?cmd=mpvc togglef" title="togglef">fs</a>
-            <a href="?cmd=mpvc togglei" title="togglei">idle</a>
-        </li>
-        <li>
-            <a href="?cmd=mpvc cplayrand">crand</a>
-            <a href="?cmd=mpvc creplay">creplay</a>
-            <a href="?cmd=mpvc cloop">cloop</a>
-            <a href="?cmd=mpvc cprev" title="cprev">ch-</a>
-            <a href="?cmd=mpvc cnext" title="cnext">ch+</a>
-        </li>
-        <li>
             $(printf " +30\n+20\n+10\n+5\n0\n-5\n-10\n-20\n-30" | mpvc_web_select_form "mpvc -q vol" "${MPVC_WEB_SHORTCUT_VOL}")
         </li>
         </ul>
@@ -456,13 +442,17 @@ mpvc_web_index()
         <details>
         <summary>
         [
-            <a href="#mpvc-web-extras" name="mpvc-web-extras">Extras</a> (toggle open/close)
+            <a href="#mpvc-web-extras" name="mpvc-web-extras">Extras</a>
+            <a href="#mpvc-web-extras-full" name="mpvc-web-extras-full">#full</a>
         ]
         </summary>
         <hr>
         <ul>
             <li>
-                $(mpvc stash list | awk 'NR>1{print $NF}' | mpvc tac | mpvc_web_select_form "mpvc -q stash apply" "${MPVC_WEB_SHORTCUT_APPLY}")
+                $(mpvc stash list | mpvc tac | mpvc-fzf -0 | mpvc_web_select_form "mpvc -q stash apply" "${MPVC_WEB_SHORTCUT_APPLY}")
+            </li>
+            <li>
+                $(mpvc stash list | mpvc tac | mpvc-fzf -0 | mpvc_web_select_form "mpvc -q stash append" "${MPVC_WEB_SHORTCUT_APPLY}")
             </li>
             <li>
                 $([ -n "${MPVC_WEB_DEV:-}" ] && mpvc_web_cli)
@@ -472,6 +462,9 @@ mpvc_web_index()
             </li>
             <li>
                 $(mpvc-equalizer preset | awk '/ #preset:/ {print $NF}' | mpvc_web_select_form "mpvc-equalizer load" "${MPVC_WEB_SHORTCUT_EQUALIZER}")
+            </li>
+            <li>
+                $("$MPVC_WEB_CGI" mpvc save | mpvc_web_select_form "mpvc-fzf -g" "${MPVC_WEB_SHORTCUT_SEEK}")
             </li>
             <li>
                 $(printf " +15\n+10\n+5\n+2\n+1\n0\n-1\n-2\n-5\n-10\n-15" | mpvc_web_select_form "mpvc -q track" "${MPVC_WEB_SHORTCUT_TRACK}")
@@ -495,6 +488,20 @@ mpvc_web_index()
                 <a href="." title="reset">rst</a>
                 <input type="color" id="link-color" name="link-color" onchange="toggleLinkColor()" style="width: 1em !important; height: 1em; padding:0 0;">
             </li>
+        <li>
+            <a href="?cmd=mpvc togglev" title="togglev">video</a>
+            <a href="?cmd=mpvc aspect"  title="togglea">aspect</a>
+            <a href="?cmd=mpvc togglew" title="togglew">win</a>
+            <a href="?cmd=mpvc togglef" title="togglef">fs</a>
+            <a href="?cmd=mpvc togglei" title="togglei">idle</a>
+        </li>
+        <li>
+            <a href="?cmd=mpvc cplayrand">crand</a>
+            <a href="?cmd=mpvc creplay">creplay</a>
+            <a href="?cmd=mpvc cloop">cloop</a>
+            <a href="?cmd=mpvc cprev" title="cprev">ch-</a>
+            <a href="?cmd=mpvc cnext" title="cnext">ch+</a>
+        </li>
         </ul>
         </details>
 
@@ -515,17 +522,10 @@ mpvc_web_index()
         🎧
         <a href="$PROGURL">$PROGNAME</a>
         <a href="$PROGURL">$PROGVERSION</a>
-        <a href="${PROGURL%/*}">$PROGAUTHOR</a> (c) $(date +%Y)
+        <a href="${PROGURL%/*}">$PROGAUTHOR</a> © $(date +%Y)
         <a href="javascript:Help()" title="help" ${MPVC_WEB_SHORTCUT_HELP}>/h</a>
     </body>
 </html>
-EOF
-}
-
-mpvc_web_favicon()
-{
-    # <svg viewBox="0 0 192 80" xmlns="http://www.w3.org/2000/svg" > <text x="0" y="30" font-size="45px" >🎧</text> </svg> <!-- mpvc -->
-    cat <<EOF
 EOF
 }
 
@@ -566,8 +566,8 @@ mpvc_web_setup()
         fi
 
         mpvc_web_index > "$MPVC_WEB_ROOT/index.html"
-        mpvc_web_favicon > "$MPVC_WEB_ROOT/favicon.ico"
-        mpvc_web_favicon > "$MPVC_WEB_ROOT/apple-touch-icon.svg"
+        echo > "$MPVC_WEB_ROOT/favicon.ico"
+        echo > "$MPVC_WEB_ROOT/apple-touch-icon.svg"
         if [ -n "$MPVC_WEB_CSS_STYLE" ]; then
             cat "$MPVC_WEB_CSS_STYLE" > "$MPVC_WEB_ROOT/style.css"
         else

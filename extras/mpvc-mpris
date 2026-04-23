@@ -26,10 +26,10 @@ mpris_defaults()
         export PULSE_SERVER="unix:$PULSE_SOCKET"
     fi
     playerPath=org.mpris.MediaPlayer2.Player
-    MPVC_MPRIS_PLAYERS=${MPVC_MPRIS_PLAYERS:-"mpv mpd vlc"}
+    MPVC_MPRIS_PLAYERS="mpv mpd vlc"
 
-    if [ -z "${DBUS:-}" ]; then usage "$PROGNAME: Error no dbus-send found (required)"; fi
-    if [ -z "${PACTL:-}" ]; then usage "$PROGNAME: Error no pactl found (required)"; fi
+    if [ -z "${DBUS}" ]; then usage "$PROGNAME: Error no dbus-send found (required)"; fi
+    if [ -z "${PACTL}" ]; then usage "$PROGNAME: Error no pactl found (required)"; fi
 }
 
 mpris_cmd()
@@ -77,7 +77,7 @@ mpris_set_shuffle()
 {
     local current=$(mpris_get string:Shuffle | awk '/^   variant / {print $3}')
     if [ "$current" = "true" ]; then other=false; else other=false; fi
-    mpris_set string:Shuffle variant:boolean:$other
+    mpris_set string:Shuffle "variant:boolean:$other"
 }
 
 mpris_detect_player()

@@ -17,50 +17,82 @@ set -euf
 PACTL=$(command -v pactl) || { echo "pactl not found"; exit 1; }
 FFMPEG=$(command -v ffmpeg) || { echo "ffmpeg not found"; exit 1; }
 FFPROBE=$(command -v ffprobe) || { echo "ffprobe not found"; exit 1; }
+FFMPEG_LOGLEVEL=${FFMPEG_LOGLEVEL:-warning}
 
 mpvc_cut_ffmpeg()
 {
-    "$FFMPEG" -hide_banner -loglevel "$LOGLEVEL" -i "$path" -ss "$pointA" -to "$pointB" -- "$@"
+    "$FFMPEG" -hide_banner -loglevel "$FFMPEG_LOGLEVEL" -- "$@"
 }
 
 mpvc_cutfile()
 {
-    operation="$1"
-    path="$2"
-    pointA="$3"
-    pointB="$4"
+    local operation="$1"
+    local path="$2"
+    local pointA="$3"
+    local pointB="$4"
+    local length="$(mpvc -f '%length%')"
 
     if [ -z "$path" ] || [ ! -f "$path" ]; then usage 1; fi
     if [ -z "$pointA" ] || [ "$pointA" = "no" ]; then usage 1; fi
-    if [ -z "$pointB" ] || [ "$pointB" = "no" ]; then pointB="$(mpvc -f "%length%")"; fi
+    if [ -z "$pointB" ] || [ "$pointB" = "no" ]; then pointB="$length"; fi
 
-    fileExt="${path#*.}"
-    infile="${path##*/}"
-    infile="${infile##"$fileExt"}"
-    outfile="${outfile:-${infile}_${pointA}_${pointB}}"
-    LOGLEVEL=${LOGLEVEL:-warning}
+    if ! printf '%f' "$pointA" >/dev/null 2>&1; then usage 1; fi
+    if ! printf '%f' "$pointB" >/dev/null 2>&1; then usage 1; fi
+
+    local fileExt="${path#*.}"
+    local infile="${path##*/}"
+    local infile="${infile##"$fileExt"}"
+    local outfile="${infile}_${pointA}_${pointB}"
+
+    outfile=$(printf '%s' "$outfile" | sed 's/[^a-zA-Z0-9._-]/_/g')
 
     echo "# $PROGNAME $operation $pointA $pointB $fileExt in $infile out $outfile"
 
     case "$operation" in
-    vidcord) # perform lossy transcode to x264
+    vidcord)
+        # perform lossy transcode to x264
         mpvc_cut_ffmpeg \
-               -max_muxing_queue_size 1024 \
-               -sws_flags lanczos -vf "scale=-1:720" \
-               -c:v libx264 -crf 25 -preset fast \
-               -c:a copy -map 0 -f mp4 "$outfile.mp4"
-    ;;
-    lossless) mpvc_cut_ffmpeg -c:v libx265 -x265-params lossless=1 "$outfile.mp4" ;;
-    lossy)    mpvc_cut_ffmpeg "$outfile.mp4" ;;
-    dryrun)   mpvc_cut_ffmpeg -f null /dev/null ;;
-    *)        mpvc_cut_ffmpeg -c copy -map 0 "$outfile.$fileExt" ;;
+                -i "$path" -ss "$pointA" -to "$pointB"  \
+                -max_muxing_queue_size 1024 \
+                -sws_flags lanczos -vf "scale=-1:720" \
+                -c:v libx264 -crf 25 -preset fast \
+                -c:a copy -map 0 -f mp4 "$outfile.mp4"
+        ;;
+    lossless)
+        mpvc_cut_ffmpeg \
+                -i "$path" -ss "$pointA" -to "$pointB"  \
+                -c:v libx265 -x265-params lossless=1 "$outfile.mp4"
+        ;;
+    lossy)
+        mpvc_cut_ffmpeg \
+                -i "$path" -ss "$pointA" -to "$pointB"  \
+                "$outfile.mp4"
+        ;;
+    dryrun)
+        mpvc_cut_ffmpeg \
+                -i "$path" -ss "$pointA" -to "$pointB"  \
+                -f null /dev/null
+        ;;
+    default)
+        mpvc_cut_ffmpeg \
+                -i "$path" -ss "$pointA" -to "$pointB"  \
+                -c copy -map 0 "$outfile.$fileExt"
+        ;;
+    *)
+        usage
+        ;;
     esac
 }
 
 mpvc_cut()
 {
-    mpvc_cutfile "$operation" "$(mpvc g 'path')" "$(mpvc g 'ab-loop-a')" "$(mpvc g 'ab-loop-b')"
+    local path=$(mpvc g 'path') || usage 1
+    local pointA=$(mpvc g 'ab-loop-a') || usage 1
+    local pointB=$(mpvc g 'ab-loop-b') || usage 1
+
+    mpvc_cutfile "$operation" "$path" "$pointA" "$pointB"
 }
+
 
 mpvc_cut_vres()
 {
@@ -72,7 +104,7 @@ mpvc_cut_vres()
 
 mpvc_cut_info()
 {
-    mode=$1; shift
+    local mode="$1"; shift
     "$FFPROBE" -hide_banner -loglevel info "$@" 2>&1 |
         case "$mode" in
         info) awk '/^Input/ {print} /Stream #/ {print} /Duration:/ {print}' ;;
@@ -93,18 +125,19 @@ mpvc_cut_asrc()
 
 mpvc_screencast()
 {
-    vres=$(mpvc_cut_vres)
-    asrc=$(mpvc_cut_asrc)
+    local vres="$(mpvc_cut_vres)"
+    local asrc="$(mpvc_cut_asrc)"
 
-    fout="${fout:-mpvc-cast-$(date -Iseconds | sed 's/:/-/g').mkv}"
-    LOGLEVEL=${LOGLEVEL:-warning}
-    framerate=${framerate:-25}
+    local fout="mpvc-cast-$(date +%Y%m%d-%H%M%S).mkv"
+    local framerate="25"
 
-    if [ -z "$vres" ]; then usage; fi
-    if [ -z "$asrc" ]; then usage; fi
+    if [ -z "$vres" ]; then usage 1; fi
+    if [ -z "$asrc" ]; then usage 1; fi
 
     echo "# $PROGNAME: recording vres $vres asrc $asrc to $fout (ctl+c to finish)"
-    "$FFMPEG" -hide_banner -loglevel "$LOGLEVEL" -video_size "$vres" -framerate "$framerate" -f x11grab -i :0.0 -f pulse -ac 2 -i "$asrc" "$fout"
+    "$FFMPEG" -hide_banner -loglevel "$FFMPEG_LOGLEVEL" \
+        -video_size "$vres" -framerate "$framerate" \
+        -f x11grab -i :0.0 -f pulse -ac 2 -i "$asrc" "$fout"
 }
 
 usage()

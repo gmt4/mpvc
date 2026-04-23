@@ -79,7 +79,7 @@ mpvctui_config()
     mkdir -p "$MPVC_CONFIG_DIR"
     touch "$MPVC_TUI_HISTORY"
     # if present load user config
-    if [ -r "$MPVC_CONFIG" ]; then
+    if [ -r "$MPVC_CONFIG" -a -O "$MPVC_CONFIG" ]; then
         . "$MPVC_CONFIG"
     fi
     if ! quiet command -v rlwrap; then
@@ -118,7 +118,7 @@ mpvctui_color()
 {
     ccolor=$1; shift;
     if [ -n "$NO_COLOR" ]; then
-        printf "%s" "${@}"
+        printf '%s' "${@}"
     else
         printf "${ccolor}$@${MPVC_TUI_CRST}"
     fi
@@ -155,9 +155,9 @@ mpvctui_watcher()
         mpvctui_color $MPVC_TUI_COLOR0 ">> "
         if [ -n "${show_chapters:-}" ]
         then
-            printf "%s" "$(mpvc "${MPVC_TUI_CMD_CSTATUS}")"
+            printf '%s' "$(mpvc "${MPVC_TUI_CMD_CSTATUS}")"
         else
-            printf "%s" "$(mpvc "${MPVC_TUI_CMD_STATUS}")"
+            printf '%s' "$(mpvc "${MPVC_TUI_CMD_STATUS}")"
         fi
         if [ "$tuimode" = "ttt" ]; then
             mpvctui_color $MPVC_TUI_COLOR1 " (m)"
@@ -182,7 +182,7 @@ mpvctui_watcher()
         mpvc "${MPVC_TUI_CMD_PLAYLIST}"
     fi
     mpvctui_header1 "Prompt"
-    ${MPVC_TUI_CMD_PROMPT}
+    [ -n "${MPVC_TUI_CMD_PROMPT}" ] && "${MPVC_TUI_CMD_PROMPT}"
 }
 
 mpvctui_input()
@@ -194,8 +194,6 @@ mpvctui_input()
         echo "$MPVC_TUI_PROMPT"; read -r cmd
     fi
     case "$cmd" in
-        #'!'[a-zA-z0-9]*) not_eval "${cmd##!}";;
-        #'!!'[a-zA-z0-9]*) not_shell -c "${cmd##!!}";;
         'mpvc '[a-zA-z0-9-]*) QUIETFLAG=true mpvc ${cmd##mpvc } ;;
         'mpvc-tui '[a-zA-z0-9-]*) mpvc-tui ${cmd##mpvc-tui } ;;
         'mpvc-fzf '[a-zA-z0-9-]*) mpvc-fzf ${cmd##mpvc-fzf } ;;
@@ -252,7 +250,7 @@ mpvctui_mouse_buttons()
 
     mpvc_status=$(mpvc -f '#%position%/%playlistlength% %=chapter%/%chapters% (%percentage%%%) %volume%%%')
     mpvc_buttons="${mpvc_button_mute}${mpvc_button_pause}${mpvc_button_video}${mpvc_button_cache}${mpvc_button_repeat}${mpvc_button_single}${mpvc_button_idle} <t> [c] {s} (v) ${mpvc_status}"
-    printf "%s" "$mpvc_buttons"
+    printf '%s' "$mpvc_buttons"
 }
 
 mpvctui_mouse_events()
@@ -413,8 +411,8 @@ mpvctui_main()
         -H|history)      shift; cat "$MPVC_TUI_SCROBBLER" ;;
         -M|Mouse)        shift; mpvctui_launch "-m$arg1"; exit ;; # -g 15x1
         -m|mouse)        shift; mpvctui_mouse "$arg1" ;;
-        -n|Notify)       shift; mpvctui_notify_loop "${1:-}" ;;
-        -N|notify)       shift; mpvctui_notify "$@" ;;
+        -n|notify)       shift; mpvctui_notify_loop "${1:-}" ;;
+        -N|Notify)       shift; mpvctui_notify "$@" ;;
         -k|kill)         shift; pkill -f "$PROGNAME" ;;
         -t|tui)          shift; mpvctui_watch ;;
         -tt|tinytui)     shift; mpvctui_watch "tt" ;;

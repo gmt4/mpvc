@@ -97,6 +97,7 @@ EOF
  setr                     : Set JSON MPV property from $PROGNAME socket.
  cmd                      : Send command to $PROGNAME socket.
  cmdr                     : Send command to $PROGNAME socket & retrieve raw JSON.
+ sockrepl                 : mpv socket REPL (just socat)
  sockcmd                  : Send MPV JSON IPC command to $PROGNAME socket.
  socklist                 : List $PROGNAME sockets.
  socklista                : List $PROGNAME sockets (active).
@@ -235,7 +236,7 @@ mpvc_config()
     # if not present, create config files
     if [ ! -e "$MPVC_CURL_CACHE" ]; then true > "$MPVC_CURL_CACHE"; fi
     # if present load user config
-    if [ -r "$MPVC_CONFIG" ]; then
+    if [ -r "$MPVC_CONFIG" -a -O "$MPVC_CONFIG" ] && mpvc_check_user_perms "$MPVC_CONFIG"; then
         . "$MPVC_CONFIG"
     else
         warn "# $PROGNAME Warning: ${MPVC_CONFIG##"$HOME/"} not found, see docs/mpvc.conf for defaults"
@@ -270,7 +271,7 @@ mpvc_curl_cache()
 }
 
 mpvc_curl_cache_json() { mpvc_curl_cache "https://youtube.com/oembed?url=$1"; }
-mpvc_curl() { curl -sL -A 'Mozilla/5.0' "$@"; }
+mpvc_curl() { curl -s --location --proto =https -A 'Mozilla/5.0' "$@"; }
 
 mpvc_ytquery_json() {
     for i in "$@"
@@ -334,7 +335,10 @@ mpvc_sockrepl() { $MPVC_SOCAT - "$MPVC_SOCKET"; }
 mpvc_idleloop() { $MPVC_SOCAT -t0 -,ignoreeof "$MPVC_SOCKET"; }
 
 mpvc_cmdr_() { echo "{ \"command\": [ $(for i in "$@"; do printf "\"%s\", " "$i"; done) ] }"; }
-mpvc_cmdr()  { equiet echo "$(mpvc_cmdr_ "$@")" | mpvc_sockrepl; }
+mpvc_cmdr()  {
+    if [ -n "${1:-}" -a "${1:-}" = "run" ]; then return; fi # disable mpv run command
+    equiet echo "$(mpvc_cmdr_ "$@")" | mpvc_sockrepl;
+}
 mpvc_ecmdr() {
     r=$(mpvc_cmdr "$@"); case "$r" in *"success"*|'') ;; *) echo "$r"; return 1 ;; esac
 }
@@ -456,9 +460,7 @@ mpvc_get_playlist() {
         {
             lid = NR - 1
             if (!(first <= lid && lid <= last))
-            {
                 next
-            }
             sub("^ ","",$0)
             lines[++nlines]=$0
             urls=urls" \""$0"\""
@@ -473,15 +475,13 @@ mpvc_get_playlist() {
                title=titles[nr]
 
                fmtstr="%2d  %s"
-               if (lpos == lid)
+               color_entry = (lpos == lid && !ENVIRON["NO_COLOR"])
+               if (color_entry)
                {
-                   if (!ENVIRON["NO_COLOR"])
-                   {
-                       ytcmd=sprintf("%s cmd expand-text \\${percent-pos}", mpvc)
-                       ytcmd | getline pct
-                       nchars=int((cols-(length(lid)+1+1+1)) * (pct/100))
-                       fmtstr="\033[7m%2d  %-"nchars"s\033[0m"
-                   }
+                   ytcmd=sprintf("%s cmd expand-text \\${percent-pos}", mpvc)
+                   ytcmd | getline pct
+                   nchars=int((cols-(length(lid)+1+1+1)) * (pct/100))
+                   fmtstr="\033[7m%2d  %-"nchars"s\033[0m"
                }
                line=sprintf(fmtstr, lid, truncate(title))
                print line
@@ -534,7 +534,7 @@ mpvc_stash() {
         show|list|ls)
             if [ -z "${1:-}" ]; then ls -ltr "$MPVC_STASH_DIR" | tail -n +2; else cat "$MPVC_STASH_DIR/$1"; fi
             ;;
-        edit|ed) ${EDITOR:-vi} "$MPVC_STASH_DIR/$1" ;;
+        edit|ed) "${EDITOR:-vi}" "$MPVC_STASH_DIR/$1" ;;
         drop|rm) rm -i "$MPVC_STASH_DIR/$1" ;;
         push|cp)
             stashid="${1:-}"
@@ -823,44 +823,31 @@ mpvc_chapter_list_json()
 mpvc_chapter_list()
 {
     mode="${1:-}"
-    chapter_pos=$(mpvc_get "chapter")
-    chapter_count=$(mpvc_get "chapter-list/count")
+    ch_pos=$(mpvc_get "chapter")
+    ch_count=$(mpvc_get "chapter-list/count")
 
-    firstlast=$(mpvc_get_terminal_height "$chapter_pos" "$chapter_count")
+    firstlast=$(mpvc_get_terminal_height "$ch_pos" "$ch_count")
     mpvc_chapter_list_json |
         grep -o '"title":".*' | sed 's/"title":"//; s/","time":.*$//' |
-        awk -v mode="$mode" -v chapter_pos="$chapter_pos" -v firstlast="$firstlast" \
+        awk -v mode="$mode" -v ch_pos="$ch_pos" -v firstlast="$firstlast" \
         '
         BEGIN {
             split(firstlast, flarray, " ")
             first=flarray[1]; last=flarray[2]
         }
-
         {
-            chapternr = NR-1
-            if (!(first <= chapternr && chapternr <= last) && (mode == "short"))
-            {
+            ch_nr = NR-1
+            if (!(first <= ch_nr && ch_nr <= last) && (mode == "short"))
                 next
-            }
 
-            if (chapter_pos == chapternr)
-            {
-                if (ENVIRON["NO_COLOR"])
-                {
-                    if (mode == "numbered") printf("%2d  %s\n", chapternr, $0);
-                    else printf("%s\n", $0);
-                }
-                else
-                {
-                    if (mode == "numbered") printf("%2d  \033[7m%s\033[0m\n", chapternr, $0);
-                    else printf("\033[7m%s\033[0m\n", $0);
-                }
-            }
-            else
-            {
-                if (mode == "numbered") printf("%2d  %s\n", chapternr, $0);
-                else printf("%s\n", $0);
-            }
+            fmtstr="%s"
+            color_entry = (ch_pos == ch_nr && !ENVIRON["NO_COLOR"])
+            if (color_entry)
+                fmtstr="\033[7m%s\033[0m"
+            line=sprintf(fmtstr, $0)
+            if (mode == "numbered")
+               line=sprintf("%2d  "fmtstr, ch_nr, $0)
+            print line
         }'
         QUIETFLAG=true
 }
@@ -1033,6 +1020,19 @@ mpvc_handle_socket() {
     fi
 }
 
+mpvc_check_user_perms() {
+    # check file perms
+    perms=$(equiet stat -Lc '%a' "$1" || equiet stat -Lf '%Lp' "$1")
+    if [ "$perms" != "600" ] && [ "$perms" != "644" ] && [ "$perms" != "664" ]; then
+        die 2 "$PROGNAME: Error: File ${1##"$HOME/"} has unsafe permissions: $perms."
+    fi
+    # check file owner
+    owner=$(equiet stat -c '%u' "$1" || equiet stat -f '%Du' "$1")
+    if [ "$owner" != "$(id -u)" ] && [ "$owner" != "0" ]; then
+        die 2 "$PROGNAME: Error: File ${1##"$HOME/"} unexpected owner: $owner"
+    fi
+}
+
 mpvc_validate_socket() {
     socket=$MPVC_SOCKET
     # validate deps
@@ -1047,15 +1047,7 @@ mpvc_validate_socket() {
         die 2 "$PROGNAME: Error: Socket ${socket##"$HOME/"} does not exist. Use mpvc --mpv to start one."
     fi
     # test socket perms
-    perms=$(equiet stat -c '%a' "$socket" || equiet stat -f '%Lp' "$socket")
-    if [ "$perms" = "777" ] || [ "$perms" = "666" ]; then
-        die 2 "$PROGNAME: Error: Socket ${socket##"$HOME/"} has unsafe permissions: $perms."
-    fi
-    # test socket owner
-    owner=$(equiet stat -c '%u' "$socket" || equiet stat -f '%Du' "$socket")
-    if [ "$owner" != "$(id -u)" ] && [ "$owner" != "0" ]; then
-        die 2 "$PROGNAME: Error: Socket ${socket##"$HOME/"} unexpected owner: $owner"
-    fi
+    mpvc_check_user_perms "$socket"
     # test if socket is open
     if [ "$(mpvc_get pause)" = "" ]; then
         die 3 "$PROGNAME: Error: No files added to ${MPVC_SOCKET##"$HOME/"}."
@@ -1234,7 +1226,7 @@ main() {
             --lowfi|lowfi)                   MPVC_FMTSTR="$MPVC_FMTSTR_LOFI" ;;
             --status|status)                 ;;
             --cstatus|cstatus)               MPVC_FMTSTR=$(echo "$MPVC_FMTSTR"|sed 's/%title%/%chapter%/') ;;
-            --config|config)                 ${EDITOR:-vi} ${MPVC_CONFIG}; QUIETFLAG=true;;
+            --config|config)                 "${EDITOR:-vi}" "${MPVC_CONFIG}"; QUIETFLAG=true;;
             --ascii|ascii)                   mpvc_ascii; return;;
 
             # global argument parsing

@@ -43,7 +43,9 @@ mpvcfzf_defaults()
     : "${MPVC_FZF_PARSE_CHANNEL:=0}"
     : "${MPVC_FZF_PARSE_PLAYLIST:=0}"
     : "${MPVC_FZF_INVID_URL:=https://inv.nadeko.net}"
-    : "${MPVC_FZF_CURLOPTS:=-fsSL -A Mozilla/5.0 --retry 1 --referer $MPVC_FZF_INVID_URL/feed/popular}"
+    : "${MPVC_CURL_CONFIG:=$MPVC_CONFIG_DIR/curlrc}"
+#    : "${MPVC_FZF_CURLOPTS:=--config $MPVC_CURL_CONFIG}"
+    : "${MPVC_FZF_CURLOPTS:=-fsSL -A Mozilla/5.0 --retry 1}"
     : "${MPVC_FZF_IMGVIEWER:=lsix}"
 
     : "${MPVC_FZF_SOMAFM_FILE:=$MPVC_CONFIG_DIR/feeds/somafm-channels.json}"
@@ -64,7 +66,7 @@ mpvcfzf_config()
     if [ ! -d "$MPVC_CACHE_DIR" ]; then mkdir -p "$MPVC_CACHE_DIR"; fi
     if [ ! -d "$MPVC_CACHE_DIR/thumbnail/" ]; then mkdir -p "$MPVC_CACHE_DIR/thumbnail/"; fi
     # if present load user config
-    if [ -r "$MPVC_CONFIG" ]; then
+    if [ -r "$MPVC_CONFIG" -a -O "$MPVC_CONFIG" ]; then
         . "$MPVC_CONFIG";
     fi
     if ! quiet command -v fzf; then
@@ -76,6 +78,11 @@ mpvcfzf_config()
 mpvcfzf_curl()
 {
     curl ${MPVC_FZF_CURLOPTS} "$@"
+}
+
+mpvcfzf_getalnum()
+{
+    sed 's/[^a-zA-Z0-9 ]//g; s/ /+/g'
 }
 
 mpvcfzf_getvideo_id()
@@ -186,7 +193,8 @@ mpvcfzf_related_play()
 
 mpvcfzf_related_once()
 {
-    mpvcfzf_related_search "$(MPVC_FZF_PARSE_PLAYLIST=0 mpvcfzf_isearch_once "${1:-$(mpvc get media-title)}" | mpvcfzf_awk 1)"
+    title=$(echo "${1:-$(mpvc get media-title)}" | mpvcfzf_alnum)
+    mpvcfzf_related_search "$(MPVC_FZF_PARSE_PLAYLIST=0 mpvcfzf_isearch_once "$title" | mpvcfzf_awk 1)"
 
 }
 
@@ -210,7 +218,7 @@ mpvcfzf_lyrics()
 
 mpvcfzf_lyrics_ddg()
 {
-    q=$(echo "lyrics $(mpvc -f '%title%')" | sed 's/ /+/g')
+    q=$(echo "lyrics $(mpvc get 'media-title')" | mpvcfzf_getalnum)
     echo "https://ddg.gg?ia=lyrics&iax=lyrics&q=$q"
 }
 
@@ -229,7 +237,7 @@ mpvcfzf_getvideo_id_from_fd()
     echo "$ytfd"
 }
 
-mpvcfzf_thumbnail_attachment()
+mpvcfzf_thumb_attachment()
 {
     yturl="$1"
     ytfd="$yturl"
@@ -242,16 +250,16 @@ mpvcfzf_thumbnail_attachment()
     echo "$thumb"
 }
 
-mpvcfzf_thumbnail_b64()
+mpvcfzf_thumb_b64()
 {
-    yturl=$(mpvcfzf_thumbnail_cache "$@")
+    yturl=$(mpvcfzf_thumb_cache "$@")
     [ -z "$yturl" ] || [ "$yturl" = "null" ] && return
     b64data=$(base64 -w0 "$yturl")
     b64img="data:image/png;base64,$b64data"
     echo "$b64img"
 }
 
-mpvcfzf_thumbnail_cache_url()
+mpvcfzf_thumb_cache_url()
 {
     yturl="$1"
     ytfd="$(echo "$yturl" | sed 's/[:\/]/-/g')"
@@ -262,37 +270,37 @@ mpvcfzf_thumbnail_cache_url()
     echo "$file"
 }
 
-mpvcfzf_thumbnail_cache()
+mpvcfzf_thumb_cache()
 {
-    yturl=$(mpvcfzf_thumbnail_url "$1")
+    yturl=$(mpvcfzf_thumb_url "$1")
     case "$yturl" in
-    ${MPVC_YTDL_OUTPUT}*)               mpvcfzf_thumbnail_attachment "$yturl" ;;
-    https://img.radioparadise.com/*)    mpvcfzf_thumbnail_cache_url "$yturl" ;;
-    https://api.somafm.com/logos/*)     mpvcfzf_thumbnail_cache_url "$yturl" ;;
-    https://i.ytimg.com/*)              mpvcfzf_thumbnail_cache_url "$yturl" ;;
+    ${MPVC_YTDL_OUTPUT}*)            mpvcfzf_thumb_attachment "$yturl" ;;
+    https://img.radioparadise.com/*) mpvcfzf_thumb_cache_url "$yturl" ;;
+    https://api.somafm.com/logos/*)  mpvcfzf_thumb_cache_url "$yturl" ;;
+    https://i.ytimg.com/*)           mpvcfzf_thumb_cache_url "$yturl" ;;
     esac
 }
 
-mpvcfzf_thumbnail_url()
+mpvcfzf_thumb_url()
 {
     yturl="${1:-}"
     yturl="${yturl:-$(mpvc filename current full)}"
     [ -z "$yturl" ] || [ "$yturl" = "null" ] && return
 
+    case "$yturl" in ${MPVC_YTDL_OUTPUT}*) echo "$yturl"; return ;; esac
+
     yturl=$(mpvcfzf_getvideo_id_from_fd "$yturl")
     case "$yturl" in
-    ${MPVC_YTDL_OUTPUT}*)                       echo "$yturl" ;;
+    https://ice?.somafm.com/*-*-aac)            mpvcfzf_thumb_somafm "$yturl";;
 
-    https://ice?.somafm.com/*-*-aac)            mpvcfzf_thumbnail_somafm "$yturl";;
+    https://stream.radioparadise.com/aac*)      mpvcfzf_thumb_rp chan=0 ;;
+    https://stream.radioparadise.com/mellow*)   mpvcfzf_thumb_rp chan=1 ;;
+    https://stream.radioparadise.com/rock*)     mpvcfzf_thumb_rp chan=2 ;;
+    https://stream.radioparadise.com/global*)   mpvcfzf_thumb_rp chan=3 ;;
+    https://stream.radioparadise.com/beyond*)   mpvcfzf_thumb_rp chan=4 ;;
+    https://stream.radioparadise.com/serenity*) mpvcfzf_thumb_rp chan=5 ;;
 
-    https://stream.radioparadise.com/aac*)      mpvcfzf_thumbnail_rp chan=0 ;;
-    https://stream.radioparadise.com/mellow*)   mpvcfzf_thumbnail_rp chan=1 ;;
-    https://stream.radioparadise.com/rock*)     mpvcfzf_thumbnail_rp chan=2 ;;
-    https://stream.radioparadise.com/global*)   mpvcfzf_thumbnail_rp chan=3 ;;
-    https://stream.radioparadise.com/beyond*)   mpvcfzf_thumbnail_rp chan=4 ;;
-    https://stream.radioparadise.com/serenity*) mpvcfzf_thumbnail_rp chan=5 ;;
-
-    https://tilderadio.org/listen)              mpvcfzf_thumbnail_tr ;;
+    https://tilderadio.org/listen)              mpvcfzf_thumb_tr ;;
 
     https://youtube.com/watch*)                 mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
     https://www.youtube.com/watch*)             mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
@@ -304,7 +312,7 @@ mpvcfzf_thumbnail_url()
     esac
 }
 
-mpvcfzf_thumbnail_somafm()
+mpvcfzf_thumb_somafm()
 {
     channel="${1##*/}"
     channel=${channel%-*}
@@ -314,20 +322,20 @@ mpvcfzf_thumbnail_somafm()
         jq -j '.channels | .[] | select(.id == "'"$channel"'") | .largeimage'
 }
 
-mpvcfzf_thumbnail_rp()
+mpvcfzf_thumb_rp()
 {
     mpvcfzf_curl "https://api.radioparadise.com/api/now_playing?$1" | jq -j .cover
 }
 
-mpvcfzf_thumbnail_tr()
+mpvcfzf_thumb_tr()
 {
     mpvcfzf_curl "https://azuracast.tilderadio.org/api/nowplaying" |
         jq -j '.[0] | .now_playing | .song | .art'
 }
 
-mpvcfzf_thumbnail_preview()
+mpvcfzf_thumb_preview()
 {
-    $MPVC_FZF_IMGVIEWER "$(mpvcfzf_thumbnail_cache "$@")"
+    $MPVC_FZF_IMGVIEWER "$(mpvcfzf_thumb_cache "$@")"
 }
 
 mpvcfzf_nextvideo()
@@ -420,7 +428,13 @@ mpvcfzf_localfind()
     )
 }
 
-mpvcfzf_local()
+mpvcfzf_local_search()
+{
+    dir="${1:-}"; shift
+    mpvcfzf_localfind "$dir" "$@" | sed "s|^|$dir|"
+}
+
+mpvcfzf_local_play()
 {
     (
         dir="${1:-}"; shift
@@ -462,7 +476,7 @@ mpvcfzf_quality()
         --bind='ctrl-o:execute-silent(mpvc set ytdl-format {+} &)' \
         --bind='ctrl-r:reload(mpvc-fzf -q)' <<EOF
 bestvideo+bestaudio/best
-bestvideo[vcodec!=vp9]+bestaudio/best"
+bestvideo[vcodec!=vp9]+bestaudio/best
 bestvideo[height<=?4320p]+bestaudio/best
 bestvideo[height<=?2160]+bestaudio/best
 bestvideo[height<=?1440]+bestaudio/best
@@ -686,7 +700,8 @@ usage: $PROGNAME opts # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
   -K|dsearch    : Search DuckDuckGo videos
   -l|local      : Search & play local media at \$1 (handy to pipe to m load)
   -q|quality    : Select and change yt-dlp video quality (ytdl-format)
-  -r|explorer   : Shortcut to search local media at ytdl-archive/
+  -r|explorer   : Shortcut to search & play local media at ytdl-archive/
+  -R|Explorer   : Shortcut to search local media at ytdl-archive/
   -s|search     : Search on Invidious
   -S|socket     : Set mpv socket [default: ${MPVC_SOCKET:-}].
  -SS|socklist   : Select and set the current mpv socket to operate
@@ -723,31 +738,31 @@ main()
         arg1="${2:-}"
 
         case "$arg" in
-        -0|awk0)        shift; mpvcfzf_awk NF; return ;;
-        -1|awk1)        shift; mpvcfzf_awk 1; return ;;
-        -2|awk2)        shift; mpvcfzf_awk 2; return ;;
+        -0|awk0)        shift; mpvcfzf_awk NF; return $?;;
+        -1|awk1)        shift; mpvcfzf_awk 1; return $?;;
+        -2|awk2)        shift; mpvcfzf_awk 2; return $?;;
 
-        -a|stash)       shift; mpvcfzf_stashlist; return ;;
-        -b|browse)      shift; mpvcfzf_urlbrowser "$@"; return ;;
-        -B|urlget)      shift; mpvcfzf_urlget "$@"; return ;;
-        -c|chapters)    shift; mpvcfzf_chapterlist; return ;;
-        -C|cache)       shift; mpvcfzf_icache; return;;
-        -CC|cmds)       shift; mpvcfzf_cmds "$@"; return;;
+        -a|stash)       shift; mpvcfzf_stashlist; return $?;;
+        -b|browse)      shift; mpvcfzf_urlbrowser "$@"; return $?;;
+        -B|urlget)      shift; mpvcfzf_urlget "$@"; return $?;;
+        -c|chapters)    shift; mpvcfzf_chapterlist; return $?;;
+        -C|cache)       shift; mpvcfzf_icache; return $?;;
+        -CC|cmds)       shift; mpvcfzf_cmds "$@"; return $?;;
 
         -d|dir)         shift; cd "$arg1" || return; shift;;
-        -e|eqz)         shift; mpvcfzf_equalizer "$@"; return ;;
-        -f|playlist)    shift; mpvcfzf_playlist; return ;;
-        -F|preview)     shift; mpvcfzf_preview "$@"; return ;;
-        -g|fetch)       shift; mpvcfzf_fetch "$@"; return ;;
-        -G|Fetch)       shift; mpvcfzf_fetch "$(mpvcfzf_iplay "$@")"; return ;;
-        -h|help)        shift; mpvcfzf_usage; return ;;
-        -i|lyrics)      shift; mpvcfzf_lyrics "$arg1"; return ;;
-        -I|Lyrics)      shift; mpvcfzf_lyrics_ddg; return ;;
-        -k|dplay)       shift; mpvcfzf_ddg_play "$arg1"; return ;;
-        -K|dsearch)     shift; mpvcfzf_ddg "$arg1"; return ;;
-        -l|local)       shift; mpvcfzf_local "${@:-.}"; return ;;
-        -L|localfind)   shift; mpvcfzf_localfind "${@:-.}"; return ;;
-        -n|next)        shift; mpvcfzf_nextvideo "$arg1"; return ;;
+        -e|eqz)         shift; mpvcfzf_equalizer "$@"; return $?;;
+        -f|playlist)    shift; mpvcfzf_playlist; return $?;;
+        -F|preview)     shift; mpvcfzf_preview "$@"; return $?;;
+        -g|fetch)       shift; mpvcfzf_fetch "$@"; return $?;;
+        -G|Fetch)       shift; mpvcfzf_fetch "$(mpvcfzf_iplay "$@")"; return $?;;
+        -h|help)        shift; mpvcfzf_usage; return $?;;
+        -i|lyrics)      shift; mpvcfzf_lyrics "$arg1"; return $?;;
+        -I|Lyrics)      shift; mpvcfzf_lyrics_ddg; return $?;;
+        -k|dplay)       shift; mpvcfzf_ddg_play "$arg1"; return $?;;
+        -K|dsearch)     shift; mpvcfzf_ddg "$arg1"; return $?;;
+        -l|local)       shift; mpvcfzf_local_play "${@:-.}"; return $?;;
+        -L|localfind)   shift; mpvcfzf_localfind "${@:-.}"; return $?;;
+        -n|next)        shift; mpvcfzf_nextvideo "$arg1"; return $?;;
 
         -o|osearch)     shift; mpvcfzf_isearch_once "$arg1" ;; # lucky
         -O|Osearch)     shift; mpvcfzf_isearch_once "$arg1" | mpvcfzf_awk1 | mpvc load ;; # lucky
@@ -756,13 +771,14 @@ main()
         -p|splay)       shift; mpvcfzf_iplay "$arg1" | mpvc load; return ;;
         -P|Splay)       shift; mpvcfzf_iplay "$arg1" | mpvc loadc; return ;;
         -q|quality)     shift; mpvcfzf_quality; return ;;
-        -r|explorer)    shift; mpvcfzf_local "$MPVC_YTDL_OUTPUT" "$@"; return ;;
+        -r|explorer)    shift; mpvcfzf_local_play "$MPVC_YTDL_OUTPUT" "$@"; return ;;
+        -R|Explorer)    shift; mpvcfzf_local_search "$MPVC_YTDL_OUTPUT" "$@"; return ;;
         -s|search)      shift; mpvcfzf_isearch "$arg1"; return;;
         -S|socket)      shift; export MPVC_SOCKET="${1:-}"; shift ;;
        -SS|socklist)    shift; mpvcfzf_socklist $arg1; return ;;
-        -t|thumbnail)   shift; mpvcfzf_thumbnail_url "$arg1"; return ;;
-           thumbnail64) shift; mpvcfzf_thumbnail_b64 "$arg1"; return ;;
-        -T|Thumbnail)   shift; mpvcfzf_thumbnail_preview "$arg1" ; return ;;
+        -t|thumbnail)   shift; mpvcfzf_thumb_url "$arg1"; return ;;
+           thumbnail64) shift; mpvcfzf_thumb_b64 "$arg1"; return ;;
+        -T|Thumbnail)   shift; mpvcfzf_thumb_preview "$arg1" ; return ;;
         -u|url)         shift; mpvcfzf_curlsearch_play "$arg1"; return ;;
         -U|Url)         shift; mpvcfzf_curlsearch "$arg1"; return ;;
         -x|launch)      shift; mpvcfzf_launch_term "$@"; exit ;;
