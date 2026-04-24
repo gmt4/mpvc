@@ -4,6 +4,7 @@ Contribute answers in a `Q: A:` format to your favorite Frequently Asked Questio
 
 ## Companion tools
 
+* [fish](https://github.com/fish-shell/fish-shell)
 * [fzf](https://github.com/junegunn/fzf)
 * [cava](https://github.com/karlstav/cava)
 * [yark](https://github.com/Owez/yark)
