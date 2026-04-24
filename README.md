@@ -331,31 +331,32 @@ usage: mpvc-fzf opts # @version v1.8 (c) gmt4 https://github.com/gmt4/mpvc
   -I|Lyrics     : Search given media lyrics on DDG
   -k|dplay      : Search & play DuckDuckGo videos
   -K|dsearch    : Search DuckDuckGo videos
-  -l|local      : Search & play local media at $1 (handy to pipe to m load)
+  -l|local      : Search & play local media at \$1 (handy to pipe to m load)
   -q|quality    : Select and change yt-dlp video quality (ytdl-format)
-  -r|explorer   : Shortcut to search local media at ytdl-archive/
+  -r|explorer   : Shortcut to search & play local media at ytdl-archive/
+  -R|Explorer   : Shortcut to search local media at ytdl-archive/
   -s|search     : Search on Invidious
-  -S|socket     : Set mpv socket [default: ].
+  -S|socket     : Set mpv socket [default: ${MPVC_SOCKET:-}].
  -SS|socklist   : Select and set the current mpv socket to operate
   -t|thumbnail  : Retrieve thumbnail_url from metadata of the current YT-URL
   -T|Thumbnail  : Display thumbnail_url from metadata of the provided YT-URL
   -p|splay      : Search & play media found using Invidious
   -u|url        : Search the given YT URL (supports vids,channels,playlist feeds)
   -U|Url        : Search & play the given YT URL
-  -x|launch     : Starts mpvc-fzf in a new xterm (config $MPVC_TERM) [combine -x with other opts]
+  -x|launch     : Starts $PROGNAME in a new $MPVC_TERM (config \$MPVC_TERM) [combine -x with other opts]
   -y|related    : Search related media on Invidious
   -Y|Related    : Search & play related media using Invidious
   -z|relatedo   : Search current media-title on Invidious and return related media
-  -v|version    : Return the mpvc-fzf version.
+  -v|version    : Return the $PROGNAME version.
 
-    now        : Return a shareable URL to the "now listening" playlist
-    lofi       : Search & play Lo-Fi channels
-    somafm     : Search & play SomaFM channels
-    radioapi   : Search & play Radio-Browser API channels
-    ntsradio   : Search & play NTS-Radio API channels
-    custom     : Search & play your custom feeds (channels, playlists, ...)
-    custom-gen : Generate a template for your custom feeds (channels, playlists, ...)
-    invid-list : List available Invidious instances (set MPVC_FZF_INVID_URL)
+    (--)now     : Return a shareable URL to the "now listening" playlist
+    (--)lofi    : Search & play Lo-Fi channels
+    (--)somafm  : Search & play SomaFM channels
+    (--)rapi    : Search & play Radio-Browser API channels
+    (--)ntsr    : Search & play NTS-Radio API channels
+    (--)custom  : Search & play your custom feeds (channels, playlists, ...)
+    custom-gen  : Generate a template for your custom feeds (channels, playlists, ...)
+    invid-list  : List available Invidious instances (set MPVC_FZF_INVID_URL)
 
 *tips: If unsure about where to begin, start: mpvc-fzf -p 'kupla mirage'
 ```
@@ -377,6 +378,7 @@ usage: mpvc-installer args # @version v1.8 (c) gmt4 https://github.com/gmt4/mpvc
   install-sys    : Install to BINDIR=/usr/local/bin (sets PREFIX=/usr/local)
   uninstall-user : Uninstall from BINDIR=/home/user/bin (sets PREFIX=/home/user)
   uninstall-sys  : Uninstall from BINDIR=/usr/local/bin (sets PREFIX=/usr/local)
+
 *tips: If unsure where to start, start with: mpvc-installer fetch-user
 ```
 
