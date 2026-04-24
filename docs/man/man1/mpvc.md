@@ -43,7 +43,7 @@ Playback Control
 `--next`
 : Jump to the next entry in the playlist.
 
-`--prev `
+`--prev`
 : Jump to the previous entry in the playlist.
 
 Playlist Management
@@ -110,7 +110,7 @@ Display current playlist:
 
 Jump to next track:
 
-    mpvc `--next`
+    mpvc --next
 
 Stop playback:
 
@@ -118,7 +118,7 @@ Stop playback:
 
 Enable repeat mode:
 
-    mpvc `--repeat`
+    mpvc --repeat
 
 Remove track with ID 3:
 

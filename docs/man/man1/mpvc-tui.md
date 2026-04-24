@@ -12,7 +12,7 @@ mpvc-tui - Terminal User Interface for displaying the MPV playlist and playback
 SYNOPSIS
 ========
 
-	mpvc-tui [options] [files]
+mpvc-tui [options] [files]
 
 DESCRIPTION
 ===========
