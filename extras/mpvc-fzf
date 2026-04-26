@@ -224,8 +224,8 @@ mpvcfzf_lyrics_ddg()
 
 mpvcfzf_getvideo_id_from_fd()
 {
-    ytfd=$1
-    ytout=$(mpvcfzf_icache_output_dir)
+    ytfd="$1"
+    ytout=$(mpvcfzf_icache_output_dir | sed 's|/$||')
     case "$ytfd" in
         $ytout/*-???????????.???|$ytout/*-???????????.????)
             ytfd="${ytfd##*/}"     # basename
@@ -663,10 +663,11 @@ mpvcfzf_now()
     vids=$(mpvcfzf_now_getvids "$urls")
 
     echo "$now?t=$date$vids"
-    if [ "$1" != "short" ]
-    then
+    if [ "$1" != "short" ]; then
         echo
-        gawk -v u="$urls" -v l="$list" 'END{ split(u,au,"\n"); split(l,al,"\n"); for(u in au) {print au[u], al[u]}; }' /dev/null
+        gawk -v u="$urls" -v l="$list" '
+            END{ split(u,au,"\n"); split(l,al,"\n"); for(u in au) {print au[u], al[u]}; }
+        ' /dev/null
     fi
 }
 
