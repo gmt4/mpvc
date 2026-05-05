@@ -297,18 +297,20 @@ usage: mpvc opts # @version v1.8 (c) gmt4 https://github.com/gmt4/mpvc
 
 ```console
 usage: mpvc-tui opts # @version v1.8 (c) gmt4 https://github.com/gmt4/mpvc
- -d|dir     : Set the WD to the media directory given as argument
- -h|help    : This help you are reading
- -H|history : Starts the mpvc-tui history
- -k|kill    : Stop the running mpvc-tui
- -n|notify  : Desktop notification using notify on mpvc events (notify-send*)
-   |socket  : Set mpv socket [default: ].
- -s|suggest : Suggest a random media to play based on previous media played
- -S|scrobler: Starts the mpvc-tui scrobbler
- -t|tui     : Starts the mpvc-tui to manage the mpv playlist (rlwrap*)
- -T|Tui     : Combo that starts mpvc-tui -t -n, and adds media given as args
- -x|launch  : Starts mpvc-tui in a new xterm ($MPVC_TUI_TERM) # combine with <opts>
- -v|version : Prints the mpvc-tui version.
+ -d|dir         : Set the WD to the media directory given as argument
+ -h|help        : This help you are reading
+ -H|history     : Starts the mpvc-tui history
+ -k|kill        : Stop the running mpvc-tui
+ -n|notify      : Desktop notification using notify on mpvc events (notify-send*)
+   |socket      : Set mpv socket [default: ].
+ -s|suggest     : Suggest a random media to play based on previous media played
+ -S|scrobler    : Starts the mpvc-tui scrobbler
+ -t|tui         : Starts the mpvc-tui TUI
+ -tt|tinytui    : Starts the mpvc-tui TUI (tiny mode)
+ -ttt|ttinytui  : Starts the mpvc-tui TUI (ttiny mode)
+ -T|Tui         : Combo that starts mpvc-tui -t -n, and adds media given as args
+ -x|launch      : Starts mpvc-tui in a new xterm ($MPVC_TUI_TERM) # combine with <opts>
+ -v|version     : Prints the mpvc-tui version.
 
 *tips: If unsure about where to begin, start with: mpvc-tui -d /path/to/media/ -T
 ````
@@ -331,23 +333,23 @@ usage: mpvc-fzf opts # @version v1.8 (c) gmt4 https://github.com/gmt4/mpvc
   -I|Lyrics     : Search given media lyrics on DDG
   -k|dplay      : Search & play DuckDuckGo videos
   -K|dsearch    : Search DuckDuckGo videos
-  -l|local      : Search & play local media at \$1 (handy to pipe to m load)
+  -l|local      : Search & play local media at $1 (handy to pipe to m load)
   -q|quality    : Select and change yt-dlp video quality (ytdl-format)
   -r|explorer   : Shortcut to search & play local media at ytdl-archive/
   -R|Explorer   : Shortcut to search local media at ytdl-archive/
   -s|search     : Search on Invidious
-  -S|socket     : Set mpv socket [default: ${MPVC_SOCKET:-}].
+  -S|socket     : Set mpv socket [default: ].
  -SS|socklist   : Select and set the current mpv socket to operate
   -t|thumbnail  : Retrieve thumbnail_url from metadata of the current YT-URL
   -T|Thumbnail  : Display thumbnail_url from metadata of the provided YT-URL
   -p|splay      : Search & play media found using Invidious
   -u|url        : Search the given YT URL (supports vids,channels,playlist feeds)
   -U|Url        : Search & play the given YT URL
-  -x|launch     : Starts $PROGNAME in a new $MPVC_TERM (config \$MPVC_TERM) [combine -x with other opts]
+  -x|launch     : Starts mpvc-fzf in a new xterm (config $MPVC_TERM) [combine -x with other opts]
   -y|related    : Search related media on Invidious
   -Y|Related    : Search & play related media using Invidious
   -z|relatedo   : Search current media-title on Invidious and return related media
-  -v|version    : Return the $PROGNAME version.
+  -v|version    : Return the mpvc-fzf version.
 
     (--)now     : Return a shareable URL to the "now listening" playlist
     (--)lofi    : Search & play Lo-Fi channels
@@ -372,11 +374,11 @@ usage: mpvc-installer args # @version v1.8 (c) gmt4 https://github.com/gmt4/mpvc
   config-sys     : Fetch mpv config to BINDIR=/usr/local/bin
   fetch-user     : Fetch to BINDIR=/home/user/bin
   link-user      : Symlink to BINDIR=/home/user/bin
-  install:       : Install to BINDIR=/usr/local/bin
-  uninstall:     : Uninstall from BINDIR=/usr/local/bin
-  install-user   : Install to BINDIR=/home/user/bin (sets PREFIX=/home/user)
+  install        : Install to BINDIR=/usr/local/bin
+  uninstall      : Uninstall from BINDIR=/usr/local/bin
+  install-user   : Install to BINDIR=/home/user/bin
   install-sys    : Install to BINDIR=/usr/local/bin (sets PREFIX=/usr/local)
-  uninstall-user : Uninstall from BINDIR=/home/user/bin (sets PREFIX=/home/user)
+  uninstall-user : Uninstall from BINDIR=/home/user/bin
   uninstall-sys  : Uninstall from BINDIR=/usr/local/bin (sets PREFIX=/usr/local)
 
 *tips: If unsure where to start, start with: mpvc-installer fetch-user
