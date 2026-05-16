@@ -74,3 +74,6 @@ mpvc-fzf -f: running with fzf to manage the playlist
 
 mpvc-tui -n: running with mpvc-fzf and desktop notifications on the upper-right corner
 ![mpvc tui+fzf+notifications screenshot](../../../blob/master/docs/assets/mpvc-tui-fzf.png)
+
+mpvc-web: accesing mpvc-web from the web-browser on the phone/
+![mpvc-web screenshot](../../../blob/master/docs/assets/mpvc-web-phone.png)
