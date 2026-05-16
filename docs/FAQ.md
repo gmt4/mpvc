@@ -60,20 +60,20 @@ mpvc-chapter merge media-in.opus ffmetadata.xml media-out.opus
 
 ## Screenshots
 
-mpvc-fzf running on macOS:
+### mpvc-fzf running on macOS
 ![mpvc-fzf on macOS](../../../blob/master/docs/assets/mpvc-fzf-mac.jpg)
 
-mpvc-tui -T: running the mpvc TUI (with albumart):
+### mpvc-tui -T: running the mpvc TUI (with albumart)
 ![mpvc-tui -T screenshot](../../../blob/master/docs/assets/mpvc-tui-new.png)
 
-mpvc-tui -T: running the mpvc TUI
+### mpvc-tui -T: running the mpvc TUI
 ![mpvc-tui -T screenshot](../../../blob/master/docs/assets/mpvc-tui.png)
 
-mpvc-fzf -f: running with fzf to manage the playlist
+### mpvc-fzf -f: running with fzf to manage the playlist
 ![mpvc-fzf screenshot](../../../blob/master/docs/assets/mpvc-tui-arch.png)
 
-mpvc-tui -n: running with mpvc-fzf and desktop notifications on the upper-right corner
+### mpvc-tui -n: running with mpvc-fzf and desktop notifications on the upper-right corner
 ![mpvc tui+fzf+notifications screenshot](../../../blob/master/docs/assets/mpvc-tui-fzf.png)
 
-mpvc-web: accesing mpvc-web from the web-browser on the phone/
+### mpvc-web: accesing mpvc-web from the web-browser on the phone/
 ![mpvc-web screenshot](../../../blob/master/docs/assets/mpvc-web-phone.png)
