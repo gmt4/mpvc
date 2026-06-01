@@ -50,6 +50,7 @@ mpvc_web_defaults()
 
     # accesskey keyboard shortcuts
     : "${MPVC_WEB_SHORTCUT_REFRESH:=accesskey=m}"
+    : "${MPVC_WEB_SHORTCUT_OPEN:=accesskey=o}"
     : "${MPVC_WEB_SHORTCUT_CLI:=accesskey=i}"
     : "${MPVC_WEB_SHORTCUT_APPLY:=accesskey=a}"
     : "${MPVC_WEB_SHORTCUT_TRACK:=accesskey=t}"
@@ -525,6 +526,7 @@ function Help()
         '- $MPVC_WEB_SHORTCUT_CLI: select cli\n'+
         '- $MPVC_WEB_SHORTCUT_EQUALIZER: select equalizer\n'+
         '- $MPVC_WEB_SHORTCUT_REFRESH: refresh\n'+
+        '- $MPVC_WEB_SHORTCUT_OPEN: open\n'+
         '- $MPVC_WEB_SHORTCUT_KILL: select kill\n'+
         '- $MPVC_WEB_SHORTCUT_NEXT: next track\n'+
         '- $MPVC_WEB_SHORTCUT_PREV: prev track\n'+
@@ -617,7 +619,7 @@ mpvc_web_index()
 
     <body>
         <details>
-        <summary>
+        <summary ${MPVC_WEB_SHORTCUT_OPEN}>
         [
             <a href="." name="top" ${MPVC_WEB_SHORTCUT_REFRESH}>🎧Player</a>
             <a title="#status"      href="#mpvc-web-status">#s</a>
