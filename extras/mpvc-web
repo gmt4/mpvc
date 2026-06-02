@@ -50,16 +50,16 @@ mpvc_web_defaults()
 
     # accesskey keyboard shortcuts
     : "${MPVC_WEB_SHORTCUT_REFRESH:=accesskey=m}"
-    : "${MPVC_WEB_SHORTCUT_OPEN:=accesskey=o}"
+    : "${MPVC_WEB_SHORTCUT_PLAYER:=accesskey=p}"
     : "${MPVC_WEB_SHORTCUT_CLI:=accesskey=i}"
     : "${MPVC_WEB_SHORTCUT_APPLY:=accesskey=a}"
-    : "${MPVC_WEB_SHORTCUT_TRACK:=accesskey=t}"
-    : "${MPVC_WEB_SHORTCUT_PREV:=accesskey=p}"
+    : "${MPVC_WEB_SHORTCUT_PREV:=accesskey=}"
     : "${MPVC_WEB_SHORTCUT_NEXT:=accesskey=n}"
     : "${MPVC_WEB_SHORTCUT_SEEK:=accesskey=s}"
     : "${MPVC_WEB_SHORTCUT_VOL:=accesskey=v}"
     : "${MPVC_WEB_SHORTCUT_KILL:=accesskey=k}"
-    : "${MPVC_WEB_SHORTCUT_PAUSE:=accesskey=p}"
+    : "${MPVC_WEB_SHORTCUT_TOGGLE:=accesskey=t}"
+    : "${MPVC_WEB_SHORTCUT_PLAYLIST:=accesskey=l}"
     : "${MPVC_WEB_SHORTCUT_EQUALIZER:=accesskey=e}"
     : "${MPVC_WEB_SHORTCUT_ARCHIVE:=accesskey=f}"
     : "${MPVC_WEB_SHORTCUT_MUTE:=accesskey=g}"
@@ -526,13 +526,11 @@ function Help()
         '- $MPVC_WEB_SHORTCUT_CLI: select cli\n'+
         '- $MPVC_WEB_SHORTCUT_EQUALIZER: select equalizer\n'+
         '- $MPVC_WEB_SHORTCUT_REFRESH: refresh\n'+
-        '- $MPVC_WEB_SHORTCUT_OPEN: open\n'+
+        '- $MPVC_WEB_SHORTCUT_PLAYER: select player\n'+
         '- $MPVC_WEB_SHORTCUT_KILL: select kill\n'+
         '- $MPVC_WEB_SHORTCUT_NEXT: next track\n'+
-        '- $MPVC_WEB_SHORTCUT_PREV: prev track\n'+
-        '- $MPVC_WEB_SHORTCUT_TRACK: select track\n'+
         '- $MPVC_WEB_SHORTCUT_SEEK: select seek\n'+
-        '- $MPVC_WEB_SHORTCUT_PAUSE: select pause\n'+
+        '- $MPVC_WEB_SHORTCUT_TOGGLE: select toggle pause\n'+
         '- $MPVC_WEB_SHORTCUT_VOL: select volume\n'+
         '- $MPVC_WEB_SHORTCUT_MUTE: select mute\n'+
         '- $MPVC_WEB_SHORTCUT_ARCHIVE: select archive\n'+
@@ -619,7 +617,7 @@ mpvc_web_index()
 
     <body>
         <details>
-        <summary ${MPVC_WEB_SHORTCUT_OPEN}>
+        <summary ${MPVC_WEB_SHORTCUT_PLAYER}>
         [
             <a href="." name="top" ${MPVC_WEB_SHORTCUT_REFRESH}>🎧Player</a>
             <a title="#status"      href="#mpvc-web-status">#s</a>
@@ -635,7 +633,7 @@ mpvc_web_index()
         <ul>
         <li>
             <!--<a href="?cmd=mpvc status">status</a>-->
-            <a class=btn href="?cmd=mpvc toggle" ${MPVC_WEB_SHORTCUT_PAUSE}>pause</a>
+            <a class=btn href="?cmd=mpvc toggle" ${MPVC_WEB_SHORTCUT_TOGGLE}>pause</a>
             <a class=btn href="?cmd=mpvc mpv">mpv</a>
             <a class=btn href="?cmd=mpvc kill" ${MPVC_WEB_SHORTCUT_KILL}>kill</a>
             <a class=btn href="?cmd=mpvc clear">clear</a>
@@ -647,7 +645,7 @@ mpvc_web_index()
             <a class=btn href="?cmd=mpvc --mute" ${MPVC_WEB_SHORTCUT_MUTE}>mute</a>
             <a class=btn href="?cmd=mpvc start 0">start</a>
             <a class=btn href="?cmd=mpvc start $">end</a>
-            <a class=btn href="?cmd=mpvc prev" title="prev" ${MPVC_WEB_SHORTCUT_PREV}>prv</a>
+            <a class=btn href="?cmd=mpvc prev" title="prev">prv</a>
             <a class=btn href="?cmd=mpvc next" title="next" ${MPVC_WEB_SHORTCUT_NEXT}>nxt</a>
         </li>
         <li>
@@ -689,7 +687,7 @@ mpvc_web_index()
             $("$MPVC_WEB_CGI" mpvc save | mpvc_web_select_form "mpvc-fzf -g" "${MPVC_WEB_SHORTCUT_SEEK}")
         </li>
         <li>
-            $(printf " +15\n+10\n+5\n+2\n+1\n0\n-1\n-2\n-5\n-10\n-15" | mpvc_web_select_form "mpvc -q track" "${MPVC_WEB_SHORTCUT_TRACK}")
+            $(printf " +15\n+10\n+5\n+2\n+1\n0\n-1\n-2\n-5\n-10\n-15" | mpvc_web_select_form "mpvc -q track")
         </li>
         <li>
             $(printf " +30\n+20\n+10\n+5\n+1\n0\n-1\n-5\n-10\n-20\n-30" | mpvc_web_select_form "mpvc -q cplay")
@@ -743,7 +741,7 @@ mpvc_web_index()
         </details>
 
         <details>
-        <summary>
+        <summary ${MPVC_WEB_SHORTCUT_PLAYLIST}>
         [
             <a href="#mpvc-web-playlist" name="mpvc-web-playlist">Playlist</a>
             <a href="#mpvc-web-fullplaylist" name="mpvc-web-fullplaylist">#full</a>
