@@ -48,7 +48,7 @@ mpvc_web_defaults()
     : "${MPVC_WEB_HTML_REFRESH:=}"
     : "${MPVC_WEB_CSS_STYLE:=}"
 
-    # accesskey keyboard shortcuts
+    # accesskey keyboard shortcuts (Alt+Shift key)
     : "${MPVC_WEB_SHORTCUT_REFRESH:=accesskey=m}"
     : "${MPVC_WEB_SHORTCUT_PLAYER:=accesskey=p}"
     : "${MPVC_WEB_SHORTCUT_CLI:=accesskey=i}"
@@ -189,7 +189,7 @@ summary {
   font-size: 15px;
   letter-spacing: 0.5px;
   transition: all 0.3s ease;
-  display: flex;
+  //display: flex;
   align-items: center;
   gap: 10px;
 }
