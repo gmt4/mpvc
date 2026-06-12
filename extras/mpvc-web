@@ -865,6 +865,9 @@ mpvc_web_setup()
             echo "# $PROGNAME Setup development/cli features (MPVC_WEB_DEV=${MPVC_WEB_DEV:-} is not set)"
         fi
 
+        # setup http requested
+        echo "# $PROGNAME Setup http://$MPVC_WEB_HOST:$MPVC_WEB_PORT"
+
         chmod -R a-w "$MPVC_WEB_ROOT/"
     )
 }
@@ -960,7 +963,7 @@ usage: $PROGNAME -[$optflags] args # @version $PROGVERSION (c) $PROGAUTHOR $PROG
   -R : Set $PROGNAME HTTP server HTML refresh (default $MPVC_WEB_HTML_REFRESH)
   -s : Set $PROGNAME HTTP server SSL/TLS (default $MPVC_WEB_SSL_ENABLE)
   -a : Set $PROGNAME HTTP server to include ytdl-archive/ (default $MPVC_WEB_ARCHIVE_ENABLE)
-*tips: If unsure where to begin, run: $PROGNAME -p 8000 -c start # serves @ http://localhost:8000
+*tips: If unsure where to begin, run: $PROGNAME -p $MPVC_WEB_PORT -c start # serves @ http://localhost:$MPVC_WEB_PORT
 EOF
     exit
 }
