@@ -1225,7 +1225,7 @@ main() {
             --hifi|hifi)                     MPVC_FMTSTR="$MPVC_FMTSTR_DFLT" ;;
             --lowfi|lowfi)                   MPVC_FMTSTR="$MPVC_FMTSTR_LOFI" ;;
             --status|status)                 ;;
-            --cstatus|cstatus)               MPVC_FMTSTR=$(echo "$MPVC_FMTSTR"|sed 's/%title%/%chapter%/') ;;
+            --cstatus|cstatus|cs)            MPVC_FMTSTR=$(echo "$MPVC_FMTSTR"|sed 's/%title%/%chapter%/') ;;
             --config|config)                 "${EDITOR:-vi}" "${MPVC_CONFIG}"; QUIETFLAG=true;;
             --ascii|ascii)                   mpvc_ascii; return;;
 
