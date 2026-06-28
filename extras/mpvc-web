@@ -667,6 +667,12 @@ mpvc_web_index()
         <li>
             $(printf " +30\n+20\n+10\n+5\n0\n-5\n-10\n-20\n-30" | mpvc_web_select_form "mpvc -q vol" "${MPVC_WEB_SHORTCUT_VOL}")
         </li>
+        <li>
+            $(printf " +15\n+10\n+5\n+2\n+1\n0\n-1\n-2\n-5\n-10\n-15" | mpvc_web_select_form "mpvc -q track")
+        </li>
+        <li>
+            $(printf " +30\n+20\n+10\n+5\n+1\n0\n-1\n-5\n-10\n-20\n-30" | mpvc_web_select_form "mpvc -q cplay")
+        </li>
 
         <li>
             $(mpvc stash list | mpvc tac | mpvc-fzf -0 | mpvc_web_select_form "mpvc -q stash apply" "${MPVC_WEB_SHORTCUT_APPLY}")
@@ -685,12 +691,6 @@ mpvc_web_index()
         </li>
         <li>
             $("$MPVC_WEB_CGI" mpvc save | mpvc_web_select_form "mpvc-fzf -g" "${MPVC_WEB_SHORTCUT_SEEK}")
-        </li>
-        <li>
-            $(printf " +15\n+10\n+5\n+2\n+1\n0\n-1\n-2\n-5\n-10\n-15" | mpvc_web_select_form "mpvc -q track")
-        </li>
-        <li>
-            $(printf " +30\n+20\n+10\n+5\n+1\n0\n-1\n-5\n-10\n-20\n-30" | mpvc_web_select_form "mpvc -q cplay")
         </li>
         <li>
             $(printf " +120\n+60\n+25\n0\n-25\n-60\n-120" | mpvc_web_select_form "mpvc -q seek" "${MPVC_WEB_SHORTCUT_SEEK}")
