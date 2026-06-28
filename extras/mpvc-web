@@ -296,6 +296,18 @@ option {
   color: var(--text-primary);
 }
 
+input[type="text"] {
+  padding: 8px 12px;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
 input[type="color"] {
   width: 32px !important;
   height: 32px !important;
@@ -706,7 +718,7 @@ mpvc_web_index()
             <a class=btn href="#" title="theme 8" onclick="document.body.style.WebkitFilter='invert(0.8)';">t8</a>
             <a class=btn href="#" title="toggle" onclick="toggleColorScheme()">tg</a>
             <a class=btn href="." title="reset">rst</a>
-            <input type="color" id="link-color" name="link-color" onchange="toggleLinkColor()" style="width: 1em !important; height: 1em; padding:0 0;">
+            <input type="color" id="link-color" name="link-color" onchange="toggleLinkColor()">
         </li>
 
         <li>
@@ -896,6 +908,8 @@ mpvc_web()
             gsub("%23", "#", r);
             gsub("%2F", "/", r);
             gsub("%3A", ":", r);
+            gsub("%3D", "=", r);
+            gsub("%3F", "?", r);
             return r
         }
 
