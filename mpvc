@@ -329,12 +329,31 @@ mpvc_socklist_active() {
     mpvc_socklist | awk '/idle-active=$/ {print $1}'
 }
 
+mpvc_json_esc() {
+    if command -v jq >/dev/null 2>&1; then
+        printf '%s' "$1" | jq -Rs .
+    else
+        # POSIX fallback: \ and " escaped; tab/CR handled; embedded newlines -> \n
+        printf '%s' "$1" | awk '
+            BEGIN { ORS=""; print "\"" }
+            { gsub(/\\/, "\\\\"); gsub(/"/, "\\\""); gsub(/\t/, "\\t");  gsub(/\r/, "\\r"); if (NR > 1) print "\\n"; print }
+            END { print "\"" }
+        '
+    fi
+}
+
 mpvc_sockecho() { echo "$@" | mpvc_sockrepl; }
 mpvc_sockcmd()  { echo "{ \"command\": [ $* ] }" | mpvc_sockrepl; }
 mpvc_sockrepl() { $MPVC_SOCAT - "$MPVC_SOCKET"; }
 mpvc_idleloop() { $MPVC_SOCAT -t0 -,ignoreeof "$MPVC_SOCKET"; }
 
-mpvc_cmdr_() { echo "{ \"command\": [ $(for i in "$@"; do printf "\"%s\", " "$i"; done) ] }"; }
+mpvc_cmdr_() {
+    sep=" "
+    printf '{ "command": ['
+    for i in "$@"; do printf '%s%s' "$sep" "$(mpvc_json_esc "$i")"; sep=", "; done;
+    printf ' ] }\n'
+}
+
 mpvc_cmdr()  {
     if [ -n "${1:-}" -a "${1:-}" = "run" ]; then return; fi # disable mpv run command
     equiet echo "$(mpvc_cmdr_ "$@")" | mpvc_sockrepl;
@@ -345,14 +364,14 @@ mpvc_ecmdr() {
 
 mpvc_cmd()   { mpvc_cmdr "$@" | mpvc_getjson 'data'; }
 mpvc_add()   { mpvc_ecmdr "add" "$@"; }
-mpvc_get()   { equiet mpvc_sockcmd "\"get_property_string\", \"$1\"," | mpvc_getjson 'data'; }
+mpvc_get()   { equiet mpvc_sockcmd "\"get_property_string\", $(mpvc_json_esc "$1")" | mpvc_getjson 'data'; }
 mpvc_set()   { mpvc_ecmdr "set_property_string" "$@"; }
-mpvc_cycle() { oquiet mpvc_sockcmd "\"cycle\", \"$1\","; }
+mpvc_cycle() { oquiet mpvc_sockcmd "\"cycle\", $(mpvc_json_esc "$1")"; }
 
-mpvc_getr()  { mpvc_sockcmd "\"get_property\", \"$1\","; }
+mpvc_getr()  { mpvc_sockcmd "\"get_property\", $(mpvc_json_esc "$1")"; }
 mpvc_setr()  { mpvc_ecmdr "set_property" "$@"; }
 
-mpvc_observe() { echo "{ \"command\": [ \"observe_property_string\", 1, \"$1\", ] }" | mpvc_idleloop; }
+mpvc_observe() { echo "{ \"command\": [ \"observe_property_string\", 1, $(mpvc_json_esc "$1") ] }" | mpvc_idleloop; }
 mpvc_idle()    { mpvc_observe "$1" | awk "/$1/ { print; exit }"; }
 
 ## Playlist Functions ##########################################################
