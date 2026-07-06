@@ -151,6 +151,19 @@ For more  check the  [LogBook](#logbook) (remember your best chance is to try, p
 ### Curl
 
 Fetch the mpvc-installer (written in POSIX-sh), and ensure it runs under a POSIX-sh SHELL
+
+* __Zen Install__ achieve inner peace of mind before piping to your shell.
+
+
+```console
+curl -fsSLO https://github.com/lwilletts/mpvc/raw/master/extras/mpvc-installer;
+# take your time to review the mpvc-installer for peace-of-mind
+BINDIR=$HOME/bin SHELL=/bin/sh $SHELL ./mpvc-installer fetch-user
+```
+
+* __YOLO Install__ fast, but you're trusting the pipe (curl|sh).
+
+
 ```console
 curl -fsSLO https://github.com/lwilletts/mpvc/raw/master/extras/mpvc-installer \
   && SHELL=/bin/sh BINDIR=$HOME/bin sh ./mpvc-installer fetch-user
