@@ -83,8 +83,8 @@ Recommended extras:
 
 ## Installation
 
-- [Git](#git)
 - [Curl](#curl)
+- [Git](#git)
 - [Debian](#debian)
 - [Arch](#arch-mpvc-git)
 - [BSD](#bsd)
@@ -96,6 +96,27 @@ Installing is just a matter of fetching the scripts either via [Git](#git)/[Curl
 
 The easiest for a onetime install is using [Curl](#curl), however for @latest version a [Git](#git) install is recommended.
 Remember to check your installation for missing dependencies/requirements using `mpvc-installer check-reqs`, and, if you encounter any issue file an [Issue](../../issues).
+
+### Curl
+
+Fetch the mpvc-installer (written in POSIX-sh), and ensure it runs under a POSIX-sh SHELL
+
+* __Zen Install__ achieve inner peace of mind before piping to your shell.
+
+
+```console
+curl -fsSLO https://github.com/lwilletts/mpvc/raw/master/extras/mpvc-installer;
+# take your time to review the mpvc-installer for peace-of-mind
+BINDIR=$HOME/bin SHELL=/bin/sh $SHELL ./mpvc-installer fetch-user
+```
+
+* __YOLO Install__ fast, but you're trusting the pipe (curl|sh).
+
+
+```console
+curl -fsSLO https://github.com/lwilletts/mpvc/raw/master/extras/mpvc-installer \
+  && SHELL=/bin/sh BINDIR=$HOME/bin sh ./mpvc-installer fetch-user
+```
 
 ### Git
 
@@ -147,27 +168,6 @@ This does git clone, and symlinks the mpvc scripts to `BINDIR` (default `~/bin`)
 ```
 
 For more  check the  [LogBook](#logbook) (remember your best chance is to try, play, learn, and have fun).
-
-### Curl
-
-Fetch the mpvc-installer (written in POSIX-sh), and ensure it runs under a POSIX-sh SHELL
-
-* __Zen Install__ achieve inner peace of mind before piping to your shell.
-
-
-```console
-curl -fsSLO https://github.com/lwilletts/mpvc/raw/master/extras/mpvc-installer;
-# take your time to review the mpvc-installer for peace-of-mind
-BINDIR=$HOME/bin SHELL=/bin/sh $SHELL ./mpvc-installer fetch-user
-```
-
-* __YOLO Install__ fast, but you're trusting the pipe (curl|sh).
-
-
-```console
-curl -fsSLO https://github.com/lwilletts/mpvc/raw/master/extras/mpvc-installer \
-  && SHELL=/bin/sh BINDIR=$HOME/bin sh ./mpvc-installer fetch-user
-```
 
 ### Debian
 
