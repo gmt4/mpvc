@@ -63,6 +63,7 @@ mpvc_web_defaults()
     : "${MPVC_WEB_SHORTCUT_EQUALIZER:=accesskey=e}"
     : "${MPVC_WEB_SHORTCUT_ARCHIVE:=accesskey=f}"
     : "${MPVC_WEB_SHORTCUT_MUTE:=accesskey=g}"
+    : "${MPVC_WEB_SHORTCUT_PLAYRAND:=accesskey=r}"
     : "${MPVC_WEB_SHORTCUT_YTSEARCH:=accesskey=y}"
     : "${MPVC_WEB_SHORTCUT_HELP:=accesskey=h}"
 
@@ -677,7 +678,7 @@ mpvc_web_index()
             <a class=btn href="?cmd=mpvc shuffle">shuffle</a>
             <a class=btn href="?cmd=mpvc playlist-shuffle">p-shuf</a>
             <a class=btn href="?cmd=mpvc playlist-unshuffle">p-unshuf</a>
-            <a class=btn href="?cmd=mpvc playrand">rnd</a>
+            <a class=btn href="?cmd=mpvc playrand" ${MPVC_WEB_SHORTCUT_PLAYRAND}>rnd</a>
         </li>
         <li>
             $(printf " +30\n+20\n+10\n+5\n0\n-5\n-10\n-20\n-30" | mpvc_web_select_form "mpvc -q vol" "${MPVC_WEB_SHORTCUT_VOL}")
