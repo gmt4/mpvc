@@ -236,7 +236,9 @@ mpvc_config()
     # if not present, create config files
     if [ ! -e "$MPVC_CURL_CACHE" ]; then true > "$MPVC_CURL_CACHE"; fi
     # if present load user config
-    if [ -r "$MPVC_CONFIG" -a -O "$MPVC_CONFIG" ] && mpvc_check_user_perms "$MPVC_CONFIG" "640"; then
+    if [ -r "$MPVC_CONFIG" -a -O "$MPVC_CONFIG" ]; then
+        chmod "640" "$MPVC_CONFIG";
+        mpvc_check_user_perms "$MPVC_CONFIG" "640";
         . "$MPVC_CONFIG"
     else
         warn "# $PROGNAME Warning: ${MPVC_CONFIG##"$HOME/"} not found, see docs/mpvc.conf for defaults"
@@ -330,16 +332,16 @@ mpvc_socklist_active() {
 }
 
 mpvc_json_esc() {
-    if command -v jq >/dev/null 2>&1; then
-        printf '%s' "$1" | jq -Rs .
-    else
+#    if command -v jq >/dev/null 2>&1; then
+#        printf '%s' "$1" | jq -Rs .
+#    else
         # POSIX fallback: \ and " escaped; tab/CR handled; embedded newlines -> \n
         printf '%s' "$1" | awk '
             BEGIN { ORS=""; print "\"" }
             { gsub(/\\/, "\\\\"); gsub(/"/, "\\\""); gsub(/\t/, "\\t");  gsub(/\r/, "\\r"); if (NR > 1) print "\\n"; print }
             END { print "\"" }
         '
-    fi
+#    fi
 }
 
 mpvc_sockecho() { echo "$@" | mpvc_sockrepl; }
