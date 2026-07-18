@@ -621,7 +621,10 @@ mpvc_web_index()
     <link rel="IconFile" href="apple-touch-icon.svg" sizes="64x64">
     <link rel="apple-touch-icon" href="apple-touch-icon.svg">
     <title> 🎧$MPVC_WEB_HOSTNAME mpvc</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="preload" href="style.css" as="style" onload="this.rel='stylesheet'" />
+    <noscript>
+      <link rel="stylesheet" href="style.css" />
+    </noscript>
     <script type="text/javascript">
         $(mpvc_web_index_js)
     </script>
@@ -749,7 +752,7 @@ mpvc_web_index()
         </summary>
 
         <hr>
-        <iframe name="mpvc-status" width="100%" height="80" frameborder="0" allowtransparency="true" src="/cgi-bin/mpvc?mpvc+status" ></iframe>
+        <iframe name="mpvc-status" title="mpvc-status" width="100%" height="80" frameborder="0" allowtransparency="true" src="/cgi-bin/mpvc?mpvc+status" defer ></iframe>
         </details>
 
         <details>
@@ -761,7 +764,7 @@ mpvc_web_index()
         </summary>
         <hr>
         <div style="display:flex">
-        <iframe name="mpvc-playlist" width="100%" frameborder="0" allowtransparency="true" style="margin:auto; float:auto" src="/cgi-bin/mpvc?mpvc+playlist" ></iframe>
+        <iframe name="mpvc-playlist" title="mpvc-playlist" width="100%" frameborder="0" allowtransparency="true" style="margin:auto; float:auto" src="/cgi-bin/mpvc?mpvc+playlist" defer ></iframe>
         <script type="text/javascript">
         var pl = document.getElementsByName('mpvc-playlist')[0];
         switch (window.location.hash) {
@@ -781,7 +784,7 @@ mpvc_web_index()
         ]
         </summary>
         <hr>
-        <iframe name="mpvc-chapter-list" width="100%" frameborder="0" allowtransparency="true" src="/cgi-bin/mpvc?mpvc+chapter-list" ></iframe>
+        <iframe name="mpvc-chapter-list" title="mpvc-chapter-list" width="100%" frameborder="0" allowtransparency="true" src="/cgi-bin/mpvc?mpvc+chapter-list" defer ></iframe>
         </details>
 
         <details $(if [ -n "$MPVC_WEB_THUMBNAIL_ENABLE" ]; then echo open; fi)>
@@ -794,7 +797,7 @@ mpvc_web_index()
         ]
         </summary>
         <hr>
-            <iframe src="/cgi-bin/mpvc?thumbnail64" alt="thumbnail" title="thumbnail" style="$MPVC_WEB_THUMBNAIL_STYLE"></iframe>
+            <iframe src="/cgi-bin/mpvc?thumbnail64" alt="thumbnail" title="thumbnail" style="$MPVC_WEB_THUMBNAIL_STYLE" defer ></iframe>
         </details>
     </ul>
         <hr>
