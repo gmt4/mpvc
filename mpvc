@@ -332,16 +332,16 @@ mpvc_socklist_active() {
 }
 
 mpvc_json_esc() {
-#    if command -v jq >/dev/null 2>&1; then
-#        printf '%s' "$1" | jq -Rs .
-#    else
+    if command -v gojq >/dev/null 2>&1; then
+        printf '%s' "$1" | gojq -Rs .
+    else
         # POSIX fallback: \ and " escaped; tab/CR handled; embedded newlines -> \n
         printf '%s' "$1" | awk '
             BEGIN { ORS=""; print "\"" }
             { gsub(/\\/, "\\\\"); gsub(/"/, "\\\""); gsub(/\t/, "\\t");  gsub(/\r/, "\\r"); if (NR > 1) print "\\n"; print }
             END { print "\"" }
         '
-#    fi
+    fi
 }
 
 mpvc_sockecho() { echo "$@" | mpvc_sockrepl; }
