@@ -917,45 +917,34 @@ mpvc_web()
             return r
         }
 
-        BEGIN { quiet=1 }
+        BEGIN {
+            quiet=1
+            allowCmdStr = "mpv clear kill --mute toggle play stop prev next playrand shuffle unshuffle repeat single replay togglev aspect togglew togglef togglei chapter-replay chapter-loop chapter-prev chapter-next cplayrand"
+            n = split(allowCmdStr, a, /[[:space:]]+/)
+            for (i = 1; i <= n; i++) { allowCmdList[a[i]] = 1; }
+        }
 
-        /GET \/\?cmd=mpvc%20mpv/          { mpvc("mpv") }
-        /GET \/\?cmd=mpvc%20clear/        { mpvc("clear") }
-        /GET \/\?cmd=mpvc%20kill/         { mpvc("kill") }
         /GET \/\?cmd=mpvc%20vol%20-5/     { mpvc("vol -5") }
         /GET \/\?cmd=mpvc%20vol%20\+5/    { mpvc("vol +5") }
 
-        /GET \/\?cmd=mpvc%20--mute/       { mpvc("--mute") }
-        /GET \/\?cmd=mpvc%20toggle/       { mpvc("toggle") }
-        /GET \/\?cmd=mpvc%20play/         { mpvc("play") }
         /GET \/\?cmd=mpvc%20start%200/    { mpvc("start 0") }
         /GET \/\?cmd=mpvc%20start%20\$/   { mpvc("start $") }
-        /GET \/\?cmd=mpvc%20stop/         { mpvc("stop") }
-        /GET \/\?cmd=mpvc%20prev/         { mpvc("prev") }
-        /GET \/\?cmd=mpvc%20next/         { mpvc("next") }
-        /GET \/\?cmd=mpvc%20playrand/     { mpvc("playrand") }
-
-        /GET \/\?cmd=mpvc%20shuffle/      { mpvc("shuffle") }
-        /GET \/\?cmd=mpvc%20unshuffle/    { mpvc("unshuffle") }
-
-        /GET \/\?cmd=mpvc%20repeat/       { mpvc("repeat") }
-        /GET \/\?cmd=mpvc%20single/       { mpvc("single") }
-        /GET \/\?cmd=mpvc%20replay/       { mpvc("replay") }
-
-        /GET \/\?cmd=mpvc%20togglev/      { mpvc("togglev") }
-        /GET \/\?cmd=mpvc%20aspect/       { mpvc("aspect") }
-        /GET \/\?cmd=mpvc%20togglew/      { mpvc("togglew") }
-        /GET \/\?cmd=mpvc%20togglef/      { mpvc("togglef") }
-        /GET \/\?cmd=mpvc%20togglei/      { mpvc("togglei") }
 
         /GET \/\?cmd=mpvc%20cstart/       { mpvc("cplay 0") }
-        /GET \/\?cmd=mpvc%20creplay/      { mpvc("chapter-replay") }
-        /GET \/\?cmd=mpvc%20cloop/        { mpvc("chapter-loop") }
-        /GET \/\?cmd=mpvc%20cprev/        { mpvc("chapter-prev") }
-        /GET \/\?cmd=mpvc%20cnext/        { mpvc("chapter-next") }
-        /GET \/\?cmd=mpvc%20cplayrand/    { mpvc("cplayrand") }
 
-        /GET \/\?cli=mpvc/                {
+        /GET \/\?cmd=mpvc%20.* / {
+            cmd="";
+            if (match($0, /GET \/\?cmd=mpvc%20[-a-z]+/)) {
+                n=length("GET /?cmd=mpvc%20")
+                cmd=substr($0, RSTART+n, RLENGTH-n)
+            }
+            if (cmd in allowCmdList)
+            {
+                mpvc(cmd)
+            }
+        }
+
+        /GET \/\?cli=mpvc/    {
             r=httpreq($0)
             if (ENVIRON["MPVC_WEB_DEV"] && match(r, "^mpvc"))
             {
