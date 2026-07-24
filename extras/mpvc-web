@@ -448,47 +448,6 @@ EOF
 mpvc_web_index_js()
 {
     cat <<EOF
-function toggleLinkColor()
-{
-    var linkcolor = document.getElementById("link-color").value;
-    document.styleSheets[0].rules[0].style.setProperty("--link-color", linkcolor);
-}
-
-function toggleColorScheme(mode="dark")
-{
-    var i = 0;
-    var mode = window.localStorage.getItem("prefers-color-scheme");
-    mode = (mode != "light") ? "light" : "dark";
-    window.localStorage.setItem("prefers-color-scheme", mode);
-
-    for (i = document.styleSheets[0].rules.length - 1; i >= 0; i--)
-    {
-        rule = document.styleSheets[0].rules[i]
-        if (!("media" in rule))
-            continue;
-        rule = document.styleSheets[0].rules[i].media;
-        if (! rule.mediaText.includes("prefers-color-scheme"))
-            continue;
-        switch (mode) {
-        case "light":
-            rule.appendMedium("original-prefers-color-scheme");
-            if (rule.mediaText.includes("light")) rule.deleteMedium("(prefers-color-scheme: light)");
-            if (rule.mediaText.includes("dark")) rule.deleteMedium("(prefers-color-scheme: dark)");
-            break;
-        case "dark":
-            rule.appendMedium("(prefers-color-scheme: light)");
-            rule.appendMedium("(prefers-color-scheme: dark)");
-            if (rule.mediaText.includes("original")) rule.deleteMedium("original-prefers-color-scheme");
-            break;
-        default:
-            rule.appendMedium("(prefers-color-scheme: dark)");
-            if (rule.mediaText.includes("light")) rule.deleteMedium("(prefers-color-scheme: light)");
-            if (rule.mediaText.includes("original")) rule.deleteMedium("original-prefers-color-scheme");
-        }
-        break;
-    }
-}
-
 function mpvcOnKeyDownEvent(event, that)
 {
     var url='';
@@ -523,10 +482,9 @@ function mpvcOnKeyDownEvent(event, that)
 
 function mpvcHttpGet(url)
 {
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("GET", url, false);
-    xmlHttp.send(null);
-    return xmlHttp.responseText;
+    return fetch(url)
+        .then(response => response.text())
+        .catch(error => console.error('Fetch error:', error));
 }
 
 function Help()
@@ -632,6 +590,7 @@ mpvc_web_index()
     </head>
 
     <body>
+        <main>
         <details>
         <summary ${MPVC_WEB_SHORTCUT_PLAYER}>
         [
@@ -714,16 +673,6 @@ mpvc_web_index()
         <li>
             $(if [ -n "$MPVC_WEB_ARCHIVE_ENABLE" ]; then find "ytdl-archive/" | awk -F/ '{print "https://"$NF}' | mpvc_web_select_form "mpvc -q add" "${MPVC_WEB_SHORTCUT_ARCHIVE}"; fi)
         </li>
-        <li>
-        theme
-            <a class=btn href="#" title="theme 2" onclick="document.body.style.WebkitFilter='invert(0.2)';">t2</a>
-            <a class=btn href="#" title="theme 4" onclick="document.body.style.WebkitFilter='invert(0.4)';">t4</a>
-            <a class=btn href="#" title="theme 4" onclick="document.body.style.WebkitFilter='invert(0.6)';">t6</a>
-            <a class=btn href="#" title="theme 8" onclick="document.body.style.WebkitFilter='invert(0.8)';">t8</a>
-            <a class=btn href="#" title="toggle" onclick="toggleColorScheme()">tg</a>
-            <a class=btn href="." title="reset">rst</a>
-            <input type="color" id="link-color" name="link-color" onchange="toggleLinkColor()">
-        </li>
 
         <li>
             <a class=btn href="?cmd=mpvc togglev" title="togglev">video</a>
@@ -801,12 +750,16 @@ mpvc_web_index()
             <iframe src="/cgi-bin/mpvc?thumbnail64" alt="thumbnail" title="thumbnail" style="$MPVC_WEB_THUMBNAIL_STYLE" defer ></iframe>
         </details>
     </ul>
+        </main>
+
+        <footer>
         <hr>
         🎧
         <a href="$PROGURL">$PROGNAME</a>
         <a href="$PROGURL">$PROGVERSION</a>
         <a href="${PROGURL%/*}">$PROGAUTHOR</a> $(date +%Y) ©
         <a href="javascript:Help()" title="help" ${MPVC_WEB_SHORTCUT_HELP}>/h</a>
+        </footer>
     </body>
 </html>
 EOF
