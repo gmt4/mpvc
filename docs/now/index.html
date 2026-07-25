@@ -64,15 +64,14 @@
         pre {
             padding: 1em;
             overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 300px;
+            overflow-y: auto;
         }
 
         a {
             color: var(--link-color);
-            /*text-decoration: none;*/
-        }
-
-        a:hover {
-            /*text-decoration: underline;*/
         }
 
         h1, h2 {
@@ -102,6 +101,36 @@
             display: block;
         }
 
+        button {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            background: var(--link-color);
+            color: var(--body-bg);
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: opacity 0.2s ease;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        #controls {
+            display: flex;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+
+        #track-info {
+            padding: 0.75rem;
+            background: var(--pre-bg);
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
         footer {
             border-top: 1px solid #ddd;
             margin-top: 3rem;
@@ -117,6 +146,14 @@
             footer {
                 flex-direction: column;
             }
+
+            #controls {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -131,6 +168,9 @@
             <a href="#now-listening" id="now-listening">Now Listening</a>
         </h2>
 
+        <div id="track-info"></div>
+        <div id="controls"></div>
+
         <div id="container" class="container"></div>
 
         <h2>Usage</h2>
@@ -144,44 +184,191 @@
         <pre id="pre"></pre>
     </main>
 
+    <!-- YouTube IFrame API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
     <!-- Deferred script for non-critical functionality -->
     <script async src="https://buttons.github.io/buttons.js" charset="utf-8"></script>
 
     <script charset="utf-8">
         const urlp = new URL(window.location.href).searchParams;
-        const dflt = ['ssDzysKLlpY', '667dtK7O89k', 'mEkZbWYUego', 'UzRFQ6pDqhk', '_nl3Oo4-IQ4', 'ypAIWyH13aM', 'Jls9wXOSjl4', 'Hwg7hJrDiRg', '6FJ7F6trvBc'];
+        const dflt = ['ssDzysKLlpY', '667dtK7O89k', 'mEkZbWYego', 'UzRFQ6pDqhk', '_nl3Oo4-IQ4', 'ypAIWyH13aM', 'Jls9wXOSjl4', 'Hwg7hJrDiRg', '6FJ7F6trvBc'];
         const vids = urlp.getAll('v').length > 0 ? urlp.getAll('v') : dflt;
+
         const autoplay = urlp.getAll('autoplay').length > 0 ? 1 : 0;
         const loop = urlp.getAll('loop').length > 0 ? 1 : 0;
+        const shuffle = urlp.getAll('shuffle').length > 0 ? true : false;
+        const startIndex = parseInt(urlp.get('start')) || 0;
+        const playlistTitle = urlp.get('title') || 'My Playlist';
+
         const cont = document.getElementById('container');
         const pre = document.getElementById('pre');
         const youtubeRegex = /^([-_a-zA-Z0-9]{11})$/;
 
-        pre.textContent = '\n';
+        // Filter valid YouTube IDs only
+        const validVids = vids.filter(v => youtubeRegex.test(v));
 
-        vids.forEach((video, index) => {
-            if (youtubeRegex.test(video)) {
-                const url = `https://www.youtube.com/watch?v=${video}\n`;
-                const emb = `https://www.youtube.com/embed/${video}`;
-                const autoplayVal = autoplay && index === 0 ? 1 : 0;
-                const loopVal = loop ? 1 : 0;
-                const att = `?autoplay=${autoplayVal}&loop=${loopVal}`;
+        // Shuffle if requested
+        let displayVids = [...validVids];
+        if (shuffle) {
+            displayVids = displayVids.sort(() => Math.random() - 0.5);
+        }
 
-                const iframe = document.createElement('iframe');
-                iframe.src = emb + att;
-                iframe.loading = 'lazy';
-                iframe.frameborder = '0';
-                iframe.allowFullscreen = true;
-                iframe.allow = 'autoplay';
+        const players = [];
+        let currentPlayerIndex = 0;
+        let playing = false;
 
-                const node = document.createElement('div');
-                node.className = 'item';
-                node.appendChild(iframe);
-                cont.appendChild(node);
+        pre.textContent = `Playlist: ${playlistTitle}\n\n`;
 
-                pre.textContent += url;
-            }
+        displayVids.forEach((video, index) => {
+            const url = `https://www.youtube.com/watch?v=${video}\n`;
+            const emb = `https://www.youtube.com/embed/${video}`;
+            const autoplayVal = autoplay ? 1 : 0;
+            const loopVal = loop ? 1 : 0;
+            const att = `?autoplay=${autoplayVal}&loop=${loopVal}`;
+
+            const iframe = document.createElement('iframe');
+            iframe.src = emb + att;
+            iframe.id = `player-${index}`;
+            iframe.loading = 'lazy';
+            iframe.frameborder = '0';
+            iframe.allowFullscreen = true;
+            iframe.allow = 'autoplay';
+
+            const node = document.createElement('div');
+            node.className = 'item';
+            node.appendChild(iframe);
+            cont.appendChild(node);
+
+            pre.textContent += url;
         });
+
+        // Update track info display
+        function updateTrackInfo() {
+            document.getElementById('track-info').textContent =
+                `${ (playing ? "[play] ►" : "[pause] ⏸️") }` +
+                ` video ${currentPlayerIndex + 1}/${displayVids.length}` +
+                ` (${playlistTitle})`;
+        }
+
+        // Control functions
+        function togglePlay() {
+            if (!playing)
+                playAll()
+            else
+                pauseAll()
+            playing = ! playing
+            updateTrackInfo()
+        }
+
+        function playAll() {
+            players.forEach(p => {
+                if (p && p.playVideo) p.playVideo();
+            });
+        }
+
+        function pauseAll() {
+            players.forEach(p => {
+                if (p && p.pauseVideo) p.pauseVideo();
+            });
+        }
+
+        function nextVideo() {
+            if (currentPlayerIndex < displayVids.length - 1) {
+                if (players[currentPlayerIndex] && players[currentPlayerIndex].stopVideo) {
+                    players[currentPlayerIndex].stopVideo();
+                }
+                currentPlayerIndex++;
+                if (players[currentPlayerIndex] && players[currentPlayerIndex].playVideo) {
+                    players[currentPlayerIndex].playVideo();
+                }
+                updateTrackInfo();
+            }
+        }
+
+        function previousVideo() {
+            if (currentPlayerIndex > 0) {
+                if (players[currentPlayerIndex] && players[currentPlayerIndex].stopVideo) {
+                    players[currentPlayerIndex].stopVideo();
+                }
+                currentPlayerIndex--;
+                if (players[currentPlayerIndex] && players[currentPlayerIndex].playVideo) {
+                    players[currentPlayerIndex].playVideo();
+                }
+                updateTrackInfo();
+            }
+        }
+
+        // Add control buttons to the page
+        const controls = document.getElementById('controls');
+        const buttons = [
+            { text: '▶️ Play/Pause', fn: togglePlay },
+            { text: '⏮️ Previous', fn: previousVideo },
+            { text: '⏭️ Next', fn: nextVideo },
+            { text: '📋 Copy Share Link', fn: copyToClipboard }
+        ];
+
+        buttons.forEach(btn => {
+            const button = document.createElement('button');
+            button.textContent = btn.text;
+            button.onclick = btn.fn;
+            controls.appendChild(button);
+        });
+
+        // Generate shareable URL
+        function generateShareURL() {
+            const baseUrl = window.location.origin + window.location.pathname;
+            const params = new URLSearchParams();
+
+            validVids.forEach(v => params.append('v', v));
+            if (autoplay) params.append('autoplay', '');
+            if (loop) params.append('loop', '');
+            if (shuffle) params.append('shuffle', '');
+            if (startIndex > 0) params.append('start', startIndex);
+            if (playlistTitle !== 'My Playlist') params.append('title', playlistTitle);
+
+            return `${baseUrl}?${params.toString()}`;
+        }
+
+        // Copy to clipboard functionality
+        function copyToClipboard() {
+            const url = generateShareURL();
+            navigator.clipboard.writeText(url).then(() => {
+                alert('Share link copied to clipboard!');
+            }).catch(() => {
+                // Fallback for older browsers
+                const input = document.createElement('input');
+                input.value = url;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                alert('Share link copied to clipboard!');
+            });
+        }
+
+        // YouTube IFrame API callback
+        function onYouTubeIframeAPIReady() {
+            displayVids.forEach((video, index) => {
+                const player = new YT.Player(`player-${index}`, {
+                    events: {
+                        'onReady': (event) => {
+                            // Ready to play
+                        },
+                        'onStateChange': (event) => {
+                            // Auto-advance to next video when current ends
+                            if (event.data === YT.PlayerState.ENDED) {
+                                if (currentPlayerIndex < displayVids.length - 1) {
+                                    nextVideo();
+                                }
+                            }
+                        }
+                    }
+                });
+                players.push(player);
+            });
+            updateTrackInfo();
+        }
     </script>
 
     <footer>
