@@ -247,16 +247,21 @@
         function updateTrackInfo() {
             document.getElementById('track-info').textContent =
                 `${ (playing ? "[play] ►" : "[pause] ⏸️") }` +
-                ` video ${currentPlayerIndex + 1}/${displayVids.length}` +
+                ` video ${currentPlayerIndex}/${displayVids.length}` +
                 ` (${playlistTitle})`;
         }
 
         // Control functions
         function togglePlay() {
-            if (!playing)
-                playAll()
-            else
-                pauseAll()
+            if (currentPlayerIndex < displayVids.length - 1) {
+                let p = players[currentPlayerIndex]
+                if (!playing) {
+                    if (p && p.playVideo) p.playVideo();
+                } else {
+                    if (p && p.pauseVideo) p.pauseVideo();
+                }
+            }
+
             playing = ! playing
             updateTrackInfo()
         }
