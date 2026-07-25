@@ -107,7 +107,7 @@ Fetch the mpvc-installer (written in POSIX-sh), and ensure it runs under a POSIX
 ```console
 curl -fsSLO https://github.com/lwilletts/mpvc/raw/master/extras/mpvc-installer;
 # take your time to review the mpvc-installer for peace-of-mind
-BINDIR=$HOME/bin SHELL=/bin/sh $SHELL ./mpvc-installer fetch-user
+BINDIR=$HOME/bin SHELL=/bin/sh $SHELL ./mpvc-installer quickstart
 ```
 
 * __YOLO Install__ fast, but you're trusting the pipe (curl|sh).
@@ -115,7 +115,7 @@ BINDIR=$HOME/bin SHELL=/bin/sh $SHELL ./mpvc-installer fetch-user
 
 ```console
 curl -fsSLO https://github.com/lwilletts/mpvc/raw/master/extras/mpvc-installer \
-  && SHELL=/bin/sh BINDIR=$HOME/bin sh ./mpvc-installer fetch-user
+  && SHELL=/bin/sh BINDIR=$HOME/bin sh ./mpvc-installer quickstart
 ```
 
 ### Git
