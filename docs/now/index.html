@@ -223,8 +223,8 @@
         displayVids.forEach((video, index) => {
             const url = `https://www.youtube.com/watch?v=${video}\n`;
             const emb = `https://www.youtube.com/embed/${video}`;
-            const autoplayVal = autoplay ? 1 : 0;
-            const loopVal = loop ? 1 : 0;
+            const autoplayVal = autoplay && currentPlayerIndex === index ? 1 : 0;
+            const loopVal = loop && currentPlayerIndex === index ? 1 : 0;
             const att = `?autoplay=${autoplayVal}&loop=${loopVal}`;
 
             const iframe = document.createElement('iframe');
