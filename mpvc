@@ -440,10 +440,12 @@ mpvc_get_playlist() {
 
     lpos=$(mpvc_get playlist-pos)
     lcount=$(mpvc_get playlist-count)
+    cols=$(mpvc_tty_cols)
     if [ -z "$lcount" ]; then return; fi
+    if [ -z "$cols" ]; then return; fi
     firstlast=$(mpvc_get_terminal_height "$lpos" "$lcount")
     mpvc_get_playlist_once |
-        awk -v mpvc="$0" -v lpos="$lpos" -v cols="$(mpvc_tty_cols)" -v firstlast="$firstlast" -v istrunc="$MPVC_PLAYLIST_TRUNC" \
+        awk -v mpvc="$0" -v lpos="$lpos" -v cols=$cols -v firstlast="$firstlast" -v istrunc="$MPVC_PLAYLIST_TRUNC" \
         '
         BEGIN {
             # truncate lines x cols when interactive (configurable)
