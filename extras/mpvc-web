@@ -674,21 +674,25 @@ mpvc_web_index()
         </fieldset>
 -->
 
-        <fieldset class="control-group" style="width:100%">
+        <fieldset class="control-group">
+          <legend>[ Controli]</legend>
+            $(printf " +30\n+20\n+10\n+5\n0\n-5\n-10\n-20\n-30" | mpvc_web_select_form "mpvc -q vol" "${MPVC_WEB_SHORTCUT_VOL}")
+            $(printf " +15\n+10\n+5\n+2\n+1\n0\n-1\n-2\n-5\n-10\n-15" | mpvc_web_select_form "mpvc -q track")
+            $(printf " +30\n+20\n+10\n+5\n+1\n0\n-1\n-5\n-10\n-20\n-30" | mpvc_web_select_form "mpvc -q cplay")
+            $(printf " +120\n+60\n+25\n0\n-25\n-60\n-120" | mpvc_web_select_form "mpvc -q seek" "${MPVC_WEB_SHORTCUT_SEEK}")
+
+            $(mpvc-equalizer preset | awk '/ #preset:/ {print $NF}' | mpvc_web_select_form "mpvc-equalizer load" "${MPVC_WEB_SHORTCUT_EQUALIZER}")
+        </fieldset>
+
+        <fieldset class="control-group">
           <legend>[ Media ]</legend>
             $([ -n "${MPVC_WEB_DEV:-}" ] && mpvc_web_cli)
             $([ -n "${MPVC_WEB_DEV:-}" ] && mpvc_web_yts)
 
-            $(printf " +30\n+20\n+10\n+5\n0\n-5\n-10\n-20\n-30" | mpvc_web_select_form "mpvc -q vol" "${MPVC_WEB_SHORTCUT_VOL}")
-            $(printf " +15\n+10\n+5\n+2\n+1\n0\n-1\n-2\n-5\n-10\n-15" | mpvc_web_select_form "mpvc -q track")
-            $(printf " +30\n+20\n+10\n+5\n+1\n0\n-1\n-5\n-10\n-20\n-30" | mpvc_web_select_form "mpvc -q cplay")
             $("$MPVC_WEB_CGI" mpvc save | mpvc_web_select_form "mpvc-fzf -g" "${MPVC_WEB_SHORTCUT_SEEK}")
-
             $(mpvc stash list | mpvc tac | mpvc-fzf -0 | mpvc_web_select_form "mpvc -q stash apply" "${MPVC_WEB_SHORTCUT_APPLY}")
             $(mpvc stash list | mpvc tac | mpvc-fzf -0 | mpvc_web_select_form "mpvc -q stash append" "${MPVC_WEB_SHORTCUT_APPLY}")
 
-            $(mpvc-equalizer preset | awk '/ #preset:/ {print $NF}' | mpvc_web_select_form "mpvc-equalizer load" "${MPVC_WEB_SHORTCUT_EQUALIZER}")
-            $(printf " +120\n+60\n+25\n0\n-25\n-60\n-120" | mpvc_web_select_form "mpvc -q seek" "${MPVC_WEB_SHORTCUT_SEEK}")
             $(if [ -n "$MPVC_WEB_ARCHIVE_ENABLE" ]; then find "ytdl-archive/" | awk -F/ '{print "https://"$NF}' | mpvc_web_select_form "mpvc -q add" "${MPVC_WEB_SHORTCUT_ARCHIVE}"; fi)
         </fieldset>
 
