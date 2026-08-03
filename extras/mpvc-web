@@ -420,6 +420,37 @@ legend {
 EOF
 }
 
+mpvc_web_icon_svg()
+{
+    cat <<EOF
+<svg xmlns="http://w3.org" viewBox="0 0 100 100">
+  <text y="0.9em" font-size="90">🎧</text>
+</svg>
+EOF
+
+}
+
+mpvc_web_manifest()
+{
+    cat <<EOF
+{
+  "short_name": "mpvc Remote",
+  "name": "mpvc Media Controller",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#121212",
+  "icons": [
+    {
+      "src": "/apple-touch-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
+EOF
+}
+
 mpvc_web_select_form()
 {
     cmd="$1"
@@ -441,7 +472,7 @@ mpvc_web_yts()
 cat <<EOF
             <!-- YTS Search Form (mobile-optimized with <select> fallback) -->
             <form id="mpvc-yts-form" action="/" method="get" class="yts-search-form">
-                <label for="mpvc-yts-input">YTS/Search</label>
+                <label for="mpvc-yts-input">YTS</label>
                 <input type="search"
                        id="mpvc-yts-input"
                        name="mpvc-yts-query"
@@ -667,6 +698,7 @@ mpvc_web_index()
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
     <meta http-equiv=refresh content="$MPVC_WEB_HTML_REFRESH;url=." />
 
+    <link rel="manifest" href="manifest.json">
     <link rel="IconFile" href="apple-touch-icon.svg" sizes="64x64">
     <link rel="apple-touch-icon" href="apple-touch-icon.svg">
     <title> 🎧$MPVC_WEB_HOSTNAME mpvc</title>
@@ -869,6 +901,28 @@ mpvc_web_https()
     #echo "$$" > "$MPVC_WEB_SSL_PID"
 }
 
+mpvc_web_qrcode()
+{
+    host=$MPVC_WEB_HOST
+    if ! command -v qrencode >/dev/null; then return; fi
+
+    if [ "$host" -eq "0" ]; then
+        host=$(ip -j route get 1.1.1.1 | jq -r '.[0].prefsrc')
+    fi
+
+    qrurl="http://$host:$MPVC_WEB_PORT";
+    if [ -n "${MPVC_WEB_SSL_ENABLE}" ]; then
+        qrurl="https://$host:$MPVC_WEB_SSL_PORT";
+    fi
+
+    if command -v qrencode >/dev/null; then
+        echo "# $PROGNAME Client QR code $qrurl"
+        echo
+        qrencode -s 6 -l H -t ansiutf8 "$qrurl";
+        echo
+    fi
+}
+
 mpvc_web_setup()
 {
     mpvc_web_config
@@ -891,7 +945,7 @@ mpvc_web_setup()
 
         mpvc_web_index > "$MPVC_WEB_ROOT/index.html"
         echo > "$MPVC_WEB_ROOT/favicon.ico"
-        echo > "$MPVC_WEB_ROOT/apple-touch-icon.svg"
+        mpvc_web_icon_svg > "$MPVC_WEB_ROOT/apple-touch-icon.svg"
         if [ -n "$MPVC_WEB_CSS_STYLE" ]; then
             cat "$MPVC_WEB_CSS_STYLE" > "$MPVC_WEB_ROOT/style.css"
         else
@@ -899,6 +953,8 @@ mpvc_web_setup()
         fi
         mpvc_web_cgi > "$MPVC_WEB_CGI"
         chmod u+x "$MPVC_WEB_CGI"
+
+        mpvc_web_manifest > "$MPVC_WEB_ROOT/manifest.json"
 
         # setup https socat if requested
         if [ -n "${MPVC_WEB_SSL_ENABLE}" ]; then
@@ -910,7 +966,10 @@ mpvc_web_setup()
                 kill "$(cat "$MPVC_WEB_SSL_PID")" || true
             fi
             mpvc_web_https
+
         fi
+
+        mpvc_web_qrcode
 
         if [ -n "${MPVC_WEB_EXTRAS_URL:-}" ]; then
             echo "# $PROGNAME Setup extras/url features (MPVC_WEB_EXTRAS_URL=$MPVC_WEB_EXTRAS_URL is set)"
