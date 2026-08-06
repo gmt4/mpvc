@@ -1019,7 +1019,7 @@ mpvc_web()
 
         BEGIN {
             quiet=1
-            allowCmdStr = "mpv clear kill --mute toggle play stop prev next playrand shuffle unshuffle repeat single replay togglev aspect togglew togglef togglei chapter-replay chapter-loop chapter-prev chapter-next cplayrand"
+            allowCmdStr = "mpv clear kill --mute toggle play stop prev next playrand shuffle unshuffle repeat single replay togglev aspect togglew togglef togglei creplay cloop cprev cnext cplayrand"
             n = split(allowCmdStr, a, /[[:space:]]+/)
             for (i = 1; i <= n; i++) { allowCmdList[a[i]] = 1; }
         }
