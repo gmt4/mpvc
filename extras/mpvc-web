@@ -478,7 +478,7 @@ cat <<EOF
                        name="mpvc-yts-query"
                        placeholder="Search title or paste URL"
                        title="Search YouTube or paste video URL (press Enter)"
-                       "$MPVC_WEB_SHORTCUT_YTSEARCH"
+                       $MPVC_WEB_SHORTCUT_YTSEARCH
                        onkeydown="mpvcOnKeyDownEvent(event, this.form)">
 
                 <select name="mpvc-yts-url"
