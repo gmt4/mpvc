@@ -269,6 +269,18 @@ form {
   display: inline-block;
 }
 
+button {
+  padding: 8px 12px;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
 select {
   padding: 8px 12px;
   background: var(--bg-tertiary);
@@ -279,6 +291,9 @@ select {
   font-size: 13px;
   transition: all 0.2s ease;
   font-family: inherit;
+
+  overflow-y: auto;
+  transition: height 0.2s ease;
 }
 
 select:hover {
@@ -470,6 +485,97 @@ mpvc_web_select_form()
 mpvc_web_yts()
 {
 cat <<EOF
+            <script>
+            function mpvcYtsOnKeyDownEvent(event, form) {
+                if (event.keyCode !== 13) return;
+
+                event.preventDefault();
+
+                var input = form.querySelector('input[name="mpvc-yts-query"]');
+                var select = document.getElementById('mpvc-yts-select');
+                var query = input.value.trim();
+
+                if (!query) {
+                    select.innerHTML = '<option value="" disabled selected>Please enter a search term</option>';
+                    return;
+                }
+
+                select.innerHTML = '<option value="" disabled selected>Loading...</option>';
+                select.disabled = true;
+                input.disabled = true;
+
+                var url = '';
+
+                url = '/cgi-bin/mpvc?mpvc-fzf+-s+' + encodeURIComponent(query);
+                mpvcHttpGet(url)
+                    .then(data => {
+                        if (!data || data.trim() === '') {
+                            select.innerHTML = '<option value="" disabled selected>No results found</option>';
+                            input.disabled = false;
+                            select.disabled = false;
+                            return;
+                        }
+
+                        var lines = data.split('\n').filter(line => line.trim() !== '');
+                        if (lines.length === 0) {
+                            select.innerHTML = '<option value="" disabled selected>No results found</option>';
+                            input.disabled = false;
+                            select.disabled = false;
+                            return;
+                        }
+
+                        var html = '<option value="" disabled>- Select a result to add -</option>';
+                        for (var i = 0; i < lines.length; i++) {
+                            var line = lines[i];
+                            var parts = line.split(/\s+/);
+                            var url = parts[0];
+
+                            html += '<option value="' +
+                                    url.replace(/"/g, '&quot;') +
+                                    '">' +
+                                    line.replace(/</g, '&lt;').replace(/>/g, '&gt;') +
+                                    '</option>';
+                        }
+
+                        // expand the select
+                        select.innerHTML = html;
+                        select.size = Math.min(lines + 1, 8);
+                        select.disabled = false;
+                        input.disabled = false;
+                        select.focus();
+                    })
+                    .catch(error => {
+                        console.error('Search error:', error);
+                        select.innerHTML = '<option value="" disabled selected>Search failed. Try again.</option>';
+                        input.disabled = false;
+                        select.disabled = false;
+                    });
+            }
+
+            // Handle Go button click: apply action to all selected results
+            function mpvcYtsSearchSubmit() {
+                var selectElement = document.getElementById('mpvc-yts-select');
+                var actionElement = document.getElementById('mpvc-yts-search-action');
+                var selectedOptions = selectElement.selectedOptions;
+
+                if (selectedOptions.length === 0) {
+                    console.log('No results selected');
+                    return;
+                }
+
+                // Process each selected result
+                var action = actionElement.value;
+                for (var i = 0; i < selectedOptions.length; i++) {
+                    var yturl = selectedOptions[i].value;
+                    var url = '/cgi-bin/mpvc?mpvc+' + action + '+' + yturl;
+                    mpvcHttpGet(url);
+                }
+
+                // Clear selection after submission
+                selectElement.value = '';
+            }
+            </script>
+
             <!-- YTS Search Form (mobile-optimized with <select> fallback) -->
             <form id="mpvc-yts-form" action="/" method="get" class="yts-search-form">
                 <label for="mpvc-yts-input">YTS</label>
@@ -479,15 +585,28 @@ cat <<EOF
                        placeholder="Search title or paste URL"
                        title="Search YouTube or paste video URL (press Enter)"
                        $MPVC_WEB_SHORTCUT_YTSEARCH
-                       onkeydown="mpvcOnKeyDownEvent(event, this.form)">
+                       onkeydown="mpvcYtsOnKeyDownEvent(event, this.form)">
 
                 <select name="mpvc-yts-url"
                         id="mpvc-yts-select"
                         title="Search results"
-                        onchange="mpvcYtsSelectChange(this)">
-                    <option value="" disabled selected>Search results appear here</option>
+                        multiple
+                        size="1">
+                    <option value="" disabled selected>Search results go here</option>
                 </select>
-            </form>
+
+                <select id="mpvc-yts-search-action">
+                    <option value="add">play-last</option>
+                    <option value="playnext">play-next</option>
+                    <option value="playnow">play-now</option>
+                    <option value="-fzf+-g">download</option>
+                    <option value="mpvc-fzf+-a">Stash</option>
+                </select>
+
+                <button id="mpvc-yts-search-submit" type="button" onclick="mpvcYtsSearchSubmit()">Go</button>
+            </form
+
+</form>
 EOF
 }
 
@@ -506,89 +625,6 @@ EOF
 mpvc_web_index_js()
 {
     cat <<EOF
-function mpvcOnKeyDownEvent(event, form) {
-    if (event.keyCode !== 13) return;
-
-    event.preventDefault();
-
-    var input = form.querySelector('input[name="mpvc-yts-query"]');
-    var select = document.getElementById('mpvc-yts-select');
-    var query = input.value.trim();
-
-    if (!query) {
-        select.innerHTML = '<option value="" disabled selected>Please enter a search term</option>';
-        return;
-    }
-
-    select.innerHTML = '<option value="" disabled selected>Loading...</option>';
-    select.disabled = true;
-    input.disabled = true;
-
-    var url = '';
-
-    // If query starts with "http": add to playlist, otherwise search query
-    if (query.startsWith('http')) {
-        url = '/cgi-bin/mpvc?mpvc+add+' + encodeURIComponent(query);
-        mpvcHttpGet(url)
-            .then(data => {
-                select.innerHTML = '<option value="" disabled selected>✓ Added to playlist</option>';
-                input.value = '';
-                input.disabled = false;
-                select.disabled = false;
-                setTimeout(() => {
-                    select.innerHTML = '<option value="" disabled selected>Search or paste URL</option>';
-                }, 2000);
-            })
-            .catch(error => {
-                select.innerHTML = '<option value="" disabled selected>✗ Failed to add URL</option>';
-                input.disabled = false;
-                select.disabled = false;
-            });
-    } else {
-        url = '/cgi-bin/mpvc?mpvc-fzf+-s+' + encodeURIComponent(query);
-        mpvcHttpGet(url)
-            .then(data => {
-                if (!data || data.trim() === '') {
-                    select.innerHTML = '<option value="" disabled selected>No results found</option>';
-                    input.disabled = false;
-                    select.disabled = false;
-                    return;
-                }
-
-                var lines = data.split('\n').filter(line => line.trim() !== '');
-                if (lines.length === 0) {
-                    select.innerHTML = '<option value="" disabled selected>No results found</option>';
-                    input.disabled = false;
-                    select.disabled = false;
-                    return;
-                }
-
-                var html = '<option value="" disabled>- Select a result to add -</option>';
-                for (var i = 0; i < lines.length; i++) {
-                    var line = lines[i];
-                    var parts = line.split(/\s+/);
-                    var url = parts[0];
-
-                    html += '<option value="' +
-                            url.replace(/"/g, '&quot;') +
-                            '">' +
-                            line.replace(/</g, '&lt;').replace(/>/g, '&gt;') +
-                            '</option>';
-                }
-
-                select.innerHTML = html;
-                select.disabled = false;
-                input.disabled = false;
-                select.focus();
-            })
-            .catch(error => {
-                console.error('Search error:', error);
-                select.innerHTML = '<option value="" disabled selected>Search failed. Try again.</option>';
-                input.disabled = false;
-                select.disabled = false;
-            });
-    }
-}
 
 function mpvcHttpGet(url) {
     return fetch(url)
@@ -597,18 +633,6 @@ function mpvcHttpGet(url) {
             console.error('Fetch error:', error);
             throw error;
         });
-}
-
-// Handle select change: submit with proper encoding
-function mpvcYtsSelectChange(selectElement) {
-    if (selectElement.value === '') return;
-
-    console.log(selectElement)
-    var form = selectElement.form;
-    var yturl= selectElement.value
-    var url = '/cgi-bin/mpvc?mpvc+add+' + yturl; //encodeURIComponent()
-
-    mpvcHttpGet(url)
 }
 
 function Help()
