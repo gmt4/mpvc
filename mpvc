@@ -652,7 +652,7 @@ mpvc_appendtrack() {
     filename="$*"
     # require absolute paths
     case "$filename" in
-        ''|' '*) if [ ! -e "$filename" ]; then warn "Warning: invalid filename"; return; fi ;;
+        ''|' '*) if [ ! -e "$filename" ]; then return; fi ;; # warn "Warning: invalid filename"; 
         /*) if [ ! -e "$filename" ]; then warn "Warning: ${filename##*/} not found."; fi ;;
         *)  if [ -e "$filename" ]; then filename="$(pwd)/$filename"; fi ;;
     esac
