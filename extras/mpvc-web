@@ -587,23 +587,26 @@ cat <<EOF
                        $MPVC_WEB_SHORTCUT_YTSEARCH
                        onkeydown="mpvcYtsOnKeyDownEvent(event, this.form)">
 
-                <select name="mpvc-yts-url"
-                        id="mpvc-yts-select"
-                        title="Search results"
-                        multiple
-                        size="1">
-                    <option value="" disabled selected>Search results go here</option>
-                </select>
-
                 <select id="mpvc-yts-search-action">
                     <option value="add">play-last</option>
                     <option value="playnext">play-next</option>
                     <option value="playnow">play-now</option>
-                    <option value="-fzf+-g">download</option>
-                    <option value="mpvc-fzf+-a">Stash</option>
+                    <option value="mpvc-fzf+-g">download</option>
+                    <option value="mpvc-fzf+-a">stash</option>
                 </select>
 
                 <button id="mpvc-yts-search-submit" type="button" onclick="mpvcYtsSearchSubmit()">Go</button>
+
+                <select name="mpvc-yts-url"
+                        id="mpvc-yts-select"
+                        title="Search results"
+                        multiple
+                        size="1"
+                        style="margin-bottom: -6px; resize: auto;"
+                        >
+                    <option value="" disabled selected>Search results go here</option>
+                </select>
+
             </form
 
 </form>
