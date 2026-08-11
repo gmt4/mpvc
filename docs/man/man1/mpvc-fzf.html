@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>mpvc-fzf(1)</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">mpvc-fzf(1)</h1>
+<p class="date">April, 2026</p>
+</header>
+<h1 id="name">NAME</h1>
+<p>mpvc-fzf - fuzzy search interface for discovering and playing media with mpvc</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p>mpvc-fzf [option]</p>
+<h1 id="description">DESCRIPTION</h1>
+<p>mpvc-fzf is a fuzzy search interface that integrates fzf with mpvc to enable interactive discovery, searching, and playback of media from multiple sources. It supports local files, YouTube, Invidious, streaming services, and custom feeds.</p>
+<p>The tool provides an interactive terminal interface for selecting and managing media, with support for advanced features like video quality selection, equalizer management, and playlist manipulation.</p>
+<h1 id="options">OPTIONS</h1>
+<h2 id="search-and-playback">Search and Playback</h2>
+<dl>
+<dt><code>-p</code>, <code>--splay</code></dt>
+<dd>Search and play media on Invidious.
+</dd>
+<dt><code>-s</code>, <code>--search</code></dt>
+<dd>Search for media on Invidious without auto-playing.
+</dd>
+<dt><code>-U</code>, <code>--Url</code></dt>
+<dd>Search and play from a given YouTube URL.
+</dd>
+<dt><code>-u</code>, <code>--url</code></dt>
+<dd>Search a given YouTube URL (videos, channels, playlists).
+</dd>
+<dt><code>-l</code>, <code>--local PATH</code></dt>
+<dd>Search and play local media at the specified path.
+</dd>
+<dt><code>-k</code>, <code>--dplay</code></dt>
+<dd>Search and play videos from DuckDuckGo.
+</dd>
+<dt><code>-K</code>, <code>--dsearch</code></dt>
+<dd>Search DuckDuckGo videos without auto-playing.
+</dd>
+<dt><code>-y</code>, <code>--related</code></dt>
+<dd>Search for related media on Invidious based on current selection.
+</dd>
+<dt><code>-Y</code>, <code>--Related</code></dt>
+<dd>Search and play related media on Invidious.
+</dd>
+<dt><code>-z</code>, <code>--relatedo</code></dt>
+<dd>Search currently playing media on Invidious for related videos.
+</dd>
+</dl>
+<h2 id="download-and-fetch">Download and Fetch</h2>
+<dl>
+<dt><code>-g</code>, <code>--fetch</code></dt>
+<dd>Fetch a YouTube URL and store locally.
+</dd>
+<dt><code>-G</code>, <code>--Fetch</code></dt>
+<dd>Search Invidious, fetch the media, and store locally.
+</dd>
+<dt><code>-C</code>, <code>--cache</code></dt>
+<dd>Search cache by URL for remote media.
+</dd>
+<dt><code>-r</code>, <code>--explorer</code></dt>
+<dd>Shortcut to search ytdl-archive directory.
+</dd>
+<dt><code>-b</code>, <code>--browse</code></dt>
+<dd>Manage ytdl-archive URL collections.
+</dd>
+</dl>
+<h2 id="playlist-and-media-management">Playlist and Media Management</h2>
+<dl>
+<dt><code>-f</code>, <code>--playlist</code></dt>
+<dd>Manage the current mpv playlist interactively with fzf.
+</dd>
+<dt><code>-a</code>, <code>--stash</code></dt>
+<dd>Manage mpvc stashes (saved playlists or media collections).
+</dd>
+<dt><code>-c</code>, <code>--chapters</code></dt>
+<dd>Manage mpv chapter list interactively.
+</dd>
+<dt><code>-e</code>, <code>--eqz</code></dt>
+<dd>Manage equalizer settings with preset selection.
+</dd>
+<dt><code>-q</code>, <code>--quality</code></dt>
+<dd>Select and change video quality for playback.
+</dd>
+</dl>
+<h2 id="metadata-and-information">Metadata and Information</h2>
+<dl>
+<dt><code>-i</code>, <code>--lyrics</code></dt>
+<dd>Search media lyrics on Invidious.
+</dd>
+<dt><code>-I</code>, <code>--Lyrics</code></dt>
+<dd>Search media lyrics on DuckDuckGo.
+</dd>
+<dt><code>-t</code>, <code>--thumbnail</code></dt>
+<dd>Retrieve thumbnail URL from media metadata.
+</dd>
+<dt><code>-T</code>, <code>--Thumbnail</code></dt>
+<dd>Display thumbnail image from metadata.
+</dd>
+</dl>
+<h2 id="radio-and-streaming-services">Radio and Streaming Services</h2>
+<dl>
+<dt><code>--now</code></dt>
+<dd>Return shareable “now listening” playlist with current media information.
+</dd>
+<dt><code>--lofi</code></dt>
+<dd>Search and play Lo-Fi music channels.
+</dd>
+<dt><code>--somafm</code></dt>
+<dd>Search and play SomaFM streaming channels.
+</dd>
+<dt><code>--rapi</code></dt>
+<dd>Search and play stations from Radio Browser API.
+</dd>
+<dt><code>--ntsr</code></dt>
+<dd>Search and play stations from NTS Radio API.
+</dd>
+<dt><code>--custom</code></dt>
+<dd>Search and play custom media feeds.
+</dd>
+<dt><code>custom-gen</code></dt>
+<dd>Generate a custom feeds template for configuration.
+</dd>
+<dt><code>invid-list</code></dt>
+<dd>List available Invidious instances.
+</dd>
+</dl>
+<h2 id="socket-and-display-options">Socket and Display Options</h2>
+<dl>
+<dt><code>-S</code>, <code>--socket SOCKET</code></dt>
+<dd>Set the path to the mpv Unix socket for communication.
+</dd>
+<dt><code>-SS</code>, <code>--socklist</code></dt>
+<dd>Select and set mpv socket from available sockets.
+</dd>
+<dt><code>-x</code>, <code>--launch</code></dt>
+<dd>Start mpvc-fzf in a new xterm window. Information
+</dd>
+<dt><code>-v</code>, <code>--version</code></dt>
+<dd>Display mpvc-fzf version information.
+</dd>
+<dt><code>-h</code>, <code>--help</code></dt>
+<dd>Display help message with usage information.
+</dd>
+</dl>
+<h1 id="examples">EXAMPLES</h1>
+<p>Search and play a song on Invidious:</p>
+<pre><code>mpvc-fzf -p &#39;kupla mirage&#39;</code></pre>
+<p>Search YouTube and interactively select results:</p>
+<pre><code>mpvc-fzf -U</code></pre>
+<p>Browse and manage current mpv playlist:</p>
+<pre><code>mpvc-fzf -f</code></pre>
+<p>Search for media lyrics on Invidious:</p>
+<pre><code>mpvc-fzf -i &#39;artist name&#39;</code></pre>
+<p>Play Lo-Fi music streams:</p>
+<pre><code>mpvc-fzf lofi</code></pre>
+<p>Manage equalizer settings:</p>
+<pre><code>mpvc-fzf -e</code></pre>
+<p>Search local music directory:</p>
+<pre><code>mpvc-fzf -l ~/Music</code></pre>
+<p>Fetch and download YouTube video locally:</p>
+<pre><code>mpvc-fzf -G &#39;video title&#39;</code></pre>
+<p>Search DuckDuckGo videos and play:</p>
+<pre><code>mpvc-fzf -k &#39;search query&#39;</code></pre>
+<p>Play SomaFM streams:</p>
+<pre><code>mpvc-fzf somafm</code></pre>
+<p>Select video quality:</p>
+<pre><code>mpvc-fzf -q</code></pre>
+<p>Display media thumbnail:</p>
+<pre><code>mpvc-fzf -T</code></pre>
+<p>Search for related videos:</p>
+<pre><code>mpvc-fzf -Y &#39;video title&#39;</code></pre>
+<h1 id="environment">ENVIRONMENT</h1>
+<dl>
+<dt>MPV_SOCKET</dt>
+<dd>Path to the mpv Unix socket. If not set, mpvc-fzf will attempt to locate the default socket automatically.
+</dd>
+<dt>FZF_DEFAULT_OPTS</dt>
+<dd>Default options for fzf fuzzy finder behavior and appearance.
+</dd>
+<dt>XDG_CONFIG_HOME</dt>
+<dd>Base directory for user configuration files. Defaults to ~/.config.
+</dd>
+</dl>
+<h1 id="files">FILES</h1>
+<dl>
+<dt>~/.config/mpvc/mpvc.conf</dt>
+<dd>mpvc configuration file.
+</dd>
+<dt>~/.config/mpvc/yt-dlp.conf</dt>
+<dd>yt-dlp configuration for YouTube downloads.
+</dd>
+<dt>~/.config/mpvc/custom-feeds.json</dt>
+<dd>Custom media feed definitions for streaming.
+</dd>
+<dt>~/.cache/mpvc/</dt>
+<dd>Cache directory for downloaded media and metadata.
+</dd>
+</dl>
+<h1 id="see-also">SEE ALSO</h1>
+<p>mpvc-fzf(1), mpvc-web(1), mpvc-tui(1), mpvc-equalizer(1) mpv(1), fzf(1), yt-dlp(1), mpv(1)</p>
+<h1 id="author">AUTHOR</h1>
+<p>Manual written by gmt4. See https://github.com/gmt4/mpvc for more information.</p>
+<h1 id="reporting-bugs">REPORTING BUGS</h1>
+<p>Report bugs at: https://github.com/gmt4/mpvc/issues</p>
+</body>
+</html>

@@ -84,7 +84,7 @@ mpvc_config()
         if [ -f "$file" ]; then
             echo "$PROGNAME: $file exists. Not overwriting."
         else
-            if curl -fsSL -o - "https://github.com/denoland/$bin/releases/download/v2.6.6/$bin-$(uname -m)-unknown-linux-gnu.zip" | gunzip > "$file"; then
+            if curl -m 20 -fsSL -o - "https://github.com/denoland/$bin/releases/latest/download/$bin-$(uname -m)-unknown-linux-gnu.zip" | gunzip > "$file"; then
                 chmod a+rx "$file"
             fi
         fi
@@ -195,6 +195,33 @@ mpvc_check_update()
     fi
 }
 
+mpvc_userprompt() { echo "$@"; read foo; }
+
+mpvc_quickstart()
+{
+    echo
+    echo "# Welcome to mpvc-installer QuickStart"
+    echo " (Hit Control-C exit / Enter to continue)"
+    echo
+
+    mpvc_userprompt "[*] Check for latest mpvc: mpvc-installer check-update [Y/n]"
+    $0 check-update
+    mpvc_userprompt "[*] Ready to install: mpvc-installer fetch-user [Y/n]"
+    $0 fetch-user
+    mpvc_userprompt "[*] Ready to config: mpvc-installer config-user [Y/n]"
+    $0 config-user
+    mpvc_userprompt "[*] Ready to perform final checks: mpvc-installer check-reqs [Y/n]"
+    $0 check-reqs
+
+    echo
+    echo "# Congrats! QuickStart Install completed!"
+    echo " (Hit Control-C exit / Enter to continue)"
+    echo
+
+    mpvc_userprompt "[*] Lets start with: mpvc-fzf somafm [Y/n]"
+    mpvc-fzf somafm
+}
+
 mpvc_version()
 {
     echo "usage: $PROGNAME args # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL"
@@ -204,6 +231,8 @@ usage()
 {
     cat <<EOF
 usage: $PROGNAME args # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
+  quickstart     : QuickStart Install for first-time users
+
   check-update   : Check for updates
   check-reqs     : Check for required packages
   config         : Fetch mpv config
@@ -217,7 +246,7 @@ usage: $PROGNAME args # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
   install-sys    : Install to BINDIR=$PREFIX/bin (sets PREFIX=/usr/local)
   uninstall-user : Uninstall from BINDIR=$HOME/bin
   uninstall-sys  : Uninstall from BINDIR=$PREFIX/bin (sets PREFIX=/usr/local)
-*tips: If unsure where to start, start with: $PROGNAME fetch-user
+*tips: If unsure where to start, start with: $PROGNAME quickstart
 EOF
     exit
 }
@@ -243,6 +272,8 @@ main()
     install)         shift; mpvc_install "$@";;
     uninstall)       shift; mpvc_uninstall "$@";;
     config)          shift; mpvc_config "$@";;
+
+    quickstart)      shift; mpvc_quickstart ;;
 
     config-user)     shift; PREFIX=$HOME $SHELL "$0" config;;
     config-sys)      shift; PREFIX=/usr/local $SHELL "$0" config;;

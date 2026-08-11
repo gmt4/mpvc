@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>mpvc-tui(1)</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">mpvc-tui(1)</h1>
+<p class="date">April, 2026</p>
+</header>
+<h1 id="name">NAME</h1>
+<p>mpvc-tui - Terminal User Interface for displaying the MPV playlist and playback</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p>mpvc-tui <a href="#options">options</a> <a href="#files">files</a></p>
+<h1 id="description">DESCRIPTION</h1>
+<p>mpvc-tui is a terminal-based user interface that displays status/playlist info of the currently mpv instance.</p>
+<h1 id="options">OPTIONS</h1>
+<dl>
+<dt><code>-d</code>, <code>--dir PATH</code></dt>
+<dd>Set the working directory to the specified media directory. All media operations will be relative to this directory.
+</dd>
+<dt><code>-h</code>, <code>--help</code></dt>
+<dd>Display the help message and exit.
+</dd>
+<dt><code>-H</code>, <code>--history</code></dt>
+<dd>Start the mpvc-tui history interface. This allows you to browse and replay previously played media.
+</dd>
+<dt><code>-k</code>, <code>--kill</code></dt>
+<dd>Stop the currently running mpvc-tui instance.
+</dd>
+<dt><code>-n</code>, <code>--notify</code></dt>
+<dd>Enable desktop notifications for mpvc events using notify-send. Notifications will appear for playback state changes and media transitions.
+</dd>
+<dt><code>--socket PATH</code></dt>
+<dd>Set the MPV socket path. Overrides the default socket connection (defaults to MPV’s standard socket if not specified).
+</dd>
+<dt><code>-s</code>, <code>--suggest</code></dt>
+<dd>Suggest a random media item to play based on previously played media. Useful for discovering content from your history.
+</dd>
+<dt><code>-S</code>, <code>--scrobbler</code></dt>
+<dd>Start the mpvc-tui scrobbler interface. This feature tracks and logs media that you play.
+</dd>
+<dt><code>-t</code>, <code>--tui</code></dt>
+<dd>Start the main TUI for managing the MPV playlist (uses rlwrap for enhanced readline functionality).
+</dd>
+<dt><code>-T</code>, <code>--Tui</code></dt>
+<dd>Combo option that starts mpvc-tui with both TUI (-t) and desktop notifications (-n) enabled. This is the recommended starting option. Additional files provided as arguments will be added to the playlist.
+</dd>
+<dt><code>-x</code>, <code>--launch</code></dt>
+<dd>Start mpvc-tui in a new xterm window. This respects the <code>$MPVC_TUI_TERM</code> environment variable for terminal selection. Can be combined with other options.
+</dd>
+<dt><code>-v</code>, <code>--version</code></dt>
+<dd>Display the mpvc-tui version and exit.
+</dd>
+</dl>
+<h1 id="examples">EXAMPLES</h1>
+<p>Start TUI with notifications for a media directory</p>
+<pre><code>mpvc-tui -d ~/Music -T
+mpvc-tui -t</code></pre>
+<p>Enable desktop notifications separately</p>
+<pre><code>mpvc-tui -n</code></pre>
+<p>Launch in a new terminal window</p>
+<pre><code>mpvc-tui -x -t -d ~/Music</code></pre>
+<p>Access playback history</p>
+<pre><code>mpvc-tui -H</code></pre>
+<p>Enable media scrobbling</p>
+<pre><code>mpvc-tui -S</code></pre>
+<h1 id="environment">ENVIRONMENT</h1>
+<dl>
+<dt>MPVC_TUI_TERM</dt>
+<dd>Specifies the terminal emulator to use when launching mpvc-tui with the -x option. If not set, xterm is used as the default.
+</dd>
+<dt>MPV_SOCKET</dt>
+<dd>Override the default MPV socket path. Can also be set directly using the –socket option.
+</dd>
+<dt>XDG_CONFIG_HOME</dt>
+<dd>Directory where mpvc configuration is stored. Defaults to ~/.config/ if not set.
+</dd>
+</dl>
+<h1 id="files">FILES</h1>
+<dl>
+<dt>~/.config/mpvc/mpvc.conf</dt>
+<dd>mpvc-specific configuration file.
+</dd>
+</dl>
+<h1 id="see-also">SEE ALSO</h1>
+<p>mpv(1), mpc(1), mpvc-fzf(1), mpvc-web(1), mpvc-tui(1), mpvc-equalizer(1)</p>
+<h1 id="author">AUTHOR</h1>
+<p>Manual written by gmt4. See https://github.com/gmt4/mpvc for more information.</p>
+<h1 id="reporting-bugs">REPORTING BUGS</h1>
+<p>Report bugs at: https://github.com/gmt4/mpvc/issues</p>
+</body>
+</html>

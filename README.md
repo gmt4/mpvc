@@ -83,8 +83,8 @@ Recommended extras:
 
 ## Installation
 
-- [Git](#git)
 - [Curl](#curl)
+- [Git](#git)
 - [Debian](#debian)
 - [Arch](#arch-mpvc-git)
 - [BSD](#bsd)
@@ -96,6 +96,27 @@ Installing is just a matter of fetching the scripts either via [Git](#git)/[Curl
 
 The easiest for a onetime install is using [Curl](#curl), however for @latest version a [Git](#git) install is recommended.
 Remember to check your installation for missing dependencies/requirements using `mpvc-installer check-reqs`, and, if you encounter any issue file an [Issue](../../issues).
+
+### Curl
+
+Fetch the mpvc-installer (written in POSIX-sh), and ensure it runs under a POSIX-sh SHELL
+
+* __Zen Install__ achieve inner peace of mind before piping to your shell.
+
+
+```console
+curl -fsSLO https://github.com/lwilletts/mpvc/raw/master/extras/mpvc-installer;
+# take your time to review the mpvc-installer for peace-of-mind
+BINDIR=$HOME/bin SHELL=/bin/sh $SHELL ./mpvc-installer quickstart
+```
+
+* __YOLO Install__ fast, but you're trusting the pipe (curl|sh).
+
+
+```console
+curl -fsSLO https://github.com/lwilletts/mpvc/raw/master/extras/mpvc-installer \
+  && SHELL=/bin/sh BINDIR=$HOME/bin sh ./mpvc-installer quickstart
+```
 
 ### Git
 
@@ -147,14 +168,6 @@ This does git clone, and symlinks the mpvc scripts to `BINDIR` (default `~/bin`)
 ```
 
 For more  check the  [LogBook](#logbook) (remember your best chance is to try, play, learn, and have fun).
-
-### Curl
-
-Fetch the mpvc-installer (written in POSIX-sh), and ensure it runs under a POSIX-sh SHELL
-```console
-curl -fsSLO https://github.com/lwilletts/mpvc/raw/master/extras/mpvc-installer \
-  && SHELL=/bin/sh BINDIR=$HOME/bin sh ./mpvc-installer fetch-user
-```
 
 ### Debian
 
@@ -297,18 +310,20 @@ usage: mpvc opts # @version v1.8 (c) gmt4 https://github.com/gmt4/mpvc
 
 ```console
 usage: mpvc-tui opts # @version v1.8 (c) gmt4 https://github.com/gmt4/mpvc
- -d|dir     : Set the WD to the media directory given as argument
- -h|help    : This help you are reading
- -H|history : Starts the mpvc-tui history
- -k|kill    : Stop the running mpvc-tui
- -n|notify  : Desktop notification using notify on mpvc events (notify-send*)
-   |socket  : Set mpv socket [default: ].
- -s|suggest : Suggest a random media to play based on previous media played
- -S|scrobler: Starts the mpvc-tui scrobbler
- -t|tui     : Starts the mpvc-tui to manage the mpv playlist (rlwrap*)
- -T|Tui     : Combo that starts mpvc-tui -t -n, and adds media given as args
- -x|launch  : Starts mpvc-tui in a new xterm ($MPVC_TUI_TERM) # combine with <opts>
- -v|version : Prints the mpvc-tui version.
+ -d|dir         : Set the WD to the media directory given as argument
+ -h|help        : This help you are reading
+ -H|history     : Starts the mpvc-tui history
+ -k|kill        : Stop the running mpvc-tui
+ -n|notify      : Desktop notification using notify on mpvc events (notify-send*)
+   |socket      : Set mpv socket [default: ].
+ -s|suggest     : Suggest a random media to play based on previous media played
+ -S|scrobler    : Starts the mpvc-tui scrobbler
+ -t|tui         : Starts the mpvc-tui TUI
+ -tt|tinytui    : Starts the mpvc-tui TUI (tiny mode)
+ -ttt|ttinytui  : Starts the mpvc-tui TUI (ttiny mode)
+ -T|Tui         : Combo that starts mpvc-tui -t -n, and adds media given as args
+ -x|launch      : Starts mpvc-tui in a new xterm ($MPVC_TUI_TERM) # combine with <opts>
+ -v|version     : Prints the mpvc-tui version.
 
 *tips: If unsure about where to begin, start with: mpvc-tui -d /path/to/media/ -T
 ````
@@ -333,7 +348,8 @@ usage: mpvc-fzf opts # @version v1.8 (c) gmt4 https://github.com/gmt4/mpvc
   -K|dsearch    : Search DuckDuckGo videos
   -l|local      : Search & play local media at $1 (handy to pipe to m load)
   -q|quality    : Select and change yt-dlp video quality (ytdl-format)
-  -r|explorer   : Shortcut to search local media at ytdl-archive/
+  -r|explorer   : Shortcut to search & play local media at ytdl-archive/
+  -R|Explorer   : Shortcut to search local media at ytdl-archive/
   -s|search     : Search on Invidious
   -S|socket     : Set mpv socket [default: ].
  -SS|socklist   : Select and set the current mpv socket to operate
@@ -348,14 +364,14 @@ usage: mpvc-fzf opts # @version v1.8 (c) gmt4 https://github.com/gmt4/mpvc
   -z|relatedo   : Search current media-title on Invidious and return related media
   -v|version    : Return the mpvc-fzf version.
 
-    now        : Return a shareable URL to the "now listening" playlist
-    lofi       : Search & play Lo-Fi channels
-    somafm     : Search & play SomaFM channels
-    radioapi   : Search & play Radio-Browser API channels
-    ntsradio   : Search & play NTS-Radio API channels
-    custom     : Search & play your custom feeds (channels, playlists, ...)
-    custom-gen : Generate a template for your custom feeds (channels, playlists, ...)
-    invid-list : List available Invidious instances (set MPVC_FZF_INVID_URL)
+    (--)now     : Return a shareable URL to the "now listening" playlist
+    (--)lofi    : Search & play Lo-Fi channels
+    (--)somafm  : Search & play SomaFM channels
+    (--)rapi    : Search & play Radio-Browser API channels
+    (--)ntsr    : Search & play NTS-Radio API channels
+    (--)custom  : Search & play your custom feeds (channels, playlists, ...)
+    custom-gen  : Generate a template for your custom feeds (channels, playlists, ...)
+    invid-list  : List available Invidious instances (set MPVC_FZF_INVID_URL)
 
 *tips: If unsure about where to begin, start: mpvc-fzf -p 'kupla mirage'
 ```
@@ -371,12 +387,13 @@ usage: mpvc-installer args # @version v1.8 (c) gmt4 https://github.com/gmt4/mpvc
   config-sys     : Fetch mpv config to BINDIR=/usr/local/bin
   fetch-user     : Fetch to BINDIR=/home/user/bin
   link-user      : Symlink to BINDIR=/home/user/bin
-  install:       : Install to BINDIR=/usr/local/bin
-  uninstall:     : Uninstall from BINDIR=/usr/local/bin
-  install-user   : Install to BINDIR=/home/user/bin (sets PREFIX=/home/user)
+  install        : Install to BINDIR=/usr/local/bin
+  uninstall      : Uninstall from BINDIR=/usr/local/bin
+  install-user   : Install to BINDIR=/home/user/bin
   install-sys    : Install to BINDIR=/usr/local/bin (sets PREFIX=/usr/local)
-  uninstall-user : Uninstall from BINDIR=/home/user/bin (sets PREFIX=/home/user)
+  uninstall-user : Uninstall from BINDIR=/home/user/bin
   uninstall-sys  : Uninstall from BINDIR=/usr/local/bin (sets PREFIX=/usr/local)
+
 *tips: If unsure where to start, start with: mpvc-installer fetch-user
 ```
 

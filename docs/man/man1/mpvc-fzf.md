@@ -111,22 +111,22 @@ Metadata and Information
 Radio and Streaming Services
 ----------------------------
 
-`now`
+`--now`
 : Return shareable "now listening" playlist with current media information.
 
-`lofi`
+`--lofi`
 : Search and play Lo-Fi music channels.
 
-`somafm`
+`--somafm`
 : Search and play SomaFM streaming channels.
 
-`radioapi`
+`--rapi`
 : Search and play stations from Radio Browser API.
 
-`ntsradio`
+`--ntsr`
 : Search and play stations from NTS Radio API.
 
-`custom`
+`--custom`
 : Search and play custom media feeds.
 
 `custom-gen`
@@ -141,7 +141,7 @@ Socket and Display Options
 `-S`, `--socket SOCKET`
 : Set the path to the mpv Unix socket for communication.
 
--SS, `--socklist`
+` -SS`, `--socklist`
 : Select and set mpv socket from available sockets.
 
 `-x`, `--launch`

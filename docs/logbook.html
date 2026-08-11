@@ -779,17 +779,17 @@ The @reboot, @daily and @weekly crontab entries, take care of starting mpvc with
 
 <pre>
 # crontab: enable audio/mpv in the morning, disable at night
-@reboot           mpvc -q quit stash apply current
-#@daily            mpvc -q quit stash apply current
-#@weekly           mpvc -q quit stash apply current
+@reboot           $HOME/bin/mpvc -q quit stash apply current
+#@daily           $HOME/bin/mpvc -q quit stash apply current
+#@weekly          $HOME/bin/mpvc -q quit stash apply current
 
 #m  h d m w cmd
- 0 21 * * * mpvc -q volume 20
- 0 22 * * * mpvc -q pause volume 15
- 0 23 * * * mpvc-mpris voloff
- 0  7 * * * mpvc-mpris volon
- 0  7 * * * mpvc -q resume "" volume 20
-30  7 * * * mpvc -q volume 30
+ 0 21 * * * $HOME/bin/mpvc -q volume 20
+ 0 22 * * * $HOME/bin/mpvc -q pause volume 15
+ 0 23 * * * $HOME/bin/mpvc-mpris voloff
+ 0  7 * * * $HOME/bin/mpvc-mpris volon
+ 0  7 * * * $HOME/bin/mpvc -q resume "" volume 20
+30  7 * * * $HOME/bin/mpvc -q volume 30
 </pre>
 </p>
 

@@ -16,24 +16,24 @@ SITEURL="https://gmt4.github.io/mpvc"
 set -euf
 
 mpvc_ascii() {
-    cat <<EOF
-
-⠀⠀⠀⠀⠀⠀⠀⢀⣤⠖⠂⠉⠉⠉⠀⠒⠤⣀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⢀⠀⣶⡟⢀⣴⣶⣿⣾⣶⣶⣄⡀⠈⠑⢤⡀⠀⠀
-⠀⠀⠀⡴⣫⣼⡿⣴⡟⠛⠉⠉⠛⠛⠿⣿⣿⣷⣦⡀⠙⢄⠀
-⠀⠀⣼⢁⣟⡟⣷⠁⠀⠀⠀⠀⠀⠀⠀⠀⠙⢿⣿⣷⣆⠈⢣
+    cat <<"EOF"
+                                            ___
+⠀⠀⠀⠀⠀⠀⠀⢀⣤⠖⠂⠉⠉⠉⠀⠒⠤⣀⠀⠀⠀⠀⠀              ____ _/ (_)___ ______⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⢀⠀⣶⡟⢀⣴⣶⣿⣾⣶⣶⣄⡀⠈⠑⢤⡀⠀⠀             / __ `/ / / __ `/ ___/⠀⠀⠀⠀⠀
+⠀⠀⠀⡴⣫⣼⡿⣴⡟⠛⠉⠉⠛⠛⠿⣿⣿⣷⣦⡀⠙⢄⠀            / /_/ / / / /_/ (__  ) ⠀⠀⠀⠀⠀
+⠀⠀⣼⢁⣟⡟⣷⠁⠀⠀⠀⠀⠀⠀⠀⠀⠙⢿⣿⣷⣆⠈⢣            \__,_/_/_/\__,_/____/  ⡀⠀⠀⠀⠀
 ⠀⢰⣿⢼⣿⣷⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⣿⣿⡆⠀⢱⠀⠀
-⠀⢸⡵⣾⣇⣸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⣧⠀⠀⢧⠀⠀⠀
-⠀⠘⣴⣿⢯⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⡿⠛⠉⠹⡆⠀⠀
-⢀⣼⣿⣧⠟⠁⢀⢀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢯⣴⣶⣴⡇⠀⠀⠀
-⢸⣿⣼⣿⣋⣉⠀⠀⠀⠈⠙⠦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣿⣿⣷⣷⡀⠀⠀
-⢸⠁⠊⣿⠛⢛⢟⣦⡀⠀⠀⠀⠈⢆⠀⠀⠀⠀⢀⠔⣨⣶⡜⠂⠈⠽⣧⡀⠀
-⠸⣶⣾⡯⠤⢄⡀⠵⢿⣦⡀⠀⠀⠀⡷⡄⠀⡰⢁⣾⣿⣿⣿⠀⠀⠀⣿⡹⡄
-⠀⣿⣡⠦⢄⡀⠈⠳⣬⣹⣿⣆⠀⠀⢉⠻⣴⠇⣾⣿⡟⢻⠁⠀⠀⠀⣿⠁⡇
-⠀⣿⡭⡀⠀⠈⠲⣦⣸⣿⣿⣿⣧⣀⠈⡔⣜⣴⣿⡟⢀⡎⡈⠀⠀⢰⡿⢠⣷
-⠀⢸⣿⣄⣒⡀⡀⣿⣷⡿⣿⢿⣿⣷⡰⡸⣯⣏⣿⡷⢋⣼⣁⡢⢠⠟⠀⣼⣿
-⠀⠀⠻⣷⣈⣁⣮⢻⢸⡇⢨⣿⣿⣿⣷⢶⣿⣏⣩⣶⣿⣿⣿⣿⡯⣤⣴⣿⠃
-⠀⠀⠀⠘⠿⣿⣿⣽⣽⣷⣿⣿⣿⣿⣿⡶⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀
+⠀⢸⡵⣾⣇⣸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⣧⠀⠀⢧⠀⠀⠀          ____ ___  ____ _   __  _____
+⠀⠘⣴⣿⢯⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⡿⠛⠉⠹⡆⠀⠀         / __ `__ \/ __ \ | / / / ___/
+⢀⣼⣿⣧⠟⠁⢀⢀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢯⣴⣶⣴⡇⠀⠀⠀       / / / / / / /_/ / |/ / / /__
+⢸⣿⣼⣿⣋⣉⠀⠀⠀⠈⠙⠦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣿⣿⣷⣷⡀⠀⠀      /_/ /_/ /_/ .___/|___/  \___/
+⢸⠁⠊⣿⠛⢛⢟⣦⡀⠀⠀⠀⠈⢆⠀⠀⠀⠀⢀⠔⣨⣶⡜⠂⠈⠽⣧⡀⠀               /_/                           ⠀
+⠸⣶⣾⡯⠤⢄⡀⠵⢿⣦⡀⠀⠀⠀⡷⡄⠀⡰⢁⣾⣿⣿⣿⠀⠀⠀⣿⡹⡄         ____ ___  ____ _   __     __     _____/ /_ ⠀
+⠀⣿⣡⠦⢄⡀⠈⠳⣬⣹⣿⣆⠀⠀⢉⠻⣴⠇⣾⣿⡟⢻⠁⠀⠀⠀⣿⠁⡇        / __ `__ \/ __ \ | / /  __/ /_   / ___/ __ \⠀
+⠀⣿⡭⡀⠀⠈⠲⣦⣸⣿⣿⣿⣧⣀⠈⡔⣜⣴⣿⡟⢀⡎⡈⠀⠀⢰⡿⢠⣷   ⠀   / / / / / / /_/ / |/ /  /_  __/  (__  ) / / /⠀
+⠀⢸⣿⣄⣒⡀⡀⣿⣷⡿⣿⢿⣿⣷⡰⡸⣯⣏⣿⡷⢋⣼⣁⡢⢠⠟⠀⣼⣿      /_/ /_/ /_/ .___/|___/    /_/    /____/_/ /_/
+⠀⠀⠻⣷⣈⣁⣮⢻⢸⡇⢨⣿⣿⣿⣷⢶⣿⣏⣩⣶⣿⣿⣿⣿⡯⣤⣴⣿⠃               /_/
+⠀⠀⠀⠘⠿⣿⣿⣽⣽⣷⣿⣿⣿⣿⣿⡶⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀      (mpvc, where mpv meets the shell)
 ⠀⠀⠀⠀⠀⠀⠉⠙⠿⢿⣿⣿⣿⣿⠟⠁⠀⠘⠿⣿⣿⣿⠿⠟⠉⠀⠀⠀⠀
 
 EOF
@@ -236,7 +236,9 @@ mpvc_config()
     # if not present, create config files
     if [ ! -e "$MPVC_CURL_CACHE" ]; then true > "$MPVC_CURL_CACHE"; fi
     # if present load user config
-    if [ -r "$MPVC_CONFIG" -a -O "$MPVC_CONFIG" ] && mpvc_check_user_perms "$MPVC_CONFIG"; then
+    if [ -r "$MPVC_CONFIG" -a -O "$MPVC_CONFIG" ]; then
+        chmod "640" "$MPVC_CONFIG";
+        mpvc_check_user_perms "$MPVC_CONFIG" "640";
         . "$MPVC_CONFIG"
     else
         warn "# $PROGNAME Warning: ${MPVC_CONFIG##"$HOME/"} not found, see docs/mpvc.conf for defaults"
@@ -329,12 +331,31 @@ mpvc_socklist_active() {
     mpvc_socklist | awk '/idle-active=$/ {print $1}'
 }
 
+mpvc_json_esc() {
+    if command -v gojq >/dev/null 2>&1; then
+        printf '%s' "$1" | gojq -Rs .
+    else
+        # POSIX fallback: \ and " escaped; tab/CR handled; embedded newlines -> \n
+        printf '%s' "$1" | awk '
+            BEGIN { ORS=""; print "\"" }
+            { gsub(/\\/, "\\\\"); gsub(/"/, "\\\""); gsub(/\t/, "\\t");  gsub(/\r/, "\\r"); if (NR > 1) print "\\n"; print }
+            END { print "\"" }
+        '
+    fi
+}
+
 mpvc_sockecho() { echo "$@" | mpvc_sockrepl; }
 mpvc_sockcmd()  { echo "{ \"command\": [ $* ] }" | mpvc_sockrepl; }
 mpvc_sockrepl() { $MPVC_SOCAT - "$MPVC_SOCKET"; }
 mpvc_idleloop() { $MPVC_SOCAT -t0 -,ignoreeof "$MPVC_SOCKET"; }
 
-mpvc_cmdr_() { echo "{ \"command\": [ $(for i in "$@"; do printf "\"%s\", " "$i"; done) ] }"; }
+mpvc_cmdr_() {
+    sep=" "
+    printf '{ "command": ['
+    for i in "$@"; do printf '%s%s' "$sep" "$(mpvc_json_esc "$i")"; sep=", "; done;
+    printf ' ] }\n'
+}
+
 mpvc_cmdr()  {
     if [ -n "${1:-}" -a "${1:-}" = "run" ]; then return; fi # disable mpv run command
     equiet echo "$(mpvc_cmdr_ "$@")" | mpvc_sockrepl;
@@ -345,14 +366,14 @@ mpvc_ecmdr() {
 
 mpvc_cmd()   { mpvc_cmdr "$@" | mpvc_getjson 'data'; }
 mpvc_add()   { mpvc_ecmdr "add" "$@"; }
-mpvc_get()   { equiet mpvc_sockcmd "\"get_property_string\", \"$1\"," | mpvc_getjson 'data'; }
+mpvc_get()   { equiet mpvc_sockcmd "\"get_property_string\", $(mpvc_json_esc "$1")" | mpvc_getjson 'data'; }
 mpvc_set()   { mpvc_ecmdr "set_property_string" "$@"; }
-mpvc_cycle() { oquiet mpvc_sockcmd "\"cycle\", \"$1\","; }
+mpvc_cycle() { oquiet mpvc_sockcmd "\"cycle\", $(mpvc_json_esc "$1")"; }
 
-mpvc_getr()  { mpvc_sockcmd "\"get_property\", \"$1\","; }
+mpvc_getr()  { mpvc_sockcmd "\"get_property\", $(mpvc_json_esc "$1")"; }
 mpvc_setr()  { mpvc_ecmdr "set_property" "$@"; }
 
-mpvc_observe() { echo "{ \"command\": [ \"observe_property_string\", 1, \"$1\", ] }" | mpvc_idleloop; }
+mpvc_observe() { echo "{ \"command\": [ \"observe_property_string\", 1, $(mpvc_json_esc "$1") ] }" | mpvc_idleloop; }
 mpvc_idle()    { mpvc_observe "$1" | awk "/$1/ { print; exit }"; }
 
 ## Playlist Functions ##########################################################
@@ -419,10 +440,12 @@ mpvc_get_playlist() {
 
     lpos=$(mpvc_get playlist-pos)
     lcount=$(mpvc_get playlist-count)
+    cols=$(mpvc_tty_cols)
     if [ -z "$lcount" ]; then return; fi
+    if [ -z "$cols" ]; then return; fi
     firstlast=$(mpvc_get_terminal_height "$lpos" "$lcount")
     mpvc_get_playlist_once |
-        awk -v mpvc="$0" -v lpos="$lpos" -v cols="$(mpvc_tty_cols)" -v firstlast="$firstlast" -v istrunc="$MPVC_PLAYLIST_TRUNC" \
+        awk -v mpvc="$0" -v lpos="$lpos" -v cols=$cols -v firstlast="$firstlast" -v istrunc="$MPVC_PLAYLIST_TRUNC" \
         '
         BEGIN {
             # truncate lines x cols when interactive (configurable)
@@ -629,6 +652,7 @@ mpvc_appendtrack() {
     filename="$*"
     # require absolute paths
     case "$filename" in
+        ''|' '*) if [ ! -e "$filename" ]; then return; fi ;; # warn "Warning: invalid filename";
         /*) if [ ! -e "$filename" ]; then warn "Warning: ${filename##*/} not found."; fi ;;
         *)  if [ -e "$filename" ]; then filename="$(pwd)/$filename"; fi ;;
     esac
@@ -1023,13 +1047,13 @@ mpvc_handle_socket() {
 mpvc_check_user_perms() {
     # check file perms
     perms=$(equiet stat -Lc '%a' "$1" || equiet stat -Lf '%Lp' "$1")
-    if [ "$perms" != "600" ] && [ "$perms" != "644" ] && [ "$perms" != "664" ]; then
-        die 2 "$PROGNAME: Error: File ${1##"$HOME/"} has unsafe permissions: $perms."
+    if [ "$perms" != "$2" ]; then
+        die 2 "$PROGNAME: Error: File ${1##"$HOME/"} has unsafe permissions: $perms (should be $2)."
     fi
     # check file owner
     owner=$(equiet stat -c '%u' "$1" || equiet stat -f '%Du' "$1")
     if [ "$owner" != "$(id -u)" ] && [ "$owner" != "0" ]; then
-        die 2 "$PROGNAME: Error: File ${1##"$HOME/"} unexpected owner: $owner"
+        die 2 "$PROGNAME: Error: File ${1##"$HOME/"} unexpected owner: $owner (should be $(id -u))."
     fi
 }
 
@@ -1047,7 +1071,7 @@ mpvc_validate_socket() {
         die 2 "$PROGNAME: Error: Socket ${socket##"$HOME/"} does not exist. Use mpvc --mpv to start one."
     fi
     # test socket perms
-    mpvc_check_user_perms "$socket"
+    mpvc_check_user_perms "$socket" "600"
     # test if socket is open
     if [ "$(mpvc_get pause)" = "" ]; then
         die 3 "$PROGNAME: Error: No files added to ${MPVC_SOCKET##"$HOME/"}."
@@ -1225,7 +1249,7 @@ main() {
             --hifi|hifi)                     MPVC_FMTSTR="$MPVC_FMTSTR_DFLT" ;;
             --lowfi|lowfi)                   MPVC_FMTSTR="$MPVC_FMTSTR_LOFI" ;;
             --status|status)                 ;;
-            --cstatus|cstatus)               MPVC_FMTSTR=$(echo "$MPVC_FMTSTR"|sed 's/%title%/%chapter%/') ;;
+            --cstatus|cstatus|cs)            MPVC_FMTSTR=$(echo "$MPVC_FMTSTR"|sed 's/%title%/%chapter%/') ;;
             --config|config)                 "${EDITOR:-vi}" "${MPVC_CONFIG}"; QUIETFLAG=true;;
             --ascii|ascii)                   mpvc_ascii; return;;
 
