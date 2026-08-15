@@ -88,6 +88,10 @@ mpvc_web_config()
     if ! command -v socat >/dev/null; then
         echo "$PROGNAME: Warning: No socat found, install to support SSL."
     fi
+    if (awk --version 2>/dev/null || awk -W version 2>/dev/null) | grep mawk; then
+        echo "$PROGNAME: Warning: Found mawk, check you are running a recent > 2024 version."
+    fi
+
 }
 
 mpvc_web_style()
