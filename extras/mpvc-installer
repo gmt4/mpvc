@@ -167,14 +167,14 @@ mpvc_check_requirements()
 {
     # attempt at listing packages required by mpvc & extras/ to work
     echo "# Checking required deps:"
-    for cmd in sh mpv fzf socat awk sed; do
+    for cmd in sh mpv fzf socat sed awk; do
         (command -v "$cmd" || echo "$PROGNAME: Error: No $cmd found. Install to continue") | sed 's/^/  /'
     done
     # recommened, and good to have, but not required
     echo "# Checking recommended deps:"
-    for cmd in curl rlwrap notify-send jq yt-dlp deno; do
+    for cmd in awk curl rlwrap notify-send jq yt-dlp deno; do
         if command -v "$cmd" | sed 's/^/  /'; then
-            $cmd --version | awk 'NR==1 { print "    "$1,$2 }'
+            $cmd --version | awk 'NR==1 { print "    "$1,$2,$3 }'
         else
             echo "$PROGNAME: Warning: No $cmd found, is recommended, but not required"
         fi
