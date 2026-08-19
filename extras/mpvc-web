@@ -861,6 +861,7 @@ mpvc_web_index()
         [
             <a href="#mpvc-web-playlist" name="mpvc-web-playlist">Playlist</a>
             <a href="#mpvc-web-fullplaylist" name="mpvc-web-fullplaylist">#full</a>
+            <a href="#mpvc-web-rawplaylist" name="mpvc-web-fullplaylist">#raw</a>
         ]
         </summary>
         <hr>
@@ -871,6 +872,7 @@ mpvc_web_index()
         switch (window.location.hash) {
         case '#mpvc-web-playlist':           { pl.src='/cgi-bin/mpvc?mpvc+playlist'; break; }
         case '#mpvc-web-fullplaylist':       { pl.src='/cgi-bin/mpvc?mpvc+fullplaylist'; break; }
+        case '#mpvc-web-rawplaylist':       { pl.src='/cgi-bin/mpvc?mpvc+saven'; break; }
         }
         </script>
         </div>
