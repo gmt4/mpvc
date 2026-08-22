@@ -754,7 +754,7 @@ mpvc_web_index()
     </script>
     </head>
 
-    <body data-theme="dark">
+    <body data-theme="$MPVC_WEB_HTML_THEME">
         <main>
         <details>
         <summary ${MPVC_WEB_SHORTCUT_PLAYER}>
