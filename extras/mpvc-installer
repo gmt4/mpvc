@@ -32,6 +32,9 @@ SCRIPT="mpvc extras/mpvc-tui extras/mpvc-fzf extras/mpvc-cut extras/mpvc-chapter
 MPV_CONFIG="docs/config/mpv.conf"
 MPVC_CONFIG="docs/config/mpvc.conf docs/config/yt-dlp.conf docs/config/curlrc"
 
+MPVC_INSTALL_TOOLS_RECOMMENDED="sh mpv fzf socat sed awk"
+MPVC_INSTALL_TOOLS_RECOMMENDED="awk curl jq rlwrap notify-send qrencode yt-dlp deno"
+
 mpvc_config()
 {
     mkdir -p "$MPV_CONFDIR/scripts/"
@@ -167,12 +170,12 @@ mpvc_check_requirements()
 {
     # attempt at listing packages required by mpvc & extras/ to work
     echo "# Checking required deps:"
-    for cmd in sh mpv fzf socat sed awk; do
+    for cmd in $MPVC_INSTALL_TOOLS_RECOMMENDED; do
         (command -v "$cmd" || echo "$PROGNAME: Error: No $cmd found. Install to continue") | sed 's/^/  /'
     done
     # recommened, and good to have, but not required
     echo "# Checking recommended deps:"
-    for cmd in awk curl rlwrap notify-send jq yt-dlp deno; do
+    for cmd in $MPVC_INSTALL_TOOLS_RECOMMENDED; do
         if command -v "$cmd" | sed 's/^/  /'; then
             $cmd --version | awk 'NR==1 { print "    "$1,$2,$3 }'
         else
@@ -195,7 +198,7 @@ mpvc_check_update()
     fi
 }
 
-mpvc_userprompt() { echo "$@"; read foo; }
+mpvc_userprompt() { echo "$@"; read foo;  return $?; }
 
 mpvc_quickstart()
 {
@@ -204,14 +207,18 @@ mpvc_quickstart()
     echo " (Hit Control-C exit / Enter to continue)"
     echo
 
-    mpvc_userprompt "[*] Check for latest mpvc: mpvc-installer check-update [Y/n]"
-    $0 check-update
-    mpvc_userprompt "[*] Ready to install: mpvc-installer fetch-user [Y/n]"
-    $0 fetch-user
-    mpvc_userprompt "[*] Ready to config: mpvc-installer config-user [Y/n]"
-    $0 config-user
-    mpvc_userprompt "[*] Ready to perform final checks: mpvc-installer check-reqs [Y/n]"
-    $0 check-reqs
+    if mpvc_userprompt "[*] Check for latest mpvc: mpvc-installer check-update [Y/n]"; then
+        $0 check-update
+    fi
+    if mpvc_userprompt "[*] Ready to install: mpvc-installer fetch-user [Y/n]"; then
+        $0 fetch-user
+    fi
+    if mpvc_userprompt "[*] Ready to config: mpvc-installer config-user [Y/n]"; then
+        $0 config-user
+    fi
+    if mpvc_userprompt "[*] Ready to perform final checks: mpvc-installer check-reqs [Y/n]"; then
+        $0 check-reqs
+    fi
 
     echo
     echo "# Congrats! QuickStart Install completed!"
