@@ -89,7 +89,7 @@ mpvc_web_config()
         echo "$PROGNAME: Warning: No socat found, install to support SSL."
     fi
     if (awk --version 2>/dev/null || awk -W version 2>/dev/null) | grep mawk; then
-        echo "$PROGNAME: Warning: Found mawk, check you are running a recent > 2024 version."
+        echo "$PROGNAME: Warning: Found mawk, check you are running a recent > 2025 version."
     fi
 
 }
@@ -834,8 +834,8 @@ mpvc_web_index()
             $(mpvc stash list | mpvc tac | mpvc-fzf -0 | mpvc_web_select_form "mpvc -q stash append" "${MPVC_WEB_SHORTCUT_APPLY}")
 
 <!--
-            $("$MPVC_WEB_CGI" mpvc save | mpvc_web_select_form "mpvc-fzf -g" "${MPVC_WEB_SHORTCUT_SEEK}")
-            $(if [ -n "$MPVC_WEB_ARCHIVE_ENABLE" ]; then find "ytdl-archive/" | awk -F/ '{print "https://"$NF}' | mpvc_web_select_form "mpvc -q add" "${MPVC_WEB_SHORTCUT_ARCHIVE}"; fi)
+            #$("$MPVC_WEB_CGI" mpvc save | mpvc_web_select_form "mpvc-fzf -g" "${MPVC_WEB_SHORTCUT_SEEK}")
+            #$(if [ -n "$MPVC_WEB_ARCHIVE_ENABLE" ]; then find "ytdl-archive/" | awk -F/ '{print "https://"$NF}' | mpvc_web_select_form "mpvc -q add" "${MPVC_WEB_SHORTCUT_ARCHIVE}"; fi)
 -->
         </fieldset>
 
@@ -1029,6 +1029,7 @@ mpvc_web()
 
         # XXX handle cli commands, rewrite this mess
         python3 -u -m http.server --cgi --bind "$MPVC_WEB_HOST" "$MPVC_WEB_PORT" "$@" 2>&1 |
+            #mawk -W interactive -v mpvcbin="$MPVC_WEB_CGI"
             awk -v mpvcbin="$MPVC_WEB_CGI" \
         '
         function mpvcsys(cmd) { system(mpvcbin" "cmd); }
