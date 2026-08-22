@@ -100,6 +100,8 @@ mpvc_web_style()
 /* mpvc-web style.css */
 
 :root {
+  color-scheme: light dark;
+
   --bg-primary: #0f0f0f;
   --bg-secondary: #1a1a1a;
   --bg-tertiary: #2a2a2a;
@@ -348,14 +350,23 @@ input[type="color"]:hover {
 iframe {
   border-radius: 6px;
   border: 1px solid var(--border);
-  background: var(--text-primary);
+  background: var(--bg-secondary);
   transition: all 0.3s ease;
-  filter: invert(0.8);
 }
 
 iframe:hover {
   border-color: var(--accent);
   box-shadow: 0 4px 12px rgba(0, 212, 255, 0.1);
+}
+
+iframe html, iframe body {
+  background-color: transparent !important;
+  color: var(--text-primary) !important;
+}
+
+iframe::part(pre), iframe pre {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
 }
 
 fieldset {
@@ -721,6 +732,7 @@ mpvc_web_index()
 <html lang="en">
 <head>
     <meta charset="utf-8" />
+    <meta name="color-scheme" content="light dark">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content="gmt4 mpvc-web" />
     <meta name="author" content="gmt4 <gmt4 at github.com> (c) Copyright 2022" />
@@ -742,7 +754,7 @@ mpvc_web_index()
     </script>
     </head>
 
-    <body>
+    <body data-theme="dark">
         <main>
         <details>
         <summary ${MPVC_WEB_SHORTCUT_PLAYER}>
