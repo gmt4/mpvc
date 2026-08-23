@@ -113,6 +113,9 @@ mpvc_web_style()
   --success: #44ff44;
   --border: #666666;
   --shadow: rgba(0, 0, 0, 0.5);
+
+  --filter-light: invert(0.0);
+  --filter-dark:  invert(0.8);
 }
 
 * {
@@ -352,21 +355,8 @@ iframe {
   border: 1px solid var(--border);
   background: var(--bg-secondary);
   transition: all 0.3s ease;
-}
-
-iframe:hover {
-  border-color: var(--accent);
-  box-shadow: 0 4px 12px rgba(0, 212, 255, 0.1);
-}
-
-iframe html, iframe body {
-  background-color: transparent !important;
-  color: var(--text-primary) !important;
-}
-
-iframe::part(pre), iframe pre {
-  background-color: var(--bg-tertiary) !important;
-  color: var(--text-primary) !important;
+  filter: light-dark(var(--filter-light), var(--filter-dark));
+  //filter: invert(0.8);
 }
 
 fieldset {
