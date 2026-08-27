@@ -298,6 +298,26 @@ li {
   align-items: center;
 }
 
+a, button, .btn {
+    min-width: 32px;
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.control-group {
+    display: flex;
+    gap: 12px; /* Enforces native separation spacing */
+    flex-wrap: wrap; /* Prevents overflow clipping on narrow screens */
+}
+
+.btn {
+    touch-action: manipulation; /* Eradicates tap testing latency delays */
+    -webkit-text-size-adjust: none; /* Forces layout scaling stability */
+}
+
 a.btn {
   display: inline-block;
   padding: 4px 8px;
@@ -781,7 +801,7 @@ mpvc_web_index()
 <head>
     <meta charset="utf-8" />
     <meta name="color-scheme" content="light dark">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="generator" content="gmt4 mpvc-web" />
     <meta name="author" content="gmt4 <gmt4 at github.com> (c) Copyright 2022" />
     <meta name="description" content="mpvc-web, a mpvc-tui for the web" />
@@ -805,11 +825,7 @@ mpvc_web_index()
         <summary ${MPVC_WEB_SHORTCUT_PLAYER}>
         [
             <a href="." name="top" ${MPVC_WEB_SHORTCUT_REFRESH}>🎧Player</a>
-            <a title="#status"      href="#mpvc-web-status">#s</a>
-            <a title="#playlist"    href="#mpvc-web-playlist">#p</a>
-            <a title="#chapterlist" href="#mpvc-web-chapterlist">#c</a>
             <a title="#now"         href="/cgi-bin/mpvc?now-short">#n</a>
-            <a title="#mute"        href="/cgi-bin/mpvc?volmute">#m</a>
             $([ -n "$MPVC_WEB_ARCHIVE_ENABLE" ] && echo '<a title="#arc" href="ytdl-archive" >#a</a>'; )
             $(for x in $MPVC_WEB_EXTRAS_URL; do n=$((${n:-0} + 1)); echo "<a title=#extras-$n href=$x>#$n</a>"; done)
         ]
