@@ -99,6 +99,8 @@ mpvc_web_style()
     cat <<-EOF
 /* mpvc-web style.css */
 
+/* THEME */
+
 :root {
   color-scheme: light dark;
 
@@ -107,16 +109,62 @@ mpvc_web_style()
   --bg-tertiary: #2a2a2a;
   --text-primary: #e0e0e0;
   --text-secondary: #a0a0a0;
+  --border: #666666;
   --accent: #00d4ff;
   --accent-hover: #00e6ff;
   --danger: #ff4444;
   --success: #44ff44;
-  --border: #666666;
   --shadow: rgba(0, 0, 0, 0.5);
 
   --filter-light: invert(0.0);
   --filter-dark:  invert(0.8);
 }
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f5f5;
+    --bg-tertiary: #ebebeb;
+    --text-primary: #1a1a1a;
+    --text-secondary: #666666;
+    --border: #dddddd;
+    --accent: #0066cc;
+    --accent-hover: #0052a3;
+    --shadow: rgba(0, 0, 0, 0.1);
+  }
+
+  body {
+    background: linear-gradient(135deg, var(--bg-primary) 0%, #f0e6ff 100%);
+  }
+}
+
+html.dark-theme {
+  --bg-primary: #0f0f0f;
+  --bg-secondary: #1a1a1a;
+  --bg-tertiary: #2a2a2a;
+  --text-primary: #e0e0e0;
+  --text-secondary: #a0a0a0;
+  --border: #666666;
+  --accent: #00d4ff;
+  --accent-hover: #00e6ff;
+  --danger: #ff4444;
+  --success: #44ff44;
+  --shadow: rgba(0, 0, 0, 0.5);
+}
+
+html.light-theme {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f5f5;
+    --bg-tertiary: #ebebeb;
+    --text-primary: #1a1a1a;
+    --text-secondary: #666666;
+    --border: #dddddd;
+    --accent: #0066cc;
+    --accent-hover: #0052a3;
+    --shadow: rgba(0, 0, 0, 0.1);
+}
+
+/* TYPOGRAPHY */
 
 * {
   margin: 0;
@@ -137,9 +185,8 @@ body {
   min-height: 100vh;
   //padding: 20px;
   background-attachment: fixed;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
-
-/* TYPOGRAPHY */
 
 a {
   color: var(--accent);
@@ -419,24 +466,6 @@ legend {
   outline-offset: 2px;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg-primary: #ffffff;
-    --bg-secondary: #f5f5f5;
-    --bg-tertiary: #ebebeb;
-    --text-primary: #1a1a1a;
-    --text-secondary: #666666;
-    --border: #dddddd;
-    --shadow: rgba(0, 0, 0, 0.1);
-    --accent: #0066cc;
-    --accent-hover: #0052a3;
-  }
-
-  body {
-    background: linear-gradient(135deg, var(--bg-primary) 0%, #f0e6ff 100%);
-  }
-}
-
 EOF
 }
 
@@ -633,6 +662,33 @@ EOF
 mpvc_web_index_js()
 {
     cat <<EOF
+function themeSetup() {
+    const toggleBtn = document.getElementById('theme-toggle');
+    const rootEl = document.documentElement;
+
+    // 1. Check for a previously saved preference on load
+    const savedTheme = localStorage.getItem('mpvc-theme');
+    if (savedTheme) {
+        rootEl.classList.add(savedTheme + '-theme');
+    }
+
+    // 2. Listen for clicks to swap and store states
+    toggleBtn.addEventListener('click', () => {
+        // Determine current active mode (factoring in the existing system media query)
+        const isDark = rootEl.classList.contains('dark-theme') ||
+                       (!rootEl.classList.contains('light-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+        if (isDark) {
+            rootEl.classList.remove('dark-theme');
+            rootEl.classList.add('light-theme');
+            localStorage.setItem('mpvc-theme', 'light');
+        } else {
+            rootEl.classList.remove('light-theme');
+            rootEl.classList.add('dark-theme');
+            localStorage.setItem('mpvc-theme', 'dark');
+        }
+    });
+}
 
 function mpvcHttpGet(url) {
     return fetch(url)
@@ -667,6 +723,8 @@ function Help()
     )
     alert(help)
 }
+
+themeSetup();
 EOF
 }
 
@@ -739,9 +797,6 @@ mpvc_web_index()
     <noscript>
       <link rel="stylesheet" href="style.css" />
     </noscript>
-    <script type="text/javascript">
-        $(mpvc_web_index_js)
-    </script>
     </head>
 
     <body data-theme="$MPVC_WEB_HTML_THEME">
@@ -758,6 +813,9 @@ mpvc_web_index()
             $([ -n "$MPVC_WEB_ARCHIVE_ENABLE" ] && echo '<a title="#arc" href="ytdl-archive" >#a</a>'; )
             $(for x in $MPVC_WEB_EXTRAS_URL; do n=$((${n:-0} + 1)); echo "<a title=#extras-$n href=$x>#$n</a>"; done)
         ]
+        <span style="float:right">
+            <button id="theme-toggle" class="btn" title="Toggle dark mode" aria-label="Toggle dark mode">🌓 Theme</button>
+        </span>
         </summary>
         <hr>
         <ul>
@@ -916,6 +974,9 @@ mpvc_web_index()
         <a href="javascript:Help()" title="help" ${MPVC_WEB_SHORTCUT_HELP}>/h</a>
         </footer>
     </body>
+    <script type="text/javascript">
+        $(mpvc_web_index_js)
+    </script>
 </html>
 EOF
 }
