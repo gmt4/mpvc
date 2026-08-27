@@ -42,7 +42,7 @@ mpvc_web_defaults()
     : "${MPVC_WEB_SSL_VERIFY:=0}"
     : "${MPVC_WEB_ARCHIVE_ENABLE:=}"
     : "${MPVC_WEB_THUMBNAIL_ENABLE:=}"
-    : "${MPVC_WEB_THUMBNAIL_STYLE:=height:15em;width:100%}"
+    : "${MPVC_WEB_THUMBNAIL_STYLE:=filter:invert(0.1);height:15em;width:100%}"
     : "${MPVC_WEB_EXTRAS_URL:=}"
     : "${MPVC_WEB_HTML_THEME:=}"
     : "${MPVC_WEB_HTML_REFRESH:=}"
