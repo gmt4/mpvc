@@ -42,7 +42,7 @@ mpvc_web_defaults()
     : "${MPVC_WEB_SSL_VERIFY:=0}"
     : "${MPVC_WEB_ARCHIVE_ENABLE:=}"
     : "${MPVC_WEB_THUMBNAIL_ENABLE:=}"
-    : "${MPVC_WEB_THUMBNAIL_STYLE:=filter: invert(0.1);height:15em;width:100%}"
+    : "${MPVC_WEB_THUMBNAIL_STYLE:=height:15em;width:100%}"
     : "${MPVC_WEB_EXTRAS_URL:=}"
     : "${MPVC_WEB_HTML_THEME:=}"
     : "${MPVC_WEB_HTML_REFRESH:=}"
@@ -178,6 +178,7 @@ html.light-theme {
 html {
   scroll-behavior: smooth;
   background: linear-gradient(135deg, var(--bg-primary) 0%, var(--text-primary) 250%)
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 body {
