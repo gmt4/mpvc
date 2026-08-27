@@ -177,7 +177,8 @@ html.light-theme {
 
 html {
   scroll-behavior: smooth;
-  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--text-primary) 250%)
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--text-primary) 250%);
+  background-attachment: fixed;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -188,7 +189,6 @@ body {
   line-height: 1.6;
   min-height: 100vh;
   //padding: 20px;
-  background-attachment: fixed;
 }
 
 a {
@@ -422,7 +422,6 @@ input[type="color"]:hover {
 iframe {
   border-radius: 6px;
   border: 1px solid var(--border);
-  background: var(--bg-primary);
   transition: all 0.3s ease;
 }
 
