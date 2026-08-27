@@ -346,7 +346,6 @@ form {
 }
 
 button {
-  padding: 8px 12px;
   background: var(--bg-tertiary);
   color: var(--text-primary);
   border: 1px solid var(--border);
@@ -830,7 +829,9 @@ mpvc_web_index()
             $(for x in $MPVC_WEB_EXTRAS_URL; do n=$((${n:-0} + 1)); echo "<a title=#extras-$n href=$x>#$n</a>"; done)
         ]
         <span style="float:right">
-            <button id="theme-toggle" class="btn" title="Toggle dark mode" aria-label="Toggle dark mode">🌓 Theme</button>
+            <a class=btn href="." title="Reload" aria-label="Reload">🔄</a>
+            <a class=btn href="?cmd=mpvc toggle" title="Toggle playback" aria-label="Toggle playback">⏯️</a>
+            <button id="theme-toggle" class="btn" title="Toggle dark mode" aria-label="Toggle dark mode">🌓</button>
         </span>
         </summary>
         <hr>
