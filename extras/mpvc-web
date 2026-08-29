@@ -769,14 +769,13 @@ mpvc_web_index()
     <link rel="IconFile" href="apple-touch-icon.svg" sizes="64x64">
     <link rel="apple-touch-icon" href="apple-touch-icon.svg">
     <title> 🎧$MPVC_WEB_HOSTNAME mpvc</title>
-    <link rel="preload" href="style.css" as="style" onload="this.rel='stylesheet'" />
-    <noscript>
-      <link rel="stylesheet" href="style.css" />
-    </noscript>
 
     <style>
       $(mpvc_web_style)
     </style>
+    <link rel="preload" href="style.css" as="style" />
+    <link rel="stylesheet" href="style.css" />
+
     </head>
 
     <body data-theme="$MPVC_WEB_HTML_THEME">
