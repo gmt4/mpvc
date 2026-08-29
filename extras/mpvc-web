@@ -101,9 +101,39 @@ mpvc_web_style()
 
 /* THEME */
 
-:root {
-  color-scheme: light dark;
+html {
+  color-scheme: dark light;
 
+  --bg-primary: light-dark(#0f0f0f, #ffffff);
+  --text-primary: light-dark(#e0e0e0, #1a1a1a);
+  --bg-primary: light-dark(#ffffff, #0f0f0f);
+  --bg-secondary: light-dark(#f5f5f5, #1a1a1a);
+  --bg-tertiary: light-dark(#ebebeb, #2a2a2a);
+  --text-primary: light-dark(#1a1a1a, #e0e0e0);
+  --text-secondary: light-dark(#666666, #a0a0a0);
+  --border: light-dark(#dddddd, #666666);
+  --accent: light-dark(#0066cc, #00d4ff);
+  --accent-hover: light-dark(#0052a3, #00e6ff);
+  --shadow: light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.5));
+}
+
+html:has(#scheme-light:checked) { color-scheme: light; }
+html:has(#scheme-light:checked) iframe { filter: var(--filter-light); }
+
+html:has(#scheme-dark:checked) { color-scheme: dark; }
+html:has(#scheme-dark:checked) iframe { background: var(--text-primary); filter: var(--filter-dark); } /*XXX*/
+
+.scheme-control { position: absolute; opacity: 0; pointer-events: none; }
+.theme-toggle-container { display: inline-flex; gap: 2px; }
+.theme-lbl { cursor: pointer; padding: 2px 6px; font-size: 12px; }
+
+.theme-lbl { display: none; }
+html:has(#scheme-auto:checked) .lbl-light { display: inline-block; }
+html:has(#scheme-light:checked) .lbl-dark { display: inline-block; }
+html:has(#scheme-dark:checked) .lbl-auto  { display: inline-block; }
+
+/*
+:root {
   --bg-primary: #0f0f0f;
   --bg-secondary: #1a1a1a;
   --bg-tertiary: #2a2a2a;
@@ -111,61 +141,18 @@ mpvc_web_style()
   --text-secondary: #a0a0a0;
   --border: #666666;
   --accent: #00d4ff;
-  --accent-hover: #00e6ff;
-  --danger: #ff4444;
-  --success: #44ff44;
   --shadow: rgba(0, 0, 0, 0.5);
 
   --filter-light: invert(0.0);
   --filter-dark:  invert(0.7);
+
+  background: var(--bg-primary);
+  color: var(--text-primary);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg-primary: #ffffff;
-    --bg-secondary: #f5f5f5;
-    --bg-tertiary: #ebebeb;
-    --text-primary: #1a1a1a;
-    --text-secondary: #666666;
-    --border: #dddddd;
-    --accent: #0066cc;
-    --accent-hover: #0052a3;
-    --shadow: rgba(0, 0, 0, 0.1);
-  }
-}
-
-html.dark-theme {
-  --bg-primary: #0f0f0f;
-  --bg-secondary: #1a1a1a;
-  --bg-tertiary: #2a2a2a;
-  --text-primary: #e0e0e0;
-  --text-secondary: #a0a0a0;
-  --border: #666666;
-  --accent: #00d4ff;
-  --accent-hover: #00e6ff;
-  --danger: #ff4444;
-  --success: #44ff44;
-  --shadow: rgba(0, 0, 0, 0.5);
-}
-html.dark-theme iframe {
-  background: var(--text-primary); /*XXX*/
-  filter: var(--filter-dark);
-}
-html.light-theme iframe {
-  filter: var(--filter-light);
-}
-
-html.light-theme {
-    --bg-primary: #ffffff;
-    --bg-secondary: #f5f5f5;
-    --bg-tertiary: #ebebeb;
-    --text-primary: #1a1a1a;
-    --text-secondary: #666666;
-    --border: #dddddd;
-    --accent: #0066cc;
-    --accent-hover: #0052a3;
-    --shadow: rgba(0, 0, 0, 0.1);
-}
+#scheme-dark:checked ~ main { filter: invert(--filter-dark); }
+#scheme-light:checked ~ main { filter: invert(--filter-light); }
+*/
 
 /* TYPOGRAPHY */
 
@@ -179,7 +166,7 @@ html {
   scroll-behavior: smooth;
   background: linear-gradient(135deg, var(--bg-primary) 0%, var(--text-primary) 250%);
   background-attachment: fixed;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
 body {
@@ -422,7 +409,7 @@ input[type="color"]:hover {
 iframe {
   border-radius: 6px;
   border: 1px solid var(--border);
-  transition: all 0.3s ease;
+  transition: all 0.5s ease;
 }
 
 fieldset {
@@ -681,34 +668,6 @@ EOF
 mpvc_web_index_js()
 {
     cat <<EOF
-function themeSetup() {
-    const toggleBtn = document.getElementById('theme-toggle');
-    const rootEl = document.documentElement;
-
-    // 1. Check for a previously saved preference on load
-    const savedTheme = localStorage.getItem('mpvc-theme');
-    if (savedTheme) {
-        rootEl.classList.add(savedTheme + '-theme');
-    }
-
-    // 2. Listen for clicks to swap and store states
-    toggleBtn.addEventListener('click', () => {
-        // Determine current active mode (factoring in the existing system media query)
-        const isDark = rootEl.classList.contains('dark-theme') ||
-                       (!rootEl.classList.contains('light-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
-
-        if (isDark) {
-            rootEl.classList.remove('dark-theme');
-            rootEl.classList.add('light-theme');
-            localStorage.setItem('mpvc-theme', 'light');
-        } else {
-            rootEl.classList.remove('light-theme');
-            rootEl.classList.add('dark-theme');
-            localStorage.setItem('mpvc-theme', 'dark');
-        }
-    });
-}
-
 function mpvcHttpGet(url) {
     return fetch(url)
         .then(response => response.text())
@@ -742,8 +701,6 @@ function Help()
     )
     alert(help)
 }
-
-themeSetup();
 EOF
 }
 
@@ -816,9 +773,17 @@ mpvc_web_index()
     <noscript>
       <link rel="stylesheet" href="style.css" />
     </noscript>
+
+    <style>
+      $(mpvc_web_style)
+    </style>
     </head>
 
     <body data-theme="$MPVC_WEB_HTML_THEME">
+        <input class="scheme-control" type="radio" name="theme" id="scheme-auto" checked>
+        <input class="scheme-control" type="radio" name="theme" id="scheme-light">
+        <input class="scheme-control" type="radio" name="theme" id="scheme-dark">
+
         <main>
         <details>
         <summary ${MPVC_WEB_SHORTCUT_PLAYER}>
@@ -831,8 +796,13 @@ mpvc_web_index()
         <span style="float:right">
             <a class=btn href="." title="Reload" aria-label="Reload">🔄</a>
             <a class=btn href="?cmd=mpvc toggle" title="Toggle playback" aria-label="Toggle playback">⏯️</a>
-            <button id="theme-toggle" class="btn" title="Toggle dark mode" aria-label="Toggle dark mode">🌓</button>
+            <span class="theme-toggle-container">
+                <label for="scheme-auto" class="theme-lbl lbl-auto" title="System Theme">🌓</label>
+                <label for="scheme-light" class="theme-lbl lbl-light" title="Light Theme">☀️</label>
+                <label for="scheme-dark" class="theme-lbl lbl-dark" title="Dark Theme">🌙</label>
+            </span>
         </span>
+
         </summary>
         <hr>
         <ul>
@@ -1059,10 +1029,9 @@ mpvc_web_setup()
         mpvc_web_index > "$MPVC_WEB_ROOT/index.html"
         echo > "$MPVC_WEB_ROOT/favicon.ico"
         mpvc_web_icon_svg > "$MPVC_WEB_ROOT/apple-touch-icon.svg"
+        > "$MPVC_WEB_ROOT/style.css"
         if [ -n "$MPVC_WEB_CSS_STYLE" ]; then
             cat "$MPVC_WEB_CSS_STYLE" > "$MPVC_WEB_ROOT/style.css"
-        else
-            mpvc_web_style > "$MPVC_WEB_ROOT/style.css"
         fi
         mpvc_web_cgi > "$MPVC_WEB_CGI"
         chmod u+x "$MPVC_WEB_CGI"
