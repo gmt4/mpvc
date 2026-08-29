@@ -99,6 +99,33 @@ mpvc_web_style()
     cat <<-EOF
 /* mpvc-web style.css */
 
+@supports (font: -apple-system-body) {
+    /* iOS/Safari ... */
+    :root {
+      --bg-primary: #0f0f0f;
+      --bg-secondary: #1a1a1a;
+      --bg-tertiary: #2a2a2a;
+      --text-primary: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --border: #666666;
+      --accent: #00d4ff;
+      --shadow: rgba(0, 0, 0, 0.5);
+
+    }
+
+    #scheme-dark:checked ~ main { filter: invert(--filter-dark); }
+    #scheme-light:checked ~ main { filter: invert(--filter-light); }
+}
+
+.scheme-control { position: absolute; opacity: 0; pointer-events: none; }
+.theme-toggle-container { display: inline-flex; gap: 2px; }
+.theme-lbl { padding: 2px 6px; font-size: 12px; cursor: pointer; }
+
+.theme-lbl { display: none; }
+html:has(#scheme-auto:checked) .lbl-light { display: inline-block; }
+html:has(#scheme-light:checked) .lbl-dark { display: inline-block; }
+html:has(#scheme-dark:checked) .lbl-auto  { display: inline-block; }
+
 /* THEME */
 
 html {
@@ -115,6 +142,9 @@ html {
   --accent: light-dark(#0066cc, #00d4ff);
   --accent-hover: light-dark(#0052a3, #00e6ff);
   --shadow: light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.5));
+
+  --filter-light: invert(0.0);
+  --filter-dark:  invert(0.7);
 }
 
 html:has(#scheme-light:checked) { color-scheme: light; }
@@ -122,37 +152,6 @@ html:has(#scheme-light:checked) iframe { filter: var(--filter-light); }
 
 html:has(#scheme-dark:checked) { color-scheme: dark; }
 html:has(#scheme-dark:checked) iframe { background: var(--text-primary); filter: var(--filter-dark); } /*XXX*/
-
-.scheme-control { position: absolute; opacity: 0; pointer-events: none; }
-.theme-toggle-container { display: inline-flex; gap: 2px; }
-.theme-lbl { cursor: pointer; padding: 2px 6px; font-size: 12px; }
-
-.theme-lbl { display: none; }
-html:has(#scheme-auto:checked) .lbl-light { display: inline-block; }
-html:has(#scheme-light:checked) .lbl-dark { display: inline-block; }
-html:has(#scheme-dark:checked) .lbl-auto  { display: inline-block; }
-
-/*
-:root {
-  --bg-primary: #0f0f0f;
-  --bg-secondary: #1a1a1a;
-  --bg-tertiary: #2a2a2a;
-  --text-primary: #e0e0e0;
-  --text-secondary: #a0a0a0;
-  --border: #666666;
-  --accent: #00d4ff;
-  --shadow: rgba(0, 0, 0, 0.5);
-
-  --filter-light: invert(0.0);
-  --filter-dark:  invert(0.7);
-
-  background: var(--bg-primary);
-  color: var(--text-primary);
-}
-
-#scheme-dark:checked ~ main { filter: invert(--filter-dark); }
-#scheme-light:checked ~ main { filter: invert(--filter-light); }
-*/
 
 /* TYPOGRAPHY */
 
