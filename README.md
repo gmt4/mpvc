@@ -94,8 +94,7 @@ Recommended extras:
 
 Installing is just a matter of fetching the scripts either via [Git](#git)/[Curl](#curl)/etc., scripts can be used directly from the repo, the `mpvc-installer` bit is just there for easiness, to fetch & link them into your `BINDIR=~/bin/` that [mpvc-installer](../../blob/master/extras/mpvc-installer) does by default.
 
-The easiest for a onetime install is using [Curl](#curl), however for @latest version a [Git](#git) install is recommended.
-Remember to check your installation for missing dependencies/requirements using `mpvc-installer check-reqs`, and, if you encounter any issue file an [Issue](../../issues).
+The easiest for a onetime install is using [Curl](#curl), however for the @latest and keeping always updated a [Git](#git) install is recommended.
 
 ### Curl
 
@@ -120,27 +119,17 @@ curl -fsSLO https://github.com/lwilletts/mpvc/raw/master/extras/mpvc-installer \
 
 ### Git
 
-Below is a **Quick Start** guide showcasing mpvc git install and usage.
-This does git clone, and symlinks the mpvc scripts to `BINDIR` (default `~/bin`), so updating becomes a matter of just running `git pull`.
+If you prefer keeping a local repository clone to receive quick development updates via `git pull`, then, use the `mpvc-installer` argument directly inside the directory root:
 
 ```sh
  # fetch a local copy of the github repo
  git clone https://github.com/lwilletts/mpvc/
+
  # use extras/mpvc-installer: just copy/link to BINDIR=$HOME/bin (by default)
  (cd mpvc; extras/mpvc-installer link-user)
  (cd mpvc; extras/mpvc-installer check-reqs)
  (cd mpvc; extras/mpvc-installer config-user)
  # check ~/.config/mpvc/mpvc.conf to suit your needs
-
- # Running mpvc for first time can show some warnings:
- #   Warning: .config/mpvc/mpvc.conf not found, see docs/mpvc.conf
- # mpvc-installer config-user sets the default user config
- mpvc-installer config-user
-
- # Another common warning is when running mpvc:
- #   mpvc: Error: No files added to mpvsocket0
- # lets fix that by adding some music files to play
- mpvc
 
  # use mpvc to add/load/save media files or online YT URLs
  mpvc add /path/to/your/*.mp3 # or your URLs
@@ -251,14 +240,11 @@ ln -f -s $PWD/docs/config/yt-dlp.conf ~/.config/mpvc/
 
 ### Manuals
 
-
 * [docs/man/](../../blob/master/docs/man/)
 : For the `mpvc(1)` command read the mpvc manual page.
 
-
 * [https://mpv.io/manual/stable/](https://mpv.io/manual/stable/)
 : For the `mpv(1)` command read the mpv reference manual.
-
 
 * [logbook](#logbook)
 : For the functionality specific of this [fork](https://github.com/gmt4/mpvc) your best aim is the [logbook](#logbook)
@@ -281,6 +267,9 @@ Check the FAQ for any questions left after reading the above docs.
 
 * [docs/FAQ.md](../../blob/master/docs/FAQ.md)
 
+### Issues
+
+If you encounter a bug file an [Issue](../../issues).
 
 ## Usage
 
@@ -380,6 +369,9 @@ usage: mpvc-fzf opts # @version v1.8 (c) gmt4 https://github.com/gmt4/mpvc
 
 ```console
 usage: mpvc-installer args # @version v1.8 (c) gmt4 https://github.com/gmt4/mpvc
+  quickstart     : QuickStart Install for first-time users
+  quickstart-rm  : QuickStart Removal for first-time users
+
   check-update   : Check for updates
   check-reqs     : Check for required packages
   config         : Fetch mpv config
