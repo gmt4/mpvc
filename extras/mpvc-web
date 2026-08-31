@@ -886,8 +886,12 @@ mpvc_web_index()
 
         <fieldset class="control-group">
           <legend>[ Media ]</legend>
-            $([ -n "${MPVC_WEB_DEV:-}" ] && mpvc_web_cli)
             $([ -n "${MPVC_WEB_DEV:-}" ] && mpvc_web_yts)
+            $([ -n "${MPVC_WEB_DEV:-}" ] && mpvc_web_cli)
+        </fieldset>
+
+        <fieldset class="control-group">
+          <legend>[ Stash ]</legend>
 
             $(mpvc stash list | mpvc tac | mpvc-fzf -0 | mpvc_web_select_form "mpvc -q stash apply" "${MPVC_WEB_SHORTCUT_APPLY}")
             $(mpvc stash list | mpvc tac | mpvc-fzf -0 | mpvc_web_select_form "mpvc -q stash append" "${MPVC_WEB_SHORTCUT_APPLY}")
@@ -897,6 +901,7 @@ mpvc_web_index()
             #$(if [ -n "$MPVC_WEB_ARCHIVE_ENABLE" ]; then find "ytdl-archive/" | awk -F/ '{print "https://"$NF}' | mpvc_web_select_form "mpvc -q add" "${MPVC_WEB_SHORTCUT_ARCHIVE}"; fi)
 -->
         </fieldset>
+
 
         </details>
 
