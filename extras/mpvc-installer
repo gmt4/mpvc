@@ -21,8 +21,8 @@ DOCDIR="${DOCDIR:-$PREFIX/docs}"
 MANDIR="${MANDIR:-$PREFIX/man/man1}"
 LICDIR="${LICDIR:-$PREFIX/licenses}"
 
-MPV_CONFDIR="${MPV_CONFIGDIR:-$HOME/.config/mpv}"
-MPVC_CONFIG_DIR="${MPVC_CONFIGDIR:-$HOME/.config/mpvc}"
+MPV_CONFIG_DIR="${MPV_CONFIG_DIR:-$HOME/.config/mpv}"
+MPVC_CONFIG_DIR="${MPVC_CONFIG_DIR:-$HOME/.config/mpvc}"
 
 MANS="docs/man/man1/mpvc.1 docs/man/man1/mpvc-fzf.1 docs/man/man1/mpvc-tui.1"
 DOCS="README.md docs/config/mpv.conf docs/logbook.html"
@@ -32,13 +32,16 @@ SCRIPT="mpvc extras/mpvc-tui extras/mpvc-fzf extras/mpvc-cut extras/mpvc-chapter
 MPV_CONFIG="docs/config/mpv.conf"
 MPVC_CONFIG="docs/config/mpvc.conf docs/config/yt-dlp.conf docs/config/curlrc"
 
+MPVC_INSTALL_TOOLS_REQUIRED="sh mpv fzf socat sed awk"
+MPVC_INSTALL_TOOLS_RECOMMENDED="awk curl jq rlwrap notify-send qrencode yt-dlp deno"
+
 mpvc_config()
 {
-    mkdir -p "$MPV_CONFDIR/scripts/"
+    mkdir -p "$MPV_CONFIG_DIR/scripts/"
     echo "Fetching docs/mpv.conf from $PROGURL"
     for config in ${MPV_CONFIG};
     do
-        file="$MPV_CONFDIR/${config##*/}"
+        file="$MPV_CONFIG_DIR/${config##*/}"
         url="$PROGURL/raw/master/$config"
         echo "Fetch $file"
         if [ -f "$file" ]; then
@@ -161,20 +164,25 @@ mpvc_uninstall()
     do
         rm -v "$BINDIR/${script##*/}";
     done
+    for external in "yt-dlp" "deno";
+    do
+        rm -v  "$BINDIR/${external##*/}";
+    done
+
 }
 
 mpvc_check_requirements()
 {
     # attempt at listing packages required by mpvc & extras/ to work
     echo "# Checking required deps:"
-    for cmd in sh mpv fzf socat awk sed; do
+    for cmd in $MPVC_INSTALL_TOOLS_REQUIRED; do
         (command -v "$cmd" || echo "$PROGNAME: Error: No $cmd found. Install to continue") | sed 's/^/  /'
     done
     # recommened, and good to have, but not required
     echo "# Checking recommended deps:"
-    for cmd in curl rlwrap notify-send jq yt-dlp deno; do
+    for cmd in $MPVC_INSTALL_TOOLS_RECOMMENDED; do
         if command -v "$cmd" | sed 's/^/  /'; then
-            $cmd --version | awk 'NR==1 { print "    "$1,$2 }'
+            $cmd --version | awk 'NR==1 { print "    "$1,$2,$3 }'
         else
             echo "$PROGNAME: Warning: No $cmd found, is recommended, but not required"
         fi
@@ -195,31 +203,72 @@ mpvc_check_update()
     fi
 }
 
-mpvc_userprompt() { echo "$@"; read foo; }
-
 mpvc_quickstart()
 {
-    echo
-    echo "# Welcome to mpvc-installer QuickStart"
-    echo " (Hit Control-C exit / Enter to continue)"
-    echo
+    export BINDIR="${BINDIR:-$HOME/bin}"
+    if [ ! -d "$BINDIR" ]; then
+        echo "# Quickstart: Creating target directory: $BINDIR"
+        if ! mkdir -p "$BINDIR"; then
+            echo "❌ Quickstart failed: Failed to create directory $BINDIR"
+            return 1
+        fi
+    fi
 
-    mpvc_userprompt "[*] Check for latest mpvc: mpvc-installer check-update [Y/n]"
-    $0 check-update
-    mpvc_userprompt "[*] Ready to install: mpvc-installer fetch-user [Y/n]"
-    $0 fetch-user
-    mpvc_userprompt "[*] Ready to config: mpvc-installer config-user [Y/n]"
-    $0 config-user
-    mpvc_userprompt "[*] Ready to perform final checks: mpvc-installer check-reqs [Y/n]"
-    $0 check-reqs
+    echo "# Quickstart: Checking for updates..."
+    if ! "$0" check-update; then
+        echo "❌ Quickstart failed: 'check-update' step encountered an error."
+        return 1
+    fi
 
-    echo
-    echo "# Congrats! QuickStart Install completed!"
-    echo " (Hit Control-C exit / Enter to continue)"
-    echo
+    echo "# Quickstart: Fetching/installing files..."
+    if ! "$0" fetch-user; then
+        echo "❌ Quickstart failed: 'fetch-user' step encountered an error."
+        return 1
+    fi
 
-    mpvc_userprompt "[*] Lets start with: mpvc-fzf somafm [Y/n]"
-    mpvc-fzf somafm
+    echo "# Quickstart: Configuring user directories..."
+    if ! "$0" config-user; then
+        echo "❌ Quickstart failed: 'config-user' step encountered an error."
+        return 1
+    fi
+
+    echo "# Quickstart: Checking system requirements..."
+    if ! "$0" check-reqs; then
+        echo "❌ Quickstart failed: 'check-reqs' dependency check failed."
+        return 1
+    fi
+
+    # 4. Path validation check
+    case ":$PATH:" in
+        *:"$BINDIR":*) ;;
+        *)
+            echo ""
+            echo "⚠️  Note: '$BINDIR' not found in \$PATH. To fix this, update your shell config with:"
+            echo "  export PATH=\"\$HOME/bin:\$PATH\""
+            ;;
+    esac
+
+    echo "# QuickStart setup completed successfully!"
+}
+
+mpvc_quickstart_uninstall()
+{
+    export BINDIR="${BINDIR:-$HOME/bin}"
+
+    echo "# QuickStart: Removing mpvc binaries from $BINDIR..."
+    if ! "$0" uninstall-user; then
+        echo "❌ Quickstart failed: 'uninstall-user' step encountered an error."
+        return 1
+    fi
+
+    _config_dir="$HOME/.config/mpvc"
+    if [ -d "$_config_dir" ] || [ -L "$_config_dir" ]; then
+        echo "# QuickStart: Keeping mpvc user config at $_config_dir."
+    else
+        echo "# QuickStart: No mpvc user config found at $_config_dir (skipping)."
+    fi
+
+    echo "# QuickStart uninstall complete!"
 }
 
 mpvc_version()
@@ -232,6 +281,7 @@ usage()
     cat <<EOF
 usage: $PROGNAME args # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
   quickstart     : QuickStart Install for first-time users
+  quickstart-rm  : QuickStart Removal for first-time users
 
   check-update   : Check for updates
   check-reqs     : Check for required packages
@@ -261,6 +311,9 @@ main()
     esac
 
     case "$1" in
+    quickstart)      shift; mpvc_quickstart ;;
+    quickstart-rm)   shift; mpvc_quickstart_uninstall ;;
+
     version)         shift; mpvc_version;;
     check-reqs)      shift; mpvc_check_requirements;;
     check-update)    shift; mpvc_check_update;;
@@ -272,8 +325,6 @@ main()
     install)         shift; mpvc_install "$@";;
     uninstall)       shift; mpvc_uninstall "$@";;
     config)          shift; mpvc_config "$@";;
-
-    quickstart)      shift; mpvc_quickstart ;;
 
     config-user)     shift; PREFIX=$HOME $SHELL "$0" config;;
     config-sys)      shift; PREFIX=/usr/local $SHELL "$0" config;;

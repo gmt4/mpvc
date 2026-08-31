@@ -7,7 +7,7 @@ Contribute answers in a `Q: A:` format to your favorite Frequently Asked Questio
 * [fish](https://github.com/fish-shell/fish-shell)
 * [fzf](https://github.com/junegunn/fzf)
 * [cava](https://github.com/karlstav/cava)
-* [yark](https://github.com/Owez/yark)
+* [easyeffects](https://github.com/wwmm/easyeffects)
 * [copyparty](https://github.com/9001/copyparty)
 
 ### Related tools
@@ -16,6 +16,7 @@ Contribute answers in a `Q: A:` format to your favorite Frequently Asked Questio
 * [rmpvc](https://github.com/mierak/rmpc)
 * [ytmdl](https://github.com/deepjyoti30/ytmdl)
 * [ytmp](https://github.com/unclereeemus/ytmp)
+* [yark](https://github.com/Owez/yark)
 * [mpv-sockets](https://github.com/seanbreckenridge/mpv-sockets)
 
 ## BSD support?

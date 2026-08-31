@@ -109,6 +109,7 @@ EOF
  togglev                  : Toggle MPV video property.
  togglew                  : Toggle MPV window property.
  cycle                    : Toggle/Cycle through MPV property values.
+ cycle-values             : Toggle/Cycle through MPV property values.
  idleloop                 : Listen to MPV events on $PROGNAME socket.
  observe                  : Observe property in MPV events on $PROGNAME socket.
  playlist-shuffle         : Shuffle the current playlist
@@ -369,6 +370,7 @@ mpvc_add()   { mpvc_ecmdr "add" "$@"; }
 mpvc_get()   { equiet mpvc_sockcmd "\"get_property_string\", $(mpvc_json_esc "$1")" | mpvc_getjson 'data'; }
 mpvc_set()   { mpvc_ecmdr "set_property_string" "$@"; }
 mpvc_cycle() { oquiet mpvc_sockcmd "\"cycle\", $(mpvc_json_esc "$1")"; }
+mpvc_cyclev(){ mpvc_ecmdr "cycle-values" "$@"; }
 
 mpvc_getr()  { mpvc_sockcmd "\"get_property\", $(mpvc_json_esc "$1")"; }
 mpvc_setr()  { mpvc_ecmdr "set_property" "$@"; }
@@ -767,7 +769,7 @@ mpvc_toggle_loop() {
     property=${1:-}
     value=${2:-}
     case "$value" in
-        '')      mpvc_ecmdr "cycle-values" "$property" "yes" "no" ;;
+        '')      mpvc_cyclev $property "yes no" ;;
         on|yes)  mpvc_set "$property" yes ;;
         off|no)  mpvc_set "$property" no  ;;
         *)       mpvc_set "$property" "$value";;
@@ -1156,6 +1158,7 @@ main() {
             -r|--remove|rm|remove|del)       shift; mpvc_remove_track "${1:-}"; QUIETFLAG=true;;
 
             --cycle|cycle)                   shift; mpvc_cycle "$@"; QUIETFLAG=true;;
+            cycle-values|--cyclev|cyclev)    shift; mpvc_cyclev "$@"; QUIETFLAG=true;;
             --set|set|s)                     shift; mpvc_set "$@"; return;;
             --get|get|g)                     shift; mpvc_get "${1:-}"; QUIETFLAG=true;;
             --sets|sets|ss)                  shift; mpvc_set "$@"; return;;
@@ -1200,7 +1203,7 @@ main() {
             --togglec|togglec)                      mpvc_cycle "cache" ;;
             --togglef|togglef)                      mpvc_cycle "fullscreen" ;;
             --togglei|togglei)                      mpvc_cycle "idle" ;;
-            --toggler|toggler|rotate)               mpvc_ecmdr "cycle-values" video-rotate 0 90 180 270; QUIETFLAG=true ;;
+            --toggler|toggler|rotate)               mpvc_cyclev "video-rotate" "0 90 180 270"; QUIETFLAG=true ;;
             --toggles|toggles)                      mpvc_cycle "shuffle";  QUIETFLAG=true ;;
             --togglev|togglev)                      mpvc_cycle "video" ;;
             --togglew|togglew)                      mpvc_cycle "force-window" ;;
