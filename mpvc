@@ -293,6 +293,12 @@ mpvc_ytquery_json() {
             url="$(echo "$url" | sed 's|://yewtu.be|://youtu.be|; s|/watch?v=|/|')"
             result=$(mpvc_curl_cache_json "$url")
             ;;
+        https://yewtu.be/playlist*)
+            url="$(echo "$url" | sed 's|://yewtu.be|://youtu.be|')"
+            #result=$(mpvc_curl_cache_json "$url")  # XXX
+            url=$([ -n "${url##*/}" ] && echo "${url##*/}" || echo "$url")
+            result='{ "title":"'"${url}"'","request_id":0 }' # basenamed
+            ;;
         https://yewtu.be/*)
             url="$(echo "$url" | sed 's|://yewtu.be|://youtu.be|')"
             result=$(mpvc_curl_cache_json "$url")
