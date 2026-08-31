@@ -21,8 +21,8 @@ DOCDIR="${DOCDIR:-$PREFIX/docs}"
 MANDIR="${MANDIR:-$PREFIX/man/man1}"
 LICDIR="${LICDIR:-$PREFIX/licenses}"
 
-MPV_CONFDIR="${MPV_CONFIGDIR:-$HOME/.config/mpv}"
-MPVC_CONFIG_DIR="${MPVC_CONFIGDIR:-$HOME/.config/mpvc}"
+MPV_CONFIG_DIR="${MPV_CONFIG_DIR:-$HOME/.config/mpv}"
+MPVC_CONFIG_DIR="${MPVC_CONFIG_DIR:-$HOME/.config/mpvc}"
 
 MANS="docs/man/man1/mpvc.1 docs/man/man1/mpvc-fzf.1 docs/man/man1/mpvc-tui.1"
 DOCS="README.md docs/config/mpv.conf docs/logbook.html"
@@ -32,16 +32,16 @@ SCRIPT="mpvc extras/mpvc-tui extras/mpvc-fzf extras/mpvc-cut extras/mpvc-chapter
 MPV_CONFIG="docs/config/mpv.conf"
 MPVC_CONFIG="docs/config/mpvc.conf docs/config/yt-dlp.conf docs/config/curlrc"
 
-MPVC_INSTALL_TOOLS_RECOMMENDED="sh mpv fzf socat sed awk"
+MPVC_INSTALL_TOOLS_REQUIRED="sh mpv fzf socat sed awk"
 MPVC_INSTALL_TOOLS_RECOMMENDED="awk curl jq rlwrap notify-send qrencode yt-dlp deno"
 
 mpvc_config()
 {
-    mkdir -p "$MPV_CONFDIR/scripts/"
+    mkdir -p "$MPV_CONFIG_DIR/scripts/"
     echo "Fetching docs/mpv.conf from $PROGURL"
     for config in ${MPV_CONFIG};
     do
-        file="$MPV_CONFDIR/${config##*/}"
+        file="$MPV_CONFIG_DIR/${config##*/}"
         url="$PROGURL/raw/master/$config"
         echo "Fetch $file"
         if [ -f "$file" ]; then
@@ -164,13 +164,18 @@ mpvc_uninstall()
     do
         rm -v "$BINDIR/${script##*/}";
     done
+    for external in "yt-dlp" "deno";
+    do
+        rm -v  "$BINDIR/${external##*/}";
+    done
+
 }
 
 mpvc_check_requirements()
 {
     # attempt at listing packages required by mpvc & extras/ to work
     echo "# Checking required deps:"
-    for cmd in $MPVC_INSTALL_TOOLS_RECOMMENDED; do
+    for cmd in $MPVC_INSTALL_TOOLS_REQUIRED; do
         (command -v "$cmd" || echo "$PROGNAME: Error: No $cmd found. Install to continue") | sed 's/^/  /'
     done
     # recommened, and good to have, but not required
@@ -200,9 +205,6 @@ mpvc_check_update()
 
 mpvc_quickstart()
 {
-    echo "# Initializing mpvc QuickStart Setup..."
-
-    # 1. Resolve BINDIR path safely
     export BINDIR="${BINDIR:-$HOME/bin}"
     if [ ! -d "$BINDIR" ]; then
         echo "# Quickstart: Creating target directory: $BINDIR"
@@ -212,7 +214,6 @@ mpvc_quickstart()
         fi
     fi
 
-    # 3. Step-by-step execution with explicit if/then blocks
     echo "# Quickstart: Fetching/installing files..."
     if ! "$0" fetch-user; then
         echo "❌ Quickstart failed: 'fetch-user' step encountered an error."
@@ -236,8 +237,7 @@ mpvc_quickstart()
         *:"$BINDIR":*) ;;
         *)
             echo ""
-            echo "⚠️  Note: '$BINDIR' is not detected in your current \$PATH."
-            echo "To fix this, add the following snippet to your shell configuration file:"
+            echo "⚠️  Note: '$BINDIR' not found in \$PATH. To fix this, update your shell config with:"
             echo "  export PATH=\"\$HOME/bin:\$PATH\""
             ;;
     esac
@@ -247,27 +247,22 @@ mpvc_quickstart()
 
 mpvc_quickstart_uninstall()
 {
-    echo "# Initializing mpvc QuickStart Removal..."
-
-    # 1. Resolve BINDIR path safely
     export BINDIR="${BINDIR:-$HOME/bin}"
 
-    # 2. Execute binary uninstallation using direct self-reference
-    echo "# Removing mpvc binaries from $BINDIR..."
+    echo "# QuickStart: Removing mpvc binaries from $BINDIR..."
     if ! "$0" uninstall-user; then
-        echo "❌ Quickstart uninstall failed: 'uninstall-user' step encountered an error."
+        echo "❌ Quickstart failed: 'uninstall-user' step encountered an error."
         return 1
     fi
 
-    # 3. Safe, interactive handling of user configurations
     _config_dir="$HOME/.config/mpvc"
     if [ -d "$_config_dir" ] || [ -L "$_config_dir" ]; then
-        echo "=> Keeping mpvc user configuration files at $_config_dir."
+        echo "# QuickStart: Keeping mpvc user config at $_config_dir."
     else
-        echo "=> No mpvc user configuration folder found at $_config_dir (skipping)."
+        echo "# QuickStart: No mpvc user config found at $_config_dir (skipping)."
     fi
 
-    echo "# mpvc QuickStart removal complete!"
+    echo "# QuickStart uninstall complete!"
 }
 
 mpvc_version()
