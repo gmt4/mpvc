@@ -214,6 +214,12 @@ mpvc_quickstart()
         fi
     fi
 
+    echo "# Quickstart: Checking for updates..."
+    if ! "$0" check-update; then
+        echo "❌ Quickstart failed: 'check-update' step encountered an error."
+        return 1
+    fi
+
     echo "# Quickstart: Fetching/installing files..."
     if ! "$0" fetch-user; then
         echo "❌ Quickstart failed: 'fetch-user' step encountered an error."
