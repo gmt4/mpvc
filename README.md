@@ -11,7 +11,7 @@
 Music player in POSIX-sh using mpv from the shell/fzf + extras/goodies [^install] 📡🛸🚀.
 
 A fork of [lwillets/mpvc](https://github.com/lwilletts/mpvc) evolving on its own adding features such as: improved interfaces to CLI, TUI, FZF, WEB, EQZ, & play streaming services as YouTube/Invidious, with a focus on being fully programmable/scriptable from the shell.
-For more on the features of this fork check: [Git](#git) QuickStart, [LogBook](#logbook) & [Casts](#screencasts).
+For more on the features of this fork check: [Git](#git) install, [LogBook](#logbook) & [Casts](#screencasts).
 
 ⏩ Skip directly to [Installation](#installation) to try mpvc!
 
@@ -58,7 +58,7 @@ For more on the features of this fork check: [Git](#git) QuickStart, [LogBook](#
 - [extras/mpvc-autopilot](../../blob/master/extras/mpvc-autopilot): automatic mpv start/stop based on presence.
 - [extras/mpvc-installer](../../blob/master/extras/mpvc-installer): provides an installer to install/update mpvc.
 
-For more details on how to use the above tools have a look at the [Git](#git) QuickStart Guide, [LogBook](#logbook).
+For more details on how to use the above tools have a look at the [Git](#git) install guide and the [LogBook](#logbook).
 In addition, the [casts/](#screencasts) directory to shows some screencasts of mpvc in action.
 
 ## Requirements
@@ -119,7 +119,7 @@ curl -fsSLO https://github.com/lwilletts/mpvc/raw/master/extras/mpvc-installer \
 
 ### Git
 
-If you prefer keeping a local repository clone to receive quick development updates via `git pull`, then, use the `mpvc-installer` argument directly inside the directory root:
+Clone the git repo to receive quick development updates via `git pull`, then, use the `mpvc-installer` inside the repo:
 
 ```sh
  # fetch a local copy of the github repo
@@ -129,15 +129,18 @@ If you prefer keeping a local repository clone to receive quick development upda
  (cd mpvc; extras/mpvc-installer link-user)
  (cd mpvc; extras/mpvc-installer check-reqs)
  (cd mpvc; extras/mpvc-installer config-user)
- # check ~/.config/mpvc/mpvc.conf to suit your needs
+```
 
+Once installed, you can start using mpvc, below are some examples to get started:
+
+```
  # use mpvc to add/load/save media files or online YT URLs
  mpvc add /path/to/your/*.mp3 # or your URLs
  find . -type f -name '*.mp3' | mpvc load
  fzf | mpvc load # even better than the above
  mpvc save my-playlist
 
- # use mpvc stash to store/recover current mpv state (see the logbook for more)
+ # use mpvc stash to store/recover current mpv state
  mpvc stash ls
  mpvc stash push current
  mpvc stash apply current
