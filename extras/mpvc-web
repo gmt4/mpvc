@@ -99,8 +99,17 @@ mpvc_web_style()
     cat <<-EOF
 /* mpvc-web style.css */
 
+.scheme-control { position: absolute; opacity: 0; pointer-events: none; }
+.theme-toggle-container { display: inline-flex; gap: 2px; }
+.theme-lbl { padding: 2px 6px; font-size: 12px; cursor: pointer; }
+
+.theme-lbl { display: none; }
+html:has(#scheme-auto:checked) .lbl-light { display: inline-block; }
+html:has(#scheme-light:checked) .lbl-dark { display: inline-block; }
+html:has(#scheme-dark:checked) .lbl-auto  { display: inline-block; }
+
 @supports (font: -apple-system-body) {
-    /* iOS/Safari ... */
+    /* Old iOS/Safari workaround XXX */
     :root {
       --bg-primary: #0f0f0f;
       --bg-secondary: #1a1a1a;
@@ -110,21 +119,12 @@ mpvc_web_style()
       --border: #666666;
       --accent: #00d4ff;
       --shadow: rgba(0, 0, 0, 0.5);
-
     }
 
     #scheme-dark:checked ~ main { filter: invert(--filter-dark); }
     #scheme-light:checked ~ main { filter: invert(--filter-light); }
+    iframe { background: var(--text-primary); filter: var(--filter-dark); }
 }
-
-.scheme-control { position: absolute; opacity: 0; pointer-events: none; }
-.theme-toggle-container { display: inline-flex; gap: 2px; }
-.theme-lbl { padding: 2px 6px; font-size: 12px; cursor: pointer; }
-
-.theme-lbl { display: none; }
-html:has(#scheme-auto:checked) .lbl-light { display: inline-block; }
-html:has(#scheme-light:checked) .lbl-dark { display: inline-block; }
-html:has(#scheme-dark:checked) .lbl-auto  { display: inline-block; }
 
 /* THEME */
 
