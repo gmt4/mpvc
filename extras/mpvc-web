@@ -856,9 +856,11 @@ mpvc_web_index()
         <summary>
         [
             <a href="#mpvc-web-tools" name="mpvc-web-tools">📻 Radio</a>
-            <a href="/cgi-bin/mpvc?now-short">#now</a>
-            $([ -n "$MPVC_WEB_ARCHIVE_ENABLE" ] && echo '<a href="ytdl-archive" title="#arc" >#a</a>'; )
-            $(for x in $MPVC_WEB_EXTRAS_URL; do n=$((${n:-0} + 1)); echo "<a href=$x title=#url-$n>#u$n</a>"; done)
+            $(for x in $MPVC_WEB_EXTRAS_URL; do n=$((${n:-0} + 1)); echo "<a href=$x title=#url-$n>#$n</a>"; done)
+            <span style="float:right">
+                <a class=btn href="/cgi-bin/mpvc?now-short" title="Now Playing (share)" aria-label="Now Playing">💿</a>
+                $([ -n "$MPVC_WEB_ARCHIVE_ENABLE" ] && echo '<a class=btn href="ytdl-archive" title="Archive" aria-label="Archive">🗃️</a>'; )
+            </span>
         ]
         </summary>
 
@@ -888,6 +890,10 @@ mpvc_web_index()
           <legend>[ Media ]</legend>
             $([ -n "${MPVC_WEB_DEV:-}" ] && mpvc_web_yts)
             $([ -n "${MPVC_WEB_DEV:-}" ] && mpvc_web_cli)
+<!--
+            #$("$MPVC_WEB_CGI" mpvc save | mpvc_web_select_form "mpvc-fzf -g" "${MPVC_WEB_SHORTCUT_SEEK}")
+            #$(if [ -n "$MPVC_WEB_ARCHIVE_ENABLE" ]; then find "ytdl-archive/" | awk -F/ '{print "https://"$NF}' | mpvc_web_select_form "mpvc -q add" "${MPVC_WEB_SHORTCUT_ARCHIVE}"; fi)
+-->
         </fieldset>
 
         <fieldset class="control-group">
@@ -896,12 +902,7 @@ mpvc_web_index()
             $(mpvc stash list | mpvc tac | mpvc-fzf -0 | mpvc_web_select_form "mpvc -q stash apply" "${MPVC_WEB_SHORTCUT_APPLY}")
             $(mpvc stash list | mpvc tac | mpvc-fzf -0 | mpvc_web_select_form "mpvc -q stash append" "${MPVC_WEB_SHORTCUT_APPLY}")
 
-<!--
-            #$("$MPVC_WEB_CGI" mpvc save | mpvc_web_select_form "mpvc-fzf -g" "${MPVC_WEB_SHORTCUT_SEEK}")
-            #$(if [ -n "$MPVC_WEB_ARCHIVE_ENABLE" ]; then find "ytdl-archive/" | awk -F/ '{print "https://"$NF}' | mpvc_web_select_form "mpvc -q add" "${MPVC_WEB_SHORTCUT_ARCHIVE}"; fi)
--->
         </fieldset>
-
 
         </details>
 
