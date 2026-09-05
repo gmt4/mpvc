@@ -125,7 +125,7 @@ handle_listing()
 EOF
     )
 
-    ENC_PARENT="${ENC_PARENT:-/}"
+    ENC_PARENT="${ENC_PARENT:-}"
     # Render Parent Directory button if nested
     if [ -n "$REQ_DIR" ] && [ "$REQ_DIR" != "/" ]; then
         PARENT_DIR=$(dirname "$REQ_DIR")
@@ -149,19 +149,21 @@ EOF
     DIR_LIST=""
     DIR_LIST="${DIR_LIST}<div class='row'><a href='$PROGNAME?browser&dir=${ENC_CURRENT_DIR}' class='folder-link'>📁 .</a></div>"
     DIR_LIST="${DIR_LIST}<div class='row'><a href='$PROGNAME?browser&dir=${ENC_PARENT}' class='folder-link'>📁 ..</a></div>"
-    for item in $(set +f; echo ".." "$RESOLVED_PATH"/*); do
+    set +f
+    for item in "$RESOLVED_PATH"/*; do
         [ -d "$item" ] || continue
         name=$(basename "$item")
         case "$name" in .*) continue ;; esac
 
         ENC_DIR=$(printf '%s/%s' "$REQ_DIR" "$name" | tr -s '/' | sed 's/ /%20/g')
-        DIR_LIST="${DIR_LIST}<div class='row'><a href='$PROGNAME?browser&dir=${ENC_DIR}' class='folder-link'>📁 ${name}/</a></div>"
+        DIR_LIST="${DIR_LIST}
+            <div class='row'><a href='$PROGNAME?browser&dir=${ENC_DIR}' class='folder-link'>📁 ${name}/</a></div>"
     done
     HTML_BODY="${HTML_BODY}${DIR_LIST}"
 
     # Handle audio files
     FILE_LIST=""
-    for item in $(set +f; echo "$RESOLVED_PATH"/*); do
+    for item in "$RESOLVED_PATH"/*; do
         [ -f "$item" ] || continue
         name=$(basename "$item")
 
@@ -189,6 +191,7 @@ EOF
         esac
     done
     HTML_BODY="${HTML_BODY}${FILE_LIST}"
+    set -f
 
     # Append JavaScript filtering script and close standard DOM tags
     HTML_BODY="${HTML_BODY}</div>
