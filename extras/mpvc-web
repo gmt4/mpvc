@@ -774,8 +774,10 @@ mpvc_web_index()
     <style>
       $(mpvc_web_style)
     </style>
-    <link rel="preload" href="style.css" as="style" />
-    <link rel="stylesheet" href="style.css" />
+    $(if [ -n "$MPVC_WEB_CSS_STYLE" ]; then
+        echo '<link rel="preload" href="style.css" as="style" />'
+        echo '<link rel="stylesheet" href="style.css" />'
+    fi)
 
     </head>
 
