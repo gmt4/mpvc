@@ -11,6 +11,7 @@
 # Use as a CGI or standalone with: socat tcp-listen:8888,reuseaddr,fork exec:mpvc-web-browser'
 
 PROGNAME=${0##*/}
+PROGDIR=${0%/*}
 PROGVERSION="v1.8"
 PROGAUTHOR=gmt4
 PROGURL="https://github.com/gmt4/mpvc"
@@ -36,7 +37,7 @@ handle_config()
     TARGET_PATH=$(printf '%s' "$TARGET_PATH" | tr -s '/')
 
     # Strict Security Boundary: Ensure the path cannot escape MEDIA_ROOT
-    RESOLVED_PATH=$(realpath -m "$TARGET_PATH" 2>/dev/null)
+    RESOLVED_PATH=$(realpath -m "$TARGET_PATH" 2>/dev/null || realpath "$TARGET_PATH")
     case "$RESOLVED_PATH" in
         "${MEDIA_ROOT}"*)
             REQ_DIR=$(printf '%s' "$RESOLVED_PATH" | sed "s|^${MEDIA_ROOT}||")
@@ -79,7 +80,7 @@ handle_listing()
 {
     ENC_CURRENT_DIR=$(printf '%s' "$REQ_DIR" | sed 's/ /%20/g')
 
-    HTML_BODY=$(cat <<EOF
+    HTML_BODY=$(cat <<-EOF
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -217,11 +218,65 @@ EOF
     printf '%s' "$HTML_BODY"
 }
 
-main()
+mpvc_browser()
 {
     handle_config
     handle_action
     handle_listing
 }
 
+mpvc_warn()  { echo "$@" >&2; }
+mpvc_strip() { sed '/\x1b\[7m/ { s|\x1b\[7m||; s| |+|; }; s|\x1b\[0m||;'; }
+mpvc_cmd()   { echo "Content-Type: text/plain"; echo "Connection: close"; echo; $MPVC "$@"; }
+mpvc_cmdl()  {
+               body=$($MPVC "$@"); bytes=$(printf '%s' "$body" | wc -c);
+               echo "Content-Type: text/plain"; echo "Connection: close"; echo "Content-Length: $bytes"
+               echo
+               echo "$body"
+}
+mpvc_plain() { echo "Content-Type: text/plain"; echo "Connection: close"; echo; echo "$@"; }
+mpvc_html()  { echo "Content-Type: text/html";  echo "Connection: close"; echo; echo "$@"; }
+mpvc_redir() { if [ -n "$1" -a "$1" != "null" ]; then mpvc_html '<meta http-equiv=refresh content="0.1;url='$1'" />'; fi; }
+mpvc_split() { for i in $@; do echo "$i"; done; }
+
+usage()
+{
+    cat <<EOF
+usage: $PROGNAME -[acidlLvDh] args # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
+ -h|help    : Show this help
+*tips: If unsure about where to begin, start with: $PROGNAME preset
+EOF
+    exit "${1:-0}"
+}
+
+main()
+{
+    MPVC=${MPVC:-$(command -v mpvc)}
+
+    QUERY_STRING="${QUERY_STRING:-$@}"
+    case "$QUERY_STRING" in
+        ''|help)                   usage ;;
+
+        browser*)               mpvc_browser ;;
+
+        volmute)                mpvc_redir "$($MPVC-mpris volmute)" ;;
+        now-short)              mpvc_redir "$($MPVC-fzf now short)" ;;
+        lyrics)                 mpvc_redir "$($MPVC-fzf Lyrics '')" ;;
+        thumbnail)              mpvc_redir "$($MPVC-fzf thumbnail)" ;;
+        thumbnail64)            mpvc_redir "$($MPVC-fzf thumbnail64)" ;;
+        filename)               mpvc_redir "$($MPVC filename current full)" ;;
+        metadata)               mpvc_plain "$($MPVC metadata)" ;;
+        #related)               mpvc_plain "$($MPVC-fzf \"$($MPVC get media-title)\")" ;;
+
+        mpvc+status)            mpvc_cmdl status | mpvc_strip ;;
+        mpvc+playlist)          mpvc_cmdl playlist | mpvc_strip ;;
+        mpvc+chapter-list)      mpvc_cmdl chapter-list-nr | mpvc_strip ;;
+
+        mpvc-fzf[+\ ]*)         mpvc_plain "$(${MPVC%/*}/$(mpvc_split "$@"))" ;;
+        mpvc-equalizer[+\ ]*)   mpvc_plain "$(${MPVC%/*}/$(mpvc_split "$@"))" ;;
+        mpvc[+\ ]*)             mpvc_plain "$(${MPVC%/*}/$(mpvc_split "$@"))" ;;
+    esac
+}
+
 main "$@"
+
