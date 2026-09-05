@@ -713,6 +713,12 @@ set -euf
 mpvc_warn()  { echo "\$@" >&2; }
 mpvc_strip() { sed '/\x1b\[7m/ { s|\x1b\[7m||; s| |+|; }; s|\x1b\[0m||;'; }
 mpvc_cmd()   { echo "Content-Type: text/plain"; echo "Connection: close"; echo; $MPVC "\$@"; }
+mpvc_cmdl()  {
+               body=\$($MPVC "\$@"); bytes=\$(printf '%s' "\$body" | wc -c);
+               echo "Content-Type: text/plain"; echo "Connection: close"; echo "Content-Length: \$bytes"
+               echo
+               echo "\$body"
+}
 mpvc_plain() { echo "Content-Type: text/plain"; echo "Connection: close"; echo; echo "\$@"; }
 mpvc_html()  { echo "Content-Type: text/html";  echo "Connection: close"; echo; echo "\$@"; }
 mpvc_redir() { if [ -n "\$1" -a "\$1" != "null" ]; then mpvc_html '<meta http-equiv=refresh content="0.1;url='\$1'" />'; fi; }
@@ -721,11 +727,6 @@ mpvc_split() { for i in \$@; do echo "\$i"; done; }
 main()
 {
     QUERY_STRING="\${QUERY_STRING:-\$@}"
-    if [ -n "\${USER:-}" ]; then
-        PATH=/usr/local/bin:/usr/bin:/bin
-        env -i PATH="\$PATH" HOME="\$HOME" TERM="\$TERM" QUERY_STRING="\${QUERY_STRING:-}" "\$0" "\$@";
-        exit;
-    fi
     case "\$QUERY_STRING" in
         volmute)                mpvc_redir "\$($MPVC-mpris volmute)" ;;
         now-short)              mpvc_redir "\$($MPVC-fzf now short)" ;;
@@ -736,9 +737,9 @@ main()
         metadata)               mpvc_plain "\$($MPVC metadata)" ;;
         #related)               mpvc_plain "\$($MPVC-fzf \"\$($MPVC get media-title)\")" ;;
 
-        mpvc+status)            mpvc_cmd status | mpvc_strip ;;
-        mpvc+playlist)          mpvc_cmd playlist | mpvc_strip ;;
-        mpvc+chapter-list)      mpvc_cmd chapter-list-nr | mpvc_strip ;;
+        mpvc+status)            mpvc_cmdl status | mpvc_strip ;;
+        mpvc+playlist)          mpvc_cmdl playlist | mpvc_strip ;;
+        mpvc+chapter-list)      mpvc_cmdl chapter-list-nr | mpvc_strip ;;
 
         mpvc-fzf[+\ ]*)         mpvc_plain "\$($PROGDIR/\$(mpvc_split "\$@"))" ;;
         mpvc-equalizer[+\ ]*)   mpvc_plain "\$($PROGDIR/\$(mpvc_split "\$@"))" ;;
@@ -1075,6 +1076,11 @@ mpvc_web_setup()
     )
 }
 
+mpvc_web_envclean()
+{
+    env -i PATH=/usr/local/bin:/usr/bin:/bin HOME="$HOME" TERM="$TERM" "$@"
+}
+
 mpvc_web()
 {
     mpvc_web_setup
@@ -1082,9 +1088,9 @@ mpvc_web()
         cd "$MPVC_WEB_ROOT" || return
 
         # XXX handle cli commands, rewrite this mess
-        python3 -u -m http.server --cgi --bind "$MPVC_WEB_HOST" "$MPVC_WEB_PORT" "$@" 2>&1 |
+        mpvc_web_envclean python3 -u -m http.server --cgi --bind "$MPVC_WEB_HOST" "$MPVC_WEB_PORT" "$@" 2>&1 |
             #mawk -W interactive -v mpvcbin="$MPVC_WEB_CGI"
-            awk -v mpvcbin="$MPVC_WEB_CGI" \
+            mpvc_web_envclean awk -v mpvcbin="$MPVC_WEB_CGI" \
         '
         function mpvcsys(cmd) { system(mpvcbin" "cmd); }
         function mpvc(cmd)    { mpvcsys("mpvc -q "cmd); }
@@ -1106,6 +1112,7 @@ mpvc_web()
         }
 
         BEGIN {
+            system("env")
             quiet=1
             allowCmdStr = "mpv clear kill --mute toggle play stop prev next playrand shuffle unshuffle repeat single replay togglev aspect togglew togglef togglei creplay cloop cprev cnext cplayrand"
             n = split(allowCmdStr, a, /[[:space:]]+/)
