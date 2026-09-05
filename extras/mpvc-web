@@ -67,7 +67,9 @@ mpvc_web_defaults()
     : "${MPVC_WEB_SHORTCUT_YTSEARCH:=accesskey=y}"
     : "${MPVC_WEB_SHORTCUT_HELP:=accesskey=h}"
 
-    MPVC_WEB_CGI="$MPVC_WEB_ROOT/cgi-bin/mpvc"
+    MPVC_WEB_CGI_DIR="$MPVC_WEB_ROOT/cgi-bin/"
+    MPVC_WEB_CGI_CMD="/cgi-bin/mpvc-web-browser"
+    MPVC_WEB_CGI_FILE="$MPVC_WEB_CGI_DIR/mpvc-web-browser"
 
     # if present load user config
     if [ -r "$MPVC_CONFIG" -a -O "$MPVC_CONFIG" ]; then
@@ -618,11 +620,11 @@ cat <<EOF
 
             <!-- YTS Search Form (mobile-optimized with <select> fallback) -->
             <form id="mpvc-yts-form" action="/" method="get" class="yts-search-form">
-                <label for="mpvc-yts-input">YTS</label>
+                <label for="mpvc-yts-input"></label>
                 <input type="search"
                        id="mpvc-yts-input"
                        name="mpvc-yts-query"
-                       placeholder="Search title or paste URL"
+                       placeholder="🔍 Type to search music ..."
                        title="Search YouTube or paste video URL (press Enter)"
                        $MPVC_WEB_SHORTCUT_YTSEARCH
                        onkeydown="mpvcYtsOnKeyDownEvent(event, this.form)">
@@ -644,7 +646,7 @@ cat <<EOF
                         size="1"
                         style="margin-bottom: -6px; resize: auto;"
                         >
-                    <option value="" disabled selected>Search results go here</option>
+                    <option value="" disabled selected>Your search results</option>
                 </select>
 
             </form
@@ -704,51 +706,6 @@ function Help()
 EOF
 }
 
-
-mpvc_web_cgi() # /cgi-bin/mpvc
-{
-    cat <<EOF
-#!/bin/sh
-set -euf
-mpvc_warn()  { echo "\$@" >&2; }
-mpvc_strip() { sed '/\x1b\[7m/ { s|\x1b\[7m||; s| |+|; }; s|\x1b\[0m||;'; }
-mpvc_cmd()   { echo "Content-Type: text/plain"; echo "Connection: close"; echo; $MPVC "\$@"; }
-mpvc_cmdl()  {
-               body=\$($MPVC "\$@"); bytes=\$(printf '%s' "\$body" | wc -c);
-               echo "Content-Type: text/plain"; echo "Connection: close"; echo "Content-Length: \$bytes"
-               echo
-               echo "\$body"
-}
-mpvc_plain() { echo "Content-Type: text/plain"; echo "Connection: close"; echo; echo "\$@"; }
-mpvc_html()  { echo "Content-Type: text/html";  echo "Connection: close"; echo; echo "\$@"; }
-mpvc_redir() { if [ -n "\$1" -a "\$1" != "null" ]; then mpvc_html '<meta http-equiv=refresh content="0.1;url='\$1'" />'; fi; }
-mpvc_split() { for i in \$@; do echo "\$i"; done; }
-
-main()
-{
-    QUERY_STRING="\${QUERY_STRING:-\$@}"
-    case "\$QUERY_STRING" in
-        volmute)                mpvc_redir "\$($MPVC-mpris volmute)" ;;
-        now-short)              mpvc_redir "\$($MPVC-fzf now short)" ;;
-        lyrics)                 mpvc_redir "\$($MPVC-fzf Lyrics '')" ;;
-        thumbnail)              mpvc_redir "\$($MPVC-fzf thumbnail)" ;;
-        thumbnail64)            mpvc_redir "\$($MPVC-fzf thumbnail64)" ;;
-        filename)               mpvc_redir "\$($MPVC filename current full)" ;;
-        metadata)               mpvc_plain "\$($MPVC metadata)" ;;
-        #related)               mpvc_plain "\$($MPVC-fzf \"\$($MPVC get media-title)\")" ;;
-
-        mpvc+status)            mpvc_cmdl status | mpvc_strip ;;
-        mpvc+playlist)          mpvc_cmdl playlist | mpvc_strip ;;
-        mpvc+chapter-list)      mpvc_cmdl chapter-list-nr | mpvc_strip ;;
-
-        mpvc-fzf[+\ ]*)         mpvc_plain "\$($PROGDIR/\$(mpvc_split "\$@"))" ;;
-        mpvc-equalizer[+\ ]*)   mpvc_plain "\$($PROGDIR/\$(mpvc_split "\$@"))" ;;
-        mpvc[+\ ]*)             mpvc_plain "\$($PROGDIR/\$(mpvc_split "\$@"))" ;;
-    esac
-}
-main "\$@"
-EOF
-}
 
 mpvc_web_index()
 {
@@ -858,7 +815,7 @@ mpvc_web_index()
             <a href="#mpvc-web-radio" name="mpvc-web-radio">📻 Radio</a>
             $(for x in $MPVC_WEB_EXTRAS_URL; do n=$((${n:-0} + 1)); echo "<a href=$x title=#url-$n>#$n</a>"; done)
             <span style="float:right">
-                <a class=btn href="/cgi-bin/mpvc?now-short" title="Now Playing (share)" aria-label="Now Playing">💿</a>
+                <a class=btn href="$MPVC_WEB_CGI_CMD?now-short" title="Now Playing (share)" aria-label="Now Playing">💿</a>
                 $([ -n "$MPVC_WEB_ARCHIVE_ENABLE" ] && echo '<a class=btn href="ytdl-archive" title="Archive" aria-label="Archive">🗃️</a>'; )
             </span>
         </summary>
@@ -890,7 +847,7 @@ mpvc_web_index()
             $([ -n "${MPVC_WEB_DEV:-}" ] && mpvc_web_yts)
             $([ -n "${MPVC_WEB_DEV:-}" ] && mpvc_web_cli)
 <!--
-            #$("$MPVC_WEB_CGI" mpvc save | mpvc_web_select_form "mpvc-fzf -g" "${MPVC_WEB_SHORTCUT_SEEK}")
+            #$("$MPVC_WEB_CGI_FILE" mpvc save | mpvc_web_select_form "mpvc-fzf -g" "${MPVC_WEB_SHORTCUT_SEEK}")
             #$(if [ -n "$MPVC_WEB_ARCHIVE_ENABLE" ]; then find "ytdl-archive/" | awk -F/ '{print "https://"$NF}' | mpvc_web_select_form "mpvc -q add" "${MPVC_WEB_SHORTCUT_ARCHIVE}"; fi)
 -->
         </fieldset>
@@ -908,20 +865,20 @@ mpvc_web_index()
         <details>
         <summary>
             <a href="#mpvc-web-tools" name="mpvc-web-browse">📁 Browser</a>
-            <a href="/cgi-bin/mpvc-web-browser">#new</a>
+            <a href="$MPVC_WEB_CGI_CMD?browser">#new</a>
         </summary>
-        <iframe name="mpvc-browser" title="mpvc-status" width="100%" height="420" frameborder="0" allowtransparency="true" src="/cgi-bin/mpvc-web-browser" defer ></iframe>
+        <iframe name="mpvc-browser" title="mpvc-status" width="100%" height="420" frameborder="0" allowtransparency="true" src="$MPVC_WEB_CGI_CMD?browser" defer ></iframe>
         </details>
 
         <details open>
         <summary>
             <a href="#mpvc-web-status" name="mpvc-web-status">Status</a>
-            <a href="/cgi-bin/mpvc?metadata">#me</a>
-            <a href="/cgi-bin/mpvc?lyrics">#lyric</a>
-            <a href="/cgi-bin/mpvc?filename">#url</a>
+            <a href="$MPVC_WEB_CGI_CMD?metadata">#me</a>
+            <a href="$MPVC_WEB_CGI_CMD?lyrics">#lyric</a>
+            <a href="$MPVC_WEB_CGI_CMD?filename">#url</a>
         </summary>
         <hr>
-        <iframe name="mpvc-status" title="mpvc-status" width="100%" height="80" frameborder="0" allowtransparency="true" src="/cgi-bin/mpvc?mpvc+status" defer ></iframe>
+        <iframe name="mpvc-status" title="mpvc-status" width="100%" height="80" frameborder="0" allowtransparency="true" src="$MPVC_WEB_CGI_CMD?mpvc+status" defer ></iframe>
         </details>
 
         <details>
@@ -933,13 +890,13 @@ mpvc_web_index()
         <hr>
 
         <div style="display:flex">
-        <iframe name="mpvc-playlist" title="mpvc-playlist" width="100%" frameborder="0" allowtransparency="true" style="margin:auto; float:auto" src="/cgi-bin/mpvc?mpvc+playlist" defer ></iframe>
+        <iframe name="mpvc-playlist" title="mpvc-playlist" width="100%" frameborder="0" allowtransparency="true" style="margin:auto; float:auto" src="$MPVC_WEB_CGI_CMD?mpvc+playlist" defer ></iframe>
         <script type="text/javascript">
         var pl = document.getElementsByName('mpvc-playlist')[0];
         switch (window.location.hash) {
-        case '#mpvc-web-playlist':           { pl.src='/cgi-bin/mpvc?mpvc+playlist'; break; }
-        case '#mpvc-web-fullplaylist':       { pl.src='/cgi-bin/mpvc?mpvc+fullplaylist'; break; }
-        case '#mpvc-web-rawplaylist':       { pl.src='/cgi-bin/mpvc?mpvc+saven'; break; }
+        case '#mpvc-web-playlist':           { pl.src='$MPVC_WEB_CGI_CMD?mpvc+playlist'; break; }
+        case '#mpvc-web-fullplaylist':       { pl.src='$MPVC_WEB_CGI_CMD?mpvc+fullplaylist'; break; }
+        case '#mpvc-web-rawplaylist':        { pl.src='$MPVC_WEB_CGI_CMD?mpvc+saven'; break; }
         }
         </script>
         </div>
@@ -952,18 +909,18 @@ mpvc_web_index()
             <a href="#mpvc-web-chapter-list-raw" name="mpvc-web-chapter-list-raw">#raw</a>
         </summary>
         <hr>
-        <iframe name="mpvc-chapter-list" title="mpvc-chapter-list" width="100%" frameborder="0" allowtransparency="true" src="/cgi-bin/mpvc?mpvc+chapter-list" defer ></iframe>
+        <iframe name="mpvc-chapter-list" title="mpvc-chapter-list" width="100%" frameborder="0" allowtransparency="true" src="$MPVC_WEB_CGI_CMD?mpvc+chapter-list" defer ></iframe>
         </details>
 
         <details $(if [ -n "$MPVC_WEB_THUMBNAIL_ENABLE" ]; then echo open; fi)>
         <summary>
             <a href="#mpvc-web-thumbnail" name="mpvc-web-thumbnail">Thumbnail</a>
-            <a href="/cgi-bin/mpvc?thumbnail">#url</a>
-            <a href="/cgi-bin/mpvc?thumbnail64">#img</a>
-            <a href="/cgi-bin/mpvc?related">#rel</a>
+            <a href="$MPVC_WEB_CGI_CMD?thumbnail">#url</a>
+            <a href="$MPVC_WEB_CGI_CMD?thumbnail64">#img</a>
+            <a href="$MPVC_WEB_CGI_CMD?related">#rel</a>
         </summary>
         <hr>
-            <iframe src="/cgi-bin/mpvc?thumbnail64" alt="thumbnail" title="thumbnail" style="$MPVC_WEB_THUMBNAIL_STYLE" defer ></iframe>
+            <iframe src="$MPVC_WEB_CGI_CMD?thumbnail64" alt="thumbnail" title="thumbnail" style="$MPVC_WEB_THUMBNAIL_STYLE" defer ></iframe>
         </details>
 
         </main>
@@ -1031,8 +988,8 @@ mpvc_web_setup()
         # setup http webroot
         echo "# $PROGNAME Setup $MPVC_WEB_ROOT"
         mkdir -p "$MPVC_WEB_ROOT" || return
-        mkdir -p "$MPVC_WEB_ROOT/cgi-bin/" || return
-        mkdir -p "$MPVC_WEB_ROOT/extras/" || return
+        mkdir -p "$MPVC_WEB_CGI_DIR" || return
+
         cd "$MPVC_WEB_ROOT" || return
         chmod -R u+w "${MPVC_WEB_ROOT%/*}"
 
@@ -1044,15 +1001,14 @@ mpvc_web_setup()
 
         mpvc_web_index > "$MPVC_WEB_ROOT/index.html"
         echo > "$MPVC_WEB_ROOT/favicon.ico"
+        mpvc_web_manifest > "$MPVC_WEB_ROOT/manifest.json"
         mpvc_web_icon_svg > "$MPVC_WEB_ROOT/apple-touch-icon.svg"
-        > "$MPVC_WEB_ROOT/style.css"
+
         if [ -n "$MPVC_WEB_CSS_STYLE" ]; then
             cat "$MPVC_WEB_CSS_STYLE" > "$MPVC_WEB_ROOT/style.css"
         fi
-        mpvc_web_cgi > "$MPVC_WEB_CGI"
-        chmod u+x "$MPVC_WEB_CGI"
 
-        mpvc_web_manifest > "$MPVC_WEB_ROOT/manifest.json"
+        ln -s -f $PROGDIR/mpvc-web-browser "$MPVC_WEB_CGI_DIR"
 
         # setup https socat if requested
         if [ -n "${MPVC_WEB_SSL_ENABLE}" ]; then
@@ -1088,7 +1044,7 @@ mpvc_web_setup()
 
 mpvc_web_envclean()
 {
-    env -i PATH=/usr/local/bin:/usr/bin:/bin HOME="$HOME" TERM="$TERM" "$@"
+    env -i PATH=/usr/local/bin:/usr/bin:/bin HOME="$HOME" TERM="$TERM" MPVC=$(command -v mpvc) "$@"
 }
 
 mpvc_web()
@@ -1099,8 +1055,8 @@ mpvc_web()
 
         # XXX handle cli commands, rewrite this mess
         mpvc_web_envclean python3 -u -m http.server --cgi --bind "$MPVC_WEB_HOST" "$MPVC_WEB_PORT" "$@" 2>&1 |
-            #mawk -W interactive -v mpvcbin="$MPVC_WEB_CGI"
-            mpvc_web_envclean awk -v mpvcbin="$MPVC_WEB_CGI" \
+            #mawk -W interactive -v mpvcbin="$MPVC_WEB_CGI_FILE"
+            mpvc_web_envclean awk -v mpvcbin="$MPVC_WEB_CGI_FILE" \
         '
         function mpvcsys(cmd) { system(mpvcbin" "cmd); }
         function mpvc(cmd)    { mpvcsys("mpvc -q "cmd); }
