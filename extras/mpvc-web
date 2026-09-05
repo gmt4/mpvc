@@ -704,6 +704,7 @@ function Help()
 EOF
 }
 
+
 mpvc_web_cgi() # /cgi-bin/mpvc
 {
     cat <<EOF
@@ -711,10 +712,9 @@ mpvc_web_cgi() # /cgi-bin/mpvc
 set -euf
 mpvc_warn()  { echo "\$@" >&2; }
 mpvc_strip() { sed '/\x1b\[7m/ { s|\x1b\[7m||; s| |+|; }; s|\x1b\[0m||;'; }
-mpvc_cmd()   { echo "Content-Type: text/plain"; echo; $MPVC "\$@"; }
-mpvc_plain() { echo "Content-Type: text/plain"; echo; echo "\$@"; }
-mpvc_html()  { echo "Content-Type: text/html";  echo; echo "\$@"; }
-mpvc_json()  { echo "Content-Type: application/json";  echo; echo "\$@"; }
+mpvc_cmd()   { echo "Content-Type: text/plain"; echo "Connection: close"; echo; $MPVC "\$@"; }
+mpvc_plain() { echo "Content-Type: text/plain"; echo "Connection: close"; echo; echo "\$@"; }
+mpvc_html()  { echo "Content-Type: text/html";  echo "Connection: close"; echo; echo "\$@"; }
 mpvc_redir() { if [ -n "\$1" -a "\$1" != "null" ]; then mpvc_html '<meta http-equiv=refresh content="0.1;url='\$1'" />'; fi; }
 mpvc_split() { for i in \$@; do echo "\$i"; done; }
 
@@ -786,13 +786,11 @@ mpvc_web_index()
         <main>
         <details>
         <summary ${MPVC_WEB_SHORTCUT_PLAYER}>
-        [
             <a href="." name="top" ${MPVC_WEB_SHORTCUT_REFRESH}>🎧 Player</a>
-        ]
         <span style="float:right">
             <a class=btn href="." title="Reload" aria-label="Reload">🔄</a>
-            <a class=btn href="?cmd=mpvc toggle" title="Toggle playback" aria-label="Toggle playback">⏯️</a>
-            <a class=btn href="?cmd=mpvc cycle-volume" title="Cycle Volume">🔊</a>
+            <button class=btn onclick="mpvcHttpGet('?cmd=mpvc toggle')" title="Toggle playback" aria-label="Toggle playback">⏯️</button>
+            <button class=btn onclick="mpvcHttpGet('?cmd=mpvc cycle-volume')" title="Cycle Volume">🔊</button>
             <span class="theme-toggle-container">
                 <label for="scheme-auto" class="theme-lbl lbl-auto" title="System Theme">🌓</label>
                 <label for="scheme-light" class="theme-lbl lbl-light" title="Light Theme">☀️</label>
@@ -854,14 +852,12 @@ mpvc_web_index()
 
         <details>
         <summary>
-        [
             <a href="#mpvc-web-tools" name="mpvc-web-tools">📻 Radio</a>
             $(for x in $MPVC_WEB_EXTRAS_URL; do n=$((${n:-0} + 1)); echo "<a href=$x title=#url-$n>#$n</a>"; done)
             <span style="float:right">
                 <a class=btn href="/cgi-bin/mpvc?now-short" title="Now Playing (share)" aria-label="Now Playing">💿</a>
                 $([ -n "$MPVC_WEB_ARCHIVE_ENABLE" ] && echo '<a class=btn href="ytdl-archive" title="Archive" aria-label="Archive">🗃️</a>'; )
             </span>
-        ]
         </summary>
 
         <hr>
@@ -908,12 +904,10 @@ mpvc_web_index()
 
         <details open>
         <summary>
-        [
             <a href="#mpvc-web-status" name="mpvc-web-status">Status</a>
             <a href="/cgi-bin/mpvc?metadata">#me</a>
             <a href="/cgi-bin/mpvc?lyrics">#lyric</a>
             <a href="/cgi-bin/mpvc?filename">#url</a>
-        ]
         </summary>
         <hr>
         <iframe name="mpvc-status" title="mpvc-status" width="100%" height="80" frameborder="0" allowtransparency="true" src="/cgi-bin/mpvc?mpvc+status" defer ></iframe>
@@ -921,11 +915,9 @@ mpvc_web_index()
 
         <details>
         <summary ${MPVC_WEB_SHORTCUT_PLAYLIST}>
-        [
             <a href="#mpvc-web-playlist" name="mpvc-web-playlist">Playlist</a>
             <a href="#mpvc-web-fullplaylist" name="mpvc-web-fullplaylist">#full</a>
             <a href="#mpvc-web-rawplaylist" name="mpvc-web-fullplaylist">#raw</a>
-        ]
         </summary>
         <hr>
 
@@ -944,11 +936,9 @@ mpvc_web_index()
 
         <details>
         <summary>
-        [
             <a href="#mpvc-web-chapter-list" name="mpvc-web-chapterlist">Chapterlist</a>
             <a href="#mpvc-web-chapter-list-full" name="mpvc-web-chapter-list-full">#full</a>
             <a href="#mpvc-web-chapter-list-raw" name="mpvc-web-chapter-list-raw">#raw</a>
-        ]
         </summary>
         <hr>
         <iframe name="mpvc-chapter-list" title="mpvc-chapter-list" width="100%" frameborder="0" allowtransparency="true" src="/cgi-bin/mpvc?mpvc+chapter-list" defer ></iframe>
@@ -956,12 +946,10 @@ mpvc_web_index()
 
         <details $(if [ -n "$MPVC_WEB_THUMBNAIL_ENABLE" ]; then echo open; fi)>
         <summary>
-        [
             <a href="#mpvc-web-thumbnail" name="mpvc-web-thumbnail">Thumbnail</a>
             <a href="/cgi-bin/mpvc?thumbnail">#url</a>
             <a href="/cgi-bin/mpvc?thumbnail64">#img</a>
             <a href="/cgi-bin/mpvc?related">#rel</a>
-        ]
         </summary>
         <hr>
             <iframe src="/cgi-bin/mpvc?thumbnail64" alt="thumbnail" title="thumbnail" style="$MPVC_WEB_THUMBNAIL_STYLE" defer ></iframe>
@@ -1124,7 +1112,7 @@ mpvc_web()
             for (i = 1; i <= n; i++) { allowCmdList[a[i]] = 1; }
         }
 
-        /GET \/\?cmd=mpvc%20cycle-volume/ { mpvc("cyclev volume 0 10 20 30 35 40") }
+        /GET \/\?cmd=mpvc%20cycle-volume/ { mpvc("cyclev volume 0 10 20 30 35 40"); }
         /GET \/\?cmd=mpvc%20vol%20-5/     { mpvc("vol -5") }
         /GET \/\?cmd=mpvc%20vol%20\+5/    { mpvc("vol +5") }
 
