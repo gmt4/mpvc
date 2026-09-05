@@ -908,8 +908,9 @@ mpvc_web_index()
         <details>
         <summary>
             <a href="#mpvc-web-tools" name="mpvc-web-browse">📁 Browser</a>
+            <a href="/cgi-bin/mpvc-web-browser">#new</a>
         </summary>
-        <iframe name="mpvc-browser" title="mpvc-status" width="100%" height="420" frameborder="0" allowtransparency="true" src="/cgi-bin/mpvc-cgi-browser" defer ></iframe>
+        <iframe name="mpvc-browser" title="mpvc-status" width="100%" height="420" frameborder="0" allowtransparency="true" src="/cgi-bin/mpvc-web-browser" defer ></iframe>
         </details>
 
         <details open>
