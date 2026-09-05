@@ -64,7 +64,7 @@ handle_action()
 
         # Execute securely using the system's mpvc binary
         if [ -d "$TARGET_ITEM" ] || [ -f "$TARGET_ITEM" ]; then
-            mpvc add "$TARGET_ITEM" >/dev/null 2>&1
+            $MPVC add "$TARGET_ITEM" >/dev/null 2>&1
         fi
 
         # Fast-path exit for asynchronous background JavaScript requests
@@ -86,7 +86,7 @@ handle_listing()
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mpvc Media rowser</title>
+    <title>mpvc Media Browser</title>
     <style>
         body { font-family: sans-serif; background: #121212; color: #e0e0e0; margin: 0; padding: 15px 4px; }
         .browser { max-width: 99%; margin: 0 auto; }
@@ -147,7 +147,8 @@ EOF
 
     # Handle subdirectories
     DIR_LIST=""
-        DIR_LIST="${DIR_LIST}<div class='row'><a href='$PROGNAME?browser&dir=${ENC_PARENT}' class='folder-link'>📁 ..</a></div>"
+    DIR_LIST="${DIR_LIST}<div class='row'><a href='$PROGNAME?browser&dir=${ENC_CURRENT_DIR}' class='folder-link'>📁 .</a></div>"
+    DIR_LIST="${DIR_LIST}<div class='row'><a href='$PROGNAME?browser&dir=${ENC_PARENT}' class='folder-link'>📁 ..</a></div>"
     for item in $(set +f; echo ".." "$RESOLVED_PATH"/*); do
         [ -d "$item" ] || continue
         name=$(basename "$item")
