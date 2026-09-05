@@ -81,47 +81,47 @@ handle_listing()
     ENC_CURRENT_DIR=$(printf '%s' "$REQ_DIR" | sed 's/ /%20/g')
 
     HTML_BODY=$(cat <<-EOF
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>mpvc Media Browser</title>
-        <style>
-            body { font-family: sans-serif; background: #121212; color: #e0e0e0; margin: 0; padding: 15px 4px; }
-            .browser { max-width: 99%; margin: 0 auto; }
-            .dir-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 8px; margin-bottom: 10px; }
-            .dir-header h3 { margin: 0; border: none; padding: 0; font-size: 1.1rem; word-break: break-all; flex-grow: 1; padding-right: 10px; }
-            .btn-queue-dir { background: #2980b9; color: #fff; padding: 8px 14px; border-radius: 4px; font-weight: bold; font-size: 0.9rem; white-space: nowrap; text-decoration: none; min-height: 30px; display: flex; align-items: center; flex-shrink: 0; }
-            .btn-queue-dir:active { background: #2471a3; }
-            .search-container { margin: 10px 0 15px 0; width: 100%; }
-            #libSearch { width: 100%; box-sizing: border-box; padding: 12px; background: #222; border: 1px solid #444; border-radius: 6px; color: #fff; font-size: 1rem; min-height: 48px; }
-            #libSearch:focus { border-color: #2980b9; outline: none; }
-            a { color: #3498db; text-decoration: none; }
-            .row { display: flex; justify-content: space-between; align-items: center; padding: 4px 4px; border-bottom: 1px solid #555; }
-            .folder-link { font-weight: bold; color: #f1c40f; display: block; width: 100%; padding: 4px 0; }
-            .file-name { font-size: 0.95rem; padding-right: 15px; word-break: break-all; flex-grow: 1; }
-            button.btn-compact { background: #27ae60; color: #fff; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; min-width: 24px; min-height: 24px; font-size: 1.0rem; padding: 0; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
-            button.btn-compact:active { background: #219653; }
-            .back-btn { display: inline-block; margin-bottom: 15px; padding: 8px 12px; background: #333; border-radius: 4px; color: #fff; }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mpvc Media rowser</title>
+    <style>
+        body { font-family: sans-serif; background: #121212; color: #e0e0e0; margin: 0; padding: 15px 4px; }
+        .browser { max-width: 99%; margin: 0 auto; }
+        .dir-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 8px; margin-bottom: 10px; }
+        .dir-header h3 { margin: 0; border: none; padding: 0; font-size: 1.1rem; word-break: break-all; flex-grow: 1; padding-right: 10px; }
+        .btn-queue-dir { background: #2980b9; color: #fff; padding: 8px 14px; border-radius: 4px; font-weight: bold; font-size: 0.9rem; white-space: nowrap; text-decoration: none; min-height: 30px; display: flex; align-items: center; flex-shrink: 0; }
+        .btn-queue-dir:active { background: #2471a3; }
+        .search-container { margin: 10px 0 15px 0; width: 100%; }
+        #libSearch { width: 100%; box-sizing: border-box; padding: 12px; background: #222; border: 1px solid #444; border-radius: 6px; color: #fff; font-size: 1rem; min-height: 48px; }
+        #libSearch:focus { border-color: #2980b9; outline: none; }
+        a { color: #3498db; text-decoration: none; }
+        .row { display: flex; justify-content: space-between; align-items: center; padding: 4px 4px; border-bottom: 1px solid #555; }
+        .folder-link { font-weight: bold; color: #f1c40f; display: block; width: 100%; padding: 4px 0; }
+        .file-name { font-size: 0.95rem; padding-right: 15px; word-break: break-all; flex-grow: 1; }
+        button.btn-compact { background: #27ae60; color: #fff; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; min-width: 24px; min-height: 24px; font-size: 1.0rem; padding: 0; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+        button.btn-compact:active { background: #219653; }
+        .back-btn { display: inline-block; margin-bottom: 15px; padding: 8px 12px; background: #333; border-radius: 4px; color: #fff; }
 
-            /* Base link styles (removes default blue and forces smooth transitions) */
-            a { color: #3498db; text-decoration: none; transition: color 0.2s ease; }
-            /* Explicitly style folder links so they remain high-contrast yellow */
-            a.folder-link { color: #f1c40f; font-weight: bold; display: block; width: 100%; padding: 4px 0; }
+        /* Base link styles (removes default blue and forces smooth transitions) */
+        a { color: #3498db; text-decoration: none; transition: color 0.2s ease; }
+        /* Explicitly style folder links so they remain high-contrast yellow */
+        a.folder-link { color: #f1c40f; font-weight: bold; display: block; width: 100%; padding: 4px 0; }
 
-            /* SANER HOVER & VISITED STATES Combines standard text links and directory links to eliminate the browser's native purple/violet shift.  */
-            a:visited, a.folder-link:visited { color: inherit; /* Forces visited links to keep their original color instead of turning purple */ }
-            a:hover, a:focus { color: #5dade2; /* A slightly lighter, glowing blue on hover */ text-decoration: underline; /* Clear visual feedback for touch/mouse targeting */ }
-            a.folder-link:hover, a.folder-link:focus { color: #f4d03f; /* A slightly brighter yellow on hover */ text-decoration: underline; }
+        /* SANER HOVER & VISITED STATES Combines standard text links and directory links to eliminate the browser's native purple/violet shift.  */
+        a:visited, a.folder-link:visited { color: inherit; /* Forces visited links to keep their original color instead of turning purple */ }
+        a:hover, a:focus { color: #5dade2; /* A slightly lighter, glowing blue on hover */ text-decoration: underline; /* Clear visual feedback for touch/mouse targeting */ }
+        a.folder-link:hover, a.folder-link:focus { color: #f4d03f; /* A slightly brighter yellow on hover */ text-decoration: underline; }
 
-            /* Styling for the back button to keep it neutral */
-            .back-btn { display: inline-block; margin-bottom: 15px; padding: 8px 12px; background: #333; border-radius: 4px; color: #fff; }
-            .back-btn:hover { background: #444; color: #fff; text-decoration: none; /* Keeps the button block clean */ }
-        </style>
-    </head>
-    <body>
-    <div class="browser">
+        /* Styling for the back button to keep it neutral */
+        .back-btn { display: inline-block; margin-bottom: 15px; padding: 8px 12px; background: #333; border-radius: 4px; color: #fff; }
+        .back-btn:hover { background: #444; color: #fff; text-decoration: none; /* Keeps the button block clean */ }
+    </style>
+</head>
+<body>
+<div class="browser">
 EOF
     )
 
@@ -136,9 +136,8 @@ EOF
 
     # Directory Header Panel with "Queue Folder" option
     HTML_BODY="${HTML_BODY}<div class='dir-header'>
-        <div>/${REQ_DIR#/}</div>
-        <a href='?dir=${ENC_PARENT}' class='btn' title='Go ..'> .. </a>
-        <a href='?dir=${ENC_CURRENT_DIR}&action=add' class='btn-queue-dir' title='Queue Folder'>➕ Queue</a>
+        <div> /${REQ_DIR#/} </div>
+        <a href='$PROGNAME?browser&dir=${ENC_CURRENT_DIR}&action=add' class='btn-queue-dir' title='Queue Folder'>➕ Queue</a>
     </div>"
 
     # Live Client-side Input Filtering Search Bar
@@ -148,13 +147,14 @@ EOF
 
     # Handle subdirectories
     DIR_LIST=""
-    for item in $(set +f; echo "$RESOLVED_PATH"/*); do
+        DIR_LIST="${DIR_LIST}<div class='row'><a href='$PROGNAME?browser&dir=${ENC_PARENT}' class='folder-link'>📁 ..</a></div>"
+    for item in $(set +f; echo ".." "$RESOLVED_PATH"/*); do
         [ -d "$item" ] || continue
         name=$(basename "$item")
         case "$name" in .*) continue ;; esac
 
         ENC_DIR=$(printf '%s/%s' "$REQ_DIR" "$name" | tr -s '/' | sed 's/ /%20/g')
-        DIR_LIST="${DIR_LIST}<div class='row'><a href='?dir=${ENC_DIR}' class='folder-link'>📁 ${name}/</a></div>"
+        DIR_LIST="${DIR_LIST}<div class='row'><a href='$PROGNAME?browser&dir=${ENC_DIR}' class='folder-link'>📁 ${name}/</a></div>"
     done
     HTML_BODY="${HTML_BODY}${DIR_LIST}"
 
@@ -167,9 +167,10 @@ EOF
         media_file="${MEDIA_URL}${item##"$MEDIA_ROOT"}"
         case "$name" in
             *.mp3|*.flac|*.m4a|*.ogg|*.opus|*.wav|*.mp4|*.mkv|*.webm|*webp)
-                FILE_LIST="${FILE_LIST}<div class='row file-row'>
+                FILE_LIST="${FILE_LIST}
+                <div class='row file-row'>
                     <span class='file-name'><a href='${media_file}'>🎵${name}</a></span>
-                    <form action='?dir=${ENC_CURRENT_DIR}&action=add' method='POST' style='display:inline;'>
+                    <form action='$PROGNAME?browser&dir=${ENC_CURRENT_DIR}&action=add' method='POST' style='display:inline;'>
                         <input type='hidden' name='file_path' value='${item}'>
                         <button type='submit' class='btn-compact'>+</button>
                         <!--<button type='submit' class='btn-compact'>-</button>-->
@@ -177,9 +178,10 @@ EOF
                 </div>"
                 ;;
             *)
-                FILE_LIST="${FILE_LIST}<div class='row file-row'>
+                FILE_LIST="${FILE_LIST}
+                <div class='row file-row'>
                     <span class='file-name'><a href='${media_file}'>  ${name}</a></span>
-                    <form action='?dir=${ENC_CURRENT_DIR}&action=add' method='POST' style='display:inline;'>
+                    <form action='$PROGNAME?browser&dir=${ENC_CURRENT_DIR}&action=add' method='POST' style='display:inline;'>
                         <input type='hidden' name='file_path' value='${item}'>
                     </form>
                 </div>"
