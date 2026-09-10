@@ -78,10 +78,10 @@ html_body_open()
     </strong>
     </div>
     <div>
-        <a class='btn-action' onclick="mpvcHttpGet('$PROGNAME?mpvc+next')" title="Next track">⏭️</a>
-        <a class='btn-action' onclick="mpvcHttpGet('$PROGNAME?mpvc+cnext')" title="Next chapter">⏬</a>
-        <a class='btn-action' onclick="mpvcHttpGet('$PROGNAME?mpvc+toggle')" title="Toggle playback (ProTip: accesskey=t)" accesskey=t>⏯️</a>
-        <a class='btn-action' onclick="mpvcHttpGet('$PROGNAME?mpvc+cycle-volume')" title="Cycle Volume">🔊</a>
+        <a class='btn-action' onclick="request('$PROGNAME?mpvc+next')" title="Next track">⏭️</a>
+        <a class='btn-action' onclick="request('$PROGNAME?mpvc+cnext')" title="Next chapter">⏬</a>
+        <a class='btn-action' onclick="request('$PROGNAME?mpvc+toggle')" title="Toggle playback (ProTip: accesskey=t)" accesskey=t>⏯️</a>
+        <a class='btn-action' onclick="request('$PROGNAME?mpvc+cycle-volume')" title="Cycle Volume">🔊</a>
     </div>
 </div>
 
@@ -150,13 +150,14 @@ function filterKeyDown()
     }
 }
 
-function mpvcHttpGet(url) {
-    return fetch(url)
-        .then(response => response.text())
-        .catch(error => {
-            console.error('Fetch error:', error);
-            throw error;
-        });
+async function request(url, method = "GET") {
+  const response = await fetch(url, { method });
+
+  if (!response.ok) {
+        throw new Error("HTTP error: "+response.status);
+  }
+
+  return response.text();
 }
 
 function initModule()
