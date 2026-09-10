@@ -78,7 +78,10 @@ html_body_open()
     </strong>
     </div>
     <div>
-        <a class='btn-action' href='/?cmd=mpvc toggle' title="Toggle playback (ProTip: accesskey=t)" accesskey=t>⏯️</a>
+        <a class='btn-action' onclick="mpvcHttpGet('$PROGNAME?mpvc+next')" title="Next track">⏭️</a>
+        <a class='btn-action' onclick="mpvcHttpGet('$PROGNAME?mpvc+cnext')" title="Next chapter">⏬</a>
+        <a class='btn-action' onclick="mpvcHttpGet('$PROGNAME?mpvc+toggle')" title="Toggle playback (ProTip: accesskey=t)" accesskey=t>⏯️</a>
+        <a class='btn-action' onclick="mpvcHttpGet('$PROGNAME?mpvc+cycle-volume')" title="Cycle Volume">🔊</a>
     </div>
 </div>
 
@@ -147,6 +150,15 @@ function filterKeyDown()
     }
 }
 
+function mpvcHttpGet(url) {
+    return fetch(url)
+        .then(response => response.text())
+        .catch(error => {
+            console.error('Fetch error:', error);
+            throw error;
+        });
+}
+
 function initModule()
 {
     let elem = document.getElementById('libMode')
@@ -180,7 +192,7 @@ write_request()
     data="$1"
     byte_count=$(printf '%s' "$data" | wc -c)
 
-    printf "HTTP/1.0 200 OK\r\n"
+    #printf "HTTP/1.0 200 OK\r\n"
     printf "Status: 200 OK\r\n"
     printf "Content-Type: text/html; charset=utf-8\r\n"
     printf "Content-Length: %d\r\n" "$byte_count"
