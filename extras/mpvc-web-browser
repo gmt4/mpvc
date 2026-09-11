@@ -150,14 +150,24 @@ function filterKeyDown()
     }
 }
 
-async function request(url, method = "GET") {
-  const response = await fetch(url, { method });
+async function request(url, method = "GET", body = null) {
+    const options = { method, headers: {} };
+    if (body !== null && body !== undefined) {
+        options.headers["Content-Type"] = "application/json";
+        options.body = JSON.stringify(body);
+    }
 
-  if (!response.ok) {
+    const response = await fetch(url, options);
+    if (!response.ok) {
         throw new Error("HTTP error: "+response.status);
-  }
+    }
 
-  return response.text();
+    const contentType = response.headers.get("content-type");
+    if (contentType?.includes("application/json")) {
+        return response.json();
+    }
+
+    return response.text();
 }
 
 function initModule()
