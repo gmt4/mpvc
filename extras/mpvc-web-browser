@@ -255,13 +255,17 @@ handle_action()
     fi
 
     item=$(gup 'item=[^&]*' "$postdata")
+    if [ -z "${item}" ]; then
+        return
+    fi
+
     case "$action" in
-    stash-apply)    $MPVC -q stash apply "$(echo "$item" | awk '{print $NF}')" ;;
-    stash-append)   $MPVC -q stash append "$(echo "$item" | awk '{print $NF}')" ;;
-    equalizer-load) $MPVC-equalizer load "$item" ;;
-    playlist-play)  $MPVC -q play "$(echo "$item" | awk '{print $1}')" ;;
-    playlist-add)   $MPVC -q add "$(echo "$item" | awk '{print $1}')" ;;
-    chapter-play)   $MPVC -q chapter-play "$(echo "$item" | awk '{print $1}')" ;;
+    stash-apply)    "$MPVC" -q stash apply "${item##* }" ;;
+    stash-append)   "$MPVC" -q stash append "${item##* }" ;;
+    equalizer-load) "$MPVC-equalizer" load "$item" ;;
+    playlist-play)  "$MPVC" -q play "${item%% *}" ;;
+    playlist-add)   "$MPVC" -q add "${item%% *}" ;;
+    chapter-play)   "$MPVC" -q chapter-play "${item%% *}" ;;
     esac
 
     # Fast-path exit for asynchronous background JavaScript requests
