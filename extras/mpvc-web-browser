@@ -121,21 +121,13 @@ function filterFiles()
     let files = document.querySelectorAll('.file-row');
     files.forEach(row => {
         let fileName = row.querySelector('.file-name').innerText.toLowerCase();
-        if (fileName.includes(query)) {
-            row.style.display = 'flex';
-        } else {
-            row.style.display = 'none';
-        }
+        row.style.display = fileName.includes(query) ? 'flex' : 'none' ;
     });
 
     let dirs = document.querySelectorAll('.dir-row');
     dirs.forEach(row => {
         let fileName = row.querySelector('.dir-name').innerText.toLowerCase();
-        if (fileName.includes(query)) {
-            row.style.display = 'flex';
-        } else {
-            row.style.display = 'none';
-        }
+        row.style.display = fileName.includes(query) ? 'flex' : 'none' ;
     });
 }
 
@@ -289,7 +281,7 @@ handle_listing()
     item_list=$(
     for item in "." ".." $dir_list $fil_list;
     do
-        name=$(basename "$item")
+        name="${item##*/}"
         case "$name" in .);; ..);; .*) continue ;; esac
         enc_dir=$(printf '%s/%s' "$REQ_DIR" "$name" | tr -s '/' | sed 's/ /%20/g')
 
