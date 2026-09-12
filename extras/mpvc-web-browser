@@ -281,7 +281,7 @@ handle_listing()
     item_list=$(
     for item in "." ".." $dir_list $fil_list;
     do
-        name="${item##*/}"
+        name=$(basename "${item}")
         case "$name" in .);; ..);; .*) continue ;; esac
         enc_dir=$(printf '%s/%s' "$REQ_DIR" "$name" | tr -s '/' | sed 's/ /%20/g')
 
