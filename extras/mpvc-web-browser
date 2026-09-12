@@ -254,15 +254,14 @@ handle_action()
         postdata=$(dd bs=1 count="$CONTENT_LENGTH" 2>/dev/null)
     fi
 
-    mpvc_warn "$(gup 'item=[^&]*' "$postdata")"
-
+    item=$(gup 'item=[^&]*' "$postdata")
     case "$action" in
-    stash-apply)    $MPVC -q stash apply "$(gup 'item=[^&]*' "$postdata" | awk '{print $NF}')" ;;
-    stash-append)   $MPVC -q stash append "$(gup 'item=[^&]*' "$postdata" | awk '{print $NF}')" ;;
-    equalizer-load) $MPVC-equalizer load "$(gup 'item=[^&]*' "$postdata")" ;;
-    playlist-play)  $MPVC -q play "$(gup 'item=[^&]*' "$postdata" | awk '{print $1}')" ;;
-    playlist-add)   $MPVC -q add "$(gup 'item=[^&]*' "$postdata" | awk '{print $1}')" ;;
-    chapter-play)   $MPVC -q chapter-play "$(gup 'item=[^&]*' "$postdata" | awk '{print $1}')" ;;
+    stash-apply)    $MPVC -q stash apply "$(echo "$item" | awk '{print $NF}')" ;;
+    stash-append)   $MPVC -q stash append "$(echo "$item" | awk '{print $NF}')" ;;
+    equalizer-load) $MPVC-equalizer load "$item" ;;
+    playlist-play)  $MPVC -q play "$(echo "$item" | awk '{print $1}')" ;;
+    playlist-add)   $MPVC -q add "$(echo "$item" | awk '{print $1}')" ;;
+    chapter-play)   $MPVC -q chapter-play "$(echo "$item" | awk '{print $1}')" ;;
     esac
 
     # Fast-path exit for asynchronous background JavaScript requests
@@ -358,7 +357,6 @@ handle_equalizer()
 handle_remote()
 {
     filter=$(gup 'filter=[^&]*' "$QUERY_STRING")
-    # remote is special, as the user has to enter the query to pass to mpvc-fzf search before
     handle_generic "$MPVC-fzf search $filter" "$PROGNAME?browser&action=playlist-add"
 }
 
