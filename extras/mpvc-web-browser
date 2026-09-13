@@ -119,12 +119,13 @@ function filterFiles()
 {
     let query = document.getElementById('libSearch').value.toLowerCase();
     let files = document.querySelectorAll('.file-row');
+    let dirs = document.querySelectorAll('.dir-row');
+
     files.forEach(row => {
         let fileName = row.querySelector('.file-name').innerText.toLowerCase();
         row.style.display = fileName.includes(query) ? 'flex' : 'none' ;
     });
 
-    let dirs = document.querySelectorAll('.dir-row');
     dirs.forEach(row => {
         let fileName = row.querySelector('.dir-name').innerText.toLowerCase();
         row.style.display = fileName.includes(query) ? 'flex' : 'none' ;
@@ -270,7 +271,7 @@ handle_action()
     fi
 }
 
-# Generate HTML listings
+# Generate HTML media listings
 handle_listing()
 {
     ENC_CURRENT_DIR=$(printf '%s' "$REQ_DIR" | sed 's/ /%20/g')
@@ -284,8 +285,8 @@ handle_listing()
         name=$(basename "${item}")
         case "$name" in .);; ..);; .*) continue ;; esac
 
+        # Handle listing dirs/files: audio / non-audio
         if [ -f "$item" ]; then
-           # Handle files: audio / non-audio
             media_file="${MEDIA_URL}${item##"$MEDIA_ROOT"}"
             case "$name" in
             *.mp3|*.flac|*.m4a|*.ogg|*.opus|*.wav|*.mp4|*.mkv|*.webm|*webp)
@@ -305,7 +306,6 @@ handle_listing()
                 </div>"
             esac
         elif [ -d "$item" ]; then
-            # Handle subdirectories
             enc_dir=$(printf '%s/%s' "$REQ_DIR" "$name" | tr -s '/' | sed 's/ /%20/g')
             echo "
             <div class='row dir-row'>
