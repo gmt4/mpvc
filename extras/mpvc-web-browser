@@ -283,23 +283,9 @@ handle_listing()
     do
         name=$(basename "${item}")
         case "$name" in .);; ..);; .*) continue ;; esac
-        enc_dir=$(printf '%s/%s' "$REQ_DIR" "$name" | tr -s '/' | sed 's/ /%20/g')
 
-        # Handle subdirectories
-        if [ -d "$item" ]; then
-            echo "
-            <div class='row dir-row'>
-                <span class='dir-name'>
-                    <a href='$PROGNAME?browser&dir=${enc_dir}' class='folder-link'>📁 ${name}/</a>
-                </span>
-                <form action='$PROGNAME?browser&mode=$mode&action=playlist-add' method='POST' style='display:inline;'>
-                    <button type='submit' class='btn-compact'>+</button>
-                    <input type='hidden' name='item' value=$item>
-                </form>
-            </div>"
-        fi
-        # Handle files: audio / non-audio
         if [ -f "$item" ]; then
+           # Handle files: audio / non-audio
             media_file="${MEDIA_URL}${item##"$MEDIA_ROOT"}"
             case "$name" in
             *.mp3|*.flac|*.m4a|*.ogg|*.opus|*.wav|*.mp4|*.mkv|*.webm|*webp)
@@ -318,6 +304,19 @@ handle_listing()
                     <span class='file-name'><a href='${media_file}'>📄${name}</a></span>
                 </div>"
             esac
+        elif [ -d "$item" ]; then
+            # Handle subdirectories
+            enc_dir=$(printf '%s/%s' "$REQ_DIR" "$name" | tr -s '/' | sed 's/ /%20/g')
+            echo "
+            <div class='row dir-row'>
+                <span class='dir-name'>
+                    <a href='$PROGNAME?browser&dir=${enc_dir}' class='folder-link'>📁 ${name}/</a>
+                </span>
+                <form action='$PROGNAME?browser&mode=$mode&action=playlist-add' method='POST' style='display:inline;'>
+                    <button type='submit' class='btn-compact'>+</button>
+                    <input type='hidden' name='item' value=$item>
+                </form>
+            </div>"
         fi
     done
     )
