@@ -3,7 +3,7 @@ title: Log Book
 layout: home
 ---
 
-# [@gmt4](/) mpvc logbook 🎧
+# 🎧 mpvc logbook
 
 - **about** A minimal mpc-like interface for controlling
   [mpv](https://mpv.io) from the shell.

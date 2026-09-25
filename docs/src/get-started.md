@@ -3,7 +3,7 @@ title: Get Started
 layout: home
 ---
 
-# [@gmt4](/) mpvc 🎧
+# 🎧 mpvc 
 
 - **about** Music player in POSIX-sh using mpv from the shell/fzf +
   extras/goodies 📡🛸🚀
