@@ -127,7 +127,7 @@ EOF
  ytqj | ytqueryj          : Given a yt URL report the yt metadata
 
  (--)ascii                : Echo mpvc ascii art 🎧
- (--)config               : Edit mpvc.conf in default editor (EDITOR=${EDITOR})
+ (--)config               : Edit mpvc.conf in default editor (EDITOR=${EDITOR:-})
  (--)status               : Show current $PROGNAME status
  (--)cstatus              : Show current $PROGNAME channel status
  (--)lofi                 : Show current $PROGNAME status (one-liner)
