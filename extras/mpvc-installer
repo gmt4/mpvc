@@ -238,7 +238,7 @@ mpvc_completions()
         CLEAN_TEXT=$(MANPAGER="cat" man -l "$manfile" 2>/dev/null || mandoc -Tascii "$manfile" 2>/dev/null)
         if [ -n "$CLEAN_TEXT" ]; then
             CMDS=$(echo "$CLEAN_TEXT" |
-                awk -v re="-[A-Za-z]|--[A-Za-z-]+" ' /^ *-/ { l=$0; n=split(l,o,","); for (i in o){ if (match(o[i],re,a)) print a[0] } }' | sort -u | tr '\n' ' '
+                awk -v re="-[A-Za-z]|--[A-Za-z-]+" '/^ *-/ { l=$0; n=split(l,o,","); for (i in o){ if (match(o[i],re)) print substr(o[i],RSTART,RLENGTH) } }' | sort -u | tr '\n' ' '
             )
         fi
 
