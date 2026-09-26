@@ -137,7 +137,9 @@ Check the mpvc reference manual pages at [index](man/man1/)
 
 ### Logbook
 
-The logbook got big enought to deserve a page on its own, see here: logbook.html
+The logbook got big enough to deserve a page on its own, see here: [logbook.html](logbook.html)
 
+<!--
     📅 Mon, 15 Jun 2026 by gmt4
     ⚡ PoweredBy #HTML
+-->

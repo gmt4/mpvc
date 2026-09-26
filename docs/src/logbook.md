@@ -809,9 +809,9 @@ recently, mainly focused on improving the mpvc-web,
 
 # The End
 
-Return to the [Start](#gmt4-mpvc-fork)
+Return to the [Start](#logbook)
 
-------------------------------------------------------------------------
-
+<!--
 *📅 Sat, 08 Nov 2025 by [gmt4](https://gmt4.github.io)*
 <span style="float: right;"> *⚡ PoweredBy \#HTML* </span>
+-->
