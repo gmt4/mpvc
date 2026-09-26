@@ -1,6 +1,7 @@
 ---
 title: Get Started
-layout: home
+layout: default
+last_modified_date: 2026-09-26
 ---
 
 # 🎧 mpvc
