@@ -110,11 +110,11 @@ EOF
  togglew                  : Toggle MPV window property.
  cycle                    : Toggle/Cycle through MPV property values.
  cycle-values             : Toggle/Cycle through MPV property values.
- idleloop                 : Listen to MPV events on $PROGNAME socket.
- observe                  : Observe property in MPV events on $PROGNAME socket.
- playlist-shuffle         : Shuffle the current playlist
- playlist-unshuffle       : Unshuffle the current playlist
- search                   : Search the playlist by filename/url.
+ (--)idleloop             : Listen to MPV events on $PROGNAME socket.
+ (--)observe              : Observe property in MPV events on $PROGNAME socket.
+ (--)playlist-shuffle     : Shuffle the current playlist
+ (--)playlist-unshuffle   : Unshuffle the current playlist
+ (--)search               : Search the playlist by filename/url.
  (--)searchplay|splay     : Search the playlist by filename and play the first match.
  (--)searchPlay|sPlay     : Search the playlist by title and play the first match.
  -R | --searchrm | srm    : Search the playlist and remove matching entries.
