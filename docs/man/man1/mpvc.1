@@ -81,166 +81,166 @@ control of playback without direct interaction with the mpv window.
 .SH OPTIONS
 .SS Core Playback Commands
 .TP
--P, \[en]play, play
+-P, --play, play
 Always start playback.
 .TP
--p, \[en]toggle
+-p, --toggle
 Toggle playback.
 .TP
--s, \[en]stop, stop
+-s, --stop, stop
 Always stop playback.
 .TP
-\[en]next, next
+--next, next
 Jump to next entry in the playlist.
 .TP
-\[en]prev, prev
+--prev, prev
 Jump to previous entry in the playlist.
 .TP
--j, \[en]track
+-j, --track
 Go forwards/backwards through the playlist queue.
 .TP
--J, \[en]tracknum
+-J, --tracknum
 Jump to playlist item number.
 .SS Playlist Management
 .TP
--a, \[en]add, add
-Add media to playlist (see \[en]load for stdin).
+-a, --add, add
+Add media to playlist (see --load for stdin).
 .TP
--A, \[en]playnext
+-A, --playnext
 Add media to playlist after the current track.
 .TP
--n, \[en]playnow
+-n, --playnow
 Add media to playlist after the current track, and play it.
 .TP
-\[en]playrand
+--playrand
 Select a random track from the playlist, and play it.
 .TP
--r, \[en]remove, rm
+-r, --remove, rm
 Remove media by id from playlist (see searchrm for rm by title).
 .TP
--c, \[en]crop
+-c, --crop
 Clear the playlist except for the media currently playing.
 .TP
-\[en]save
+--save
 Save current playlist to given path.
 .TP
-\[en]load
+--load
 Load playlist from given path (stdin if none is specified).
 .TP
-\[en]playlist-shuffle
+--playlist-shuffle
 Shuffle the current playlist.
 .TP
-\[en]playlist-unshuffle
+--playlist-unshuffle
 Unshuffle the current playlist.
 .TP
--i, \[en]playlist
+-i, --playlist
 Print filenames of tracks to fit within terminal.
 .TP
--I, \[en]fullplaylist
+-I, --fullplaylist
 Print all filenames of tracks in current playlist.
 .SS Advanced Search & Manipulation
 .TP
-\[en]search
+--search
 Search the playlist by filename/url.
 .TP
-\[en]searchplay, splay
+--searchplay, splay
 Search the playlist by filename and play the first match.
 .TP
-\[en]searchPlay, sPlay
+--searchPlay, sPlay
 Search the playlist by title and play the first match.
 .TP
--R, \[en]searchrm, srm
+-R, --searchrm, srm
 Search the playlist and remove matching entries.
 .TP
--M, \[en]searchmv, smv
+-M, --searchmv, smv
 Search the playlist and move matching entries.
 .SS Audio, Speed & Time Controls
 .TP
--v, \[en]vol, vol
+-v, --vol, vol
 Increase/decrease volume relative to current volume.
 .TP
--V, \[en]volume
+-V, --volume
 Set absolute volume.
 .TP
--m, \[en]mute
+-m, --mute
 Toggle sound.
 .TP
--t, \[en]seek
+-t, --seek
 Increase/decrease playback time relatively, accepts % values.
 .TP
-\[en]seekrand
+--seekrand
 Set a random playback time.
 .TP
--T, \[en]time
+-T, --time
 Set absolute playback time.
 .TP
--x, \[en]speed
+-x, --speed
 Increase/decrease speed relative to the current speed.
 .TP
--X, \[en]speedval
+-X, --speedval
 Set absolute speed.
 .SS Properties & Daemon Configuration
 .TP
-\[en]repeat, repeat
+--repeat, repeat
 Loop the playlist.
 .TP
-\[en]single, single
+--single, single
 Loop a single file.
 .TP
--l, \[en]loop
+-l, --loop
 Loop currently playing playlist.
 .TP
--L, \[en]loopfile
+-L, --loopfile
 Loop currently playing file.
 .TP
--z, \[en]shuffle
+-z, --shuffle
 Toggle the shuffle property.
 .TP
--I, \[en]images
+-I, --images
 Enable adding of images to the queue.
 .TP
-\[en]color
+--color
 Enable color (NO_COLOR=).
 .TP
-\[en]nocolor
+--nocolor
 Disable color (NO_COLOR=true).
 .TP
--q, \[en]quiet
+-q, --quiet
 Suppress all text output.
 .TP
--Q, \[en]vid=no
+-Q, --vid=no
 Start mpv with video output disabled.
 .SS Events & Process Management
 .TP
-\[en]idleloop
+--idleloop
 Listen to MPV events on $PROGNAME socket.
 .TP
-\[en]observe
+--observe
 Observe property in MPV events on $PROGNAME socket.
 .TP
--k, \[en]kill
+-k, --kill
 Kill the mpv process controlling the given socket.
 .TP
--K, \[en]killall
+-K, --killall
 Kill all mpv processes indiscriminately.
 .TP
--S, \[en]socket
+-S, --socket
 Set mpv socket [default: $MPVC_SOCKET].
 .SS Help & Version Information
 .TP
--f, \[en]format
+-f, --format
 Enter a formatting string.
 .TP
--h, \[en]help
+-h, --help
 Prints the short help.
 .TP
--H, \[en]help-long
+-H, --help-long
 Prints the long help (tip: mpvc -H 2>&1, less).
 .TP
-\[en]version
+--version
 Prints the short version.
 .TP
-\[en]version-long
+--version-long
 Prints the long version.
 .SH EXAMPLES
 .PP
