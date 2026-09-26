@@ -291,7 +291,7 @@ yt-dlp(1),
 [mpvc-fzf(1)](mpvc-fzf.html),
 [mpvc-tui(1)](mpvc-tui.html),
 [mpvc-web(1)](mpvc-web.html),
-[mpvc-equalizer(1)](mpvc-equalizer.html)
+[mpvc-equalizer(1)](mpvc-equalizer.html),
 [mpvc-index](.),
 
 AUTHOR
