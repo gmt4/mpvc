@@ -21,7 +21,7 @@
 title: mpvc
 version: v1.9
 email: gmt4@localhost
-description: description
+description: A fast, mpc-like control interface for the mpv media player.
 baseurl: "/mpvc"              # the subpath of your site, e.g. /blog
 url: "https://gmt4.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 github_username:  gmt4
