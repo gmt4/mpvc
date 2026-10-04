@@ -15,7 +15,7 @@ PROGURL="https://github.com/gmt4/mpvc"
 set -euf
 
 SHELL="${SHELL:-/bin/sh}"
-PREFIX="${PREFIX:-/usr/local}"
+PREFIX="${PREFIX:-$HOME}"
 BINDIR="${BINDIR:-$PREFIX/bin}"
 DOCDIR="${DOCDIR:-$PREFIX/docs}"
 MANDIR="${MANDIR:-$PREFIX/man/man1}"
@@ -281,6 +281,8 @@ done
 
 mpvc_quickstart()
 {
+    install_mode=$1
+
     export BINDIR="${BINDIR:-$HOME/bin}"
     if [ ! -d "$BINDIR" ]; then
         echo "# Quickstart: Creating target directory: $BINDIR"
@@ -297,8 +299,8 @@ mpvc_quickstart()
     fi
 
     echo "# Quickstart: Fetching/installing files..."
-    if ! $SHELL "$0" fetch-user; then
-        echo "❌ Quickstart failed: 'fetch-user' step encountered an error."
+    if ! $SHELL "$0" $install_mode; then
+        echo "❌ Quickstart failed: '$install_mode' step encountered an error."
         return 1
     fi
 
@@ -332,8 +334,8 @@ mpvc_quickstart()
         *:"$BINDIR":*)
             ;;
         *)
-            echo "⚠️  Note: '$BINDIR' not found in \$PATH. To fix this, update your shell config with:"
-            echo "  export PATH=\"$BINDIR:\$PATH\""
+            echo "⚠️  Note: '$BINDIR' not found in \$PATH. Update your shell config with:"
+            echo "  export PATH=\"\$PATH:$BINDIR\""
             ;;
     esac
 
@@ -407,7 +409,8 @@ main()
     esac
 
     case "$1" in
-    quickstart)      shift; mpvc_quickstart ;;
+    quickstart)      shift; mpvc_quickstart fetch-user ;;
+    quickstart-ln)   shift; mpvc_quickstart link-user ;;
     quickstart-rm)   shift; mpvc_quickstart_uninstall ;;
 
     version)         shift; mpvc_version;;
@@ -427,7 +430,7 @@ main()
     comp-sys)         shift; MANDIR="$XDG_DATA_HOME/man/man1" $SHELL "$0" man;;
 
     man-user)        shift; MANDIR="$XDG_DATA_HOME/man/man1" $SHELL "$0" man;;
-    man-sys)         shift; MANDIR=${MANDIR} $SHELL "$0" man;;
+    man-sys)         shift; PREFIX=/usr/local $SHELL "$0" man;;
 
     config-user)     shift; PREFIX=$HOME $SHELL "$0" config;;
     config-sys)      shift; PREFIX=/usr/local $SHELL "$0" config;;
