@@ -19,7 +19,7 @@ description: "A fast, lightweight mpc-like control interface for the mpv media p
   <div style="display: flex; gap: 1rem; justify-content: center; align-items: center; flex-wrap: wrap;">
     <a href="get-started.html" class="btn btn-purple fs-4">Get Started</a>
     <a href="screen-cast.html" class="btn btn-purple fs-4">Show Demo</a>
-    <a href="https://github.com" class="btn fs-4">View GitHub</a>
+    <a href="https://github.com/gmt4/mpvc" class="btn fs-4">View GitHub</a>
   </div>
 </div>
 
