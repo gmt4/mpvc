@@ -900,7 +900,7 @@ mpvc_web_setup()
             cat "$MPVC_WEB_CSS_STYLE" > "$MPVC_WEB_ROOT/style.css"
         fi
 
-        ln -s -f $PROGDIR/mpvc-web-browser "$MPVC_WEB_CGI_DIR"
+        ln -s -f "$PROGDIR/mpvc-web-browser" "$MPVC_WEB_CGI_DIR"
 
         # setup https socat if requested
         if [ -n "${MPVC_WEB_SSL_ENABLE}" ]; then
