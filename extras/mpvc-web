@@ -683,8 +683,8 @@ mpvc_web_index()
 
             <a class=btn href="?cmd=mpvc play">play</a>
             <a class=btn href="?cmd=mpvc --mute" ${MPVC_WEB_SHORTCUT_MUTE}>mute</a>
-            <a class=btn href="?cmd=mpvc start 0">start</a>
-            <a class=btn href="?cmd=mpvc start $">end</a>
+            <a class=btn href="?cmd=mpvc start">start</a>
+            <a class=btn href="?cmd=mpvc play $">end</a>
             <a class=btn href="?cmd=mpvc prev" title="prev">prv</a>
             <a class=btn href="?cmd=mpvc next" title="next" ${MPVC_WEB_SHORTCUT_NEXT}>nxt</a>
 
@@ -950,13 +950,10 @@ mpvc_web()
 
         BEGIN {
             system("env")
-            allowCmdStr = "mpv clear kill --mute toggle play stop prev next playrand shuffle unshuffle repeat single replay togglev aspect togglew togglef togglei creplay cloop cprev cnext cplayrand cycle-volume"
+            allowCmdStr = "mpv clear kill --mute toggle play start stop prev next playrand shuffle unshuffle repeat single replay togglev aspect togglew togglef togglei creplay cloop cprev cnext cplayrand cycle-volume"
             n = split(allowCmdStr, a, /[[:space:]]+/)
             for (i = 1; i <= n; i++) { allowCmdList[a[i]] = 1; }
         }
-
-        /GET \/\?cmd=mpvc%20start%200/    { mpvc("start 0") }
-        /GET \/\?cmd=mpvc%20start%20\$/   { mpvc("start $") }
 
         /GET \/\?cmd=mpvc%20.* / {
             cmd="";
