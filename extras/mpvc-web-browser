@@ -30,8 +30,11 @@ html_body_open()
     <style>
         body { font-family: monospace, sans-serif; font-size: 0.8rem; background: #121212; color: #e0e0e0; margin: 0; padding: 15px 4px; }
         .browser { max-width: 99%; margin: 0 auto; }
-        .dir-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 8px; margin-bottom: 10px; }
-        .dir-header div { display: flex; flex-wrap: wrap; }
+
+        .dir-header { justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 8px; margin-bottom: 10px; }
+        .path-row { padding: 4px 2px 6px 2px; font-size: 0.9rem; }
+        .controls-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; padding-top: 4px; }
+
         .btn-action { display: flex; background: #333; color: #fff; padding: 4px 4px; margin: 2px 2px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; white-space: nowrap; text-decoration: none; min-height: 10px; min-width: 10px; align-items: center; flex-shrink: 0; }
         .btn-action:active { background: #2471a3; }
         .search-container { margin: 10px 0 15px 0; width: 100%; }
@@ -71,17 +74,21 @@ html_body_open()
 
 <!-- Directory Header Panel -->
 <div class='dir-header'>
-    <div>
+    <div class='path-row'>
     <strong>
         <a href="" title='Reload (ProTip: accesskey=r)' accesskey=r>&gt;</a>
-        <a href=/>/</a> ${REQ_DIR#/}
+        <a href="?browser&mode=media&dir=/">/</a>
+        ${REQ_DIR#/}
     </strong>
     </div>
-    <div>
+
+    <div class='controls-row'>
         <a class='btn-action' onclick="request('$PROGNAME?mpvc+next')" title="Next track">⏭️</a>
         <a class='btn-action' onclick="request('$PROGNAME?mpvc+cnext')" title="Next chapter">⏬</a>
         <a class='btn-action' onclick="request('$PROGNAME?mpvc+toggle')" title="Toggle playback (ProTip: accesskey=t)" accesskey=t>⏯️</a>
-        <a class='btn-action' onclick="request('$PROGNAME?mpvc+cycle-volume')" title="Cycle Volume">🔊</a>
+        <a class='btn-action' onclick="request('$PROGNAME?mpvc+cycle-volume')" title="Cycle Volume">🔈</a>
+        <a class='btn-action' onclick="request('$PROGNAME?mpvc+volume-down')" title="Volume Down">🔉-</a>
+        <a class='btn-action' onclick="request('$PROGNAME?mpvc+volume-up')" title="Volume Up">🔊+</a>
     </div>
 </div>
 
@@ -295,7 +302,7 @@ handle_listing()
             echo "
             <div class='row dir-row'>
                 <span class='dir-name'>
-                    <a href='$PROGNAME?browser&dir=${enc_dir}' class='folder-link'>📁 ${name}/</a>
+                    <a href='$PROGNAME?browser&mode=media&dir=${enc_dir}' class='folder-link'>📁 ${name}/</a>
                 </span>
                 <form action='$PROGNAME?browser&mode=$mode&action=playlist-add' method='POST' style='display:inline;'>
                     <button type='submit' class='btn-compact'>+</button>
@@ -477,6 +484,9 @@ main()
         mpvc+status)            write_request "$($MPVC status | mpvc_strip)" "text/plain" ;;
         mpvc+playlist)          write_request "$($MPVC playlist | mpvc_strip)" "text/plain" ;;
         mpvc+chapter-list)      write_request "$($MPVC chapter-list-nr | mpvc_strip)" "text/plain" ;;
+
+        mpvc+volume-down)       write_request "$($MPVC volume -5)" "text/plain" ;;
+        mpvc+volume-up)         write_request "$($MPVC volume +5)" "text/plain" ;;
 
         mpvc-fzf[+\ ]*)         write_request "$(${MPVC%/*}/$(mpvc_split "$@"))" "text/plain" ;;
         mpvc-equalizer[+\ ]*)   write_request "$(${MPVC%/*}/$(mpvc_split "$@"))" "text/plain" ;;
