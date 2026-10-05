@@ -400,21 +400,23 @@ handle_generic()
         $cmdlist |
         while IFS= read -r item;
         do
-            item_id=$(echo "$item" | awk '{print $1}')
+            item_id="${item%% *}"
 
             row_class="row file-row"
-            if [ -n "$highlight_match" ] && echo "$item" | grep -Fq "$highlight_match"; then
-                row_class="row file-row itemlist-current"
-            fi
+            case "$item" in
+                *"$highlight_match"*)
+                    [ -n "$highlight_match" ] && row_class=" row file-row itemlist-current" ;;
+            esac
 
             echo "<div class='${row_class}'>"
             echo "  <span class='file-name'> 📝 ${item} </span>"
 
             # Loop through and generate an inline form for every action argument passed
             for action_cfg in "$@"; do
-                act_suffix=$(echo "$action_cfg" | cut -d: -f1)
-                act_emoji=$(echo "$action_cfg" | cut -d: -f2)
-                act_class=$(echo "$action_cfg" | cut -d: -f3)
+                act_suffix="${action_cfg%%:*}"
+                _rest="${action_cfg#*:}"
+                act_emoji="${_rest%%:*}"
+                act_class="${_rest#*:}"
 
                 echo "  <form action='$PROGNAME?browser&mode=$mode&action=${act_suffix}' method='POST' style='display:inline;'>"
                 echo "      <button type='submit' class='${act_class:-btn-compact}'>${act_emoji}</button>"
