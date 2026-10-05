@@ -49,10 +49,10 @@ html_body_open()
         .row { display: flex; justify-content: space-between; align-items: center; padding: 4px 4px; border-bottom: 1px solid #555; }
         .folder-link { font-weight: bold; color: #f1c40f; display: block; width: 100%; padding: 4px 0; }
         .file-name { padding-right: 15px; word-break: break-all; flex-grow: 1; }
-        button.btn-compact { background: #27ae60; color: #fff; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; min-width: 24px; min-height: 24px; font-size: 1.0rem; padding: 0; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+        button.btn-compact { background: #444; color: #fff; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; min-width: 24px; min-height: 24px; font-size: 1.0rem; padding: 0; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
         button.btn-compact:active  { background: #219653; }
         button.btn-compact:visited { background: #2762ae; }
-        .back-btn { display: inline-block; margin-bottom: 15px; padding: 8px 12px; background: #333; border-radius: 4px; color: #fff; }
+        .itemlist-current { font-weight: bold; }
 
         /* Base link styles (removes default blue and forces smooth transitions) */
         a { color: #3498db; text-decoration: none; transition: color 0.2s ease; }
@@ -63,10 +63,6 @@ html_body_open()
         a:visited, a.folder-link:visited { color: inherit; }
         a:hover, a:focus { color: #5dade2; text-decoration: underline; }
         a.folder-link:hover, a.folder-link:focus { color: #f4d03f; text-decoration: underline; }
-
-        /* Styling for the back button to keep it neutral */
-        .back-btn { display: inline-block; margin-bottom: 15px; padding: 8px 12px; background: #333; border-radius: 4px; color: #fff; }
-        .back-btn:hover { background: #444; color: #fff; text-decoration: none; }
     </style>
 </head>
 <body>
@@ -344,80 +340,95 @@ handle_listing()
 
 handle_stash()
 {
-    handle_generic "$MPVC stash ls" "$PROGNAME?browser&action=stash-apply"
+    handle_generic "$MPVC stash ls" "" "stash-apply:▶️:btn-compact" "stash-append:➕:btn-compact"
 }
 
 handle_playlist()
 {
-    handle_generic "$MPVC fullplaylist" "$PROGNAME?browser&action=playlist-play"
+    handle_generic "$MPVC fullplaylist" "$("$MPVC" -q filename || echo)" "playlist-play:▶️:btn-compact" "playlist-rm:🚫:btn-compact"
 }
 
 handle_chapters()
 {
-    handle_generic "$MPVC chapter-list-nr" "$PROGNAME?browser&action=chapter-play"
+    handle_generic "$MPVC chapter-list-nr" "" "chapter-play:▶️:btn-compact"
 }
 
 handle_equalizer()
 {
-    handle_generic "$MPVC-equalizer preset-list" "$PROGNAME?browser&action=equalizer-load"
+    handle_generic "$MPVC-equalizer preset-list" "" "equalizer-load:▶️:btn-compact"
 }
 
 handle_feeds()
 {
-    handle_generic "$MPVC-fzf feed" "$PROGNAME?browser&action=playlist-add"
+    handle_generic "$MPVC-fzf feed" "" "playlist-add:▶️:btn-compact"
 }
 
 handle_yewtube()
 {
     filter=$(gup 'filter=[^&]*' "$QUERY_STRING")
-    handle_generic "$MPVC-fzf search $filter" "$PROGNAME?browser&action=playlist-add"
+    handle_generic "$MPVC-fzf search $filter" "" "playlist-add:▶️:btn-compact"
 }
 
 handle_remote()
 {
     filter=$(gup 'filter=[^&]*' "$QUERY_STRING")
-    handle_generic "$MPVC-fzf search $filter" "$PROGNAME?browser&action=playlist-add"
+    handle_generic "$MPVC-fzf search $filter" "" "playlist-add:▶️:btn-compact"
 }
 
 handle_somafm()
 {
-    handle_generic "mpvc_csv $MPVC-fzf somafm-raw" "$PROGNAME?browser&action=playlist-add"
+    handle_generic "mpvc_csv $MPVC-fzf somafm-raw" "" "playlist-add:▶️:btn-compact"
 }
 
 handle_radioparadise()
 {
-    handle_generic "mpvc_csv $MPVC-fzf rp-raw" "$PROGNAME?browser&action=playlist-add"
+    handle_generic "mpvc_csv $MPVC-fzf rp-raw" "" "playlist-add:▶️:btn-compact"
 }
 
 handle_customfeed()
 {
-    handle_generic "mpvc_csv $MPVC-fzf custom-raw" "$PROGNAME?browser&action=playlist-add"
+    handle_generic "mpvc_csv $MPVC-fzf custom-raw" "" "playlist-add:▶️:btn-compact"
 }
 
 handle_generic()
 {
     cmdlist="$1"
-    cmdaction="$2"
+    highlight_match="${2:-}"
+    shift 2
 
     items=$(
         $cmdlist |
         while IFS= read -r item;
         do
-            echo "<div class='row file-row'>
-                <span class='file-name'> 📝 ${item} </span>
-                <form action='${cmdaction}&mode=$mode' method='POST' style='display:inline;'>
-                    <button type='submit' class='btn-compact'>+</button>
-                    <input type='hidden' name='item' value='$item'>
-                </form>
-            </div>"
+            item_id=$(echo "$item" | awk '{print $1}')
+
+            row_class="row file-row"
+            if [ -n "$highlight_match" ] && echo "$item" | grep -Fq "$highlight_match"; then
+                row_class="row file-row itemlist-current"
+            fi
+
+            echo "<div class='${row_class}'>"
+            echo "  <span class='file-name'> 📝 ${item} </span>"
+
+            # Loop through and generate an inline form for every action argument passed
+            for action_cfg in "$@"; do
+                act_suffix=$(echo "$action_cfg" | cut -d: -f1)
+                act_emoji=$(echo "$action_cfg" | cut -d: -f2)
+                act_class=$(echo "$action_cfg" | cut -d: -f3)
+
+                echo "  <form action='$PROGNAME?browser&mode=$mode&action=${act_suffix}' method='POST' style='display:inline;'>"
+                echo "      <button type='submit' class='${act_class:-btn-compact}'>${act_emoji}</button>"
+                echo "      <input type='hidden' name='item' value='${item_id}'>"
+                echo "  </form>"
+            done
+            echo "</div>"
         done
     )
 
     HTML_BODY=$(html_body_open)
-    HTML_BODY="${HTML_BODY}${items}"
+    HTML_BODY="${HTML_BODY}${HTML_HEADER:-}${items}"
     HTML_BODY="${HTML_BODY}$(html_body_close)"
 
-    # Handle the request
     write_request "$HTML_BODY" "text/html"
 }
 
