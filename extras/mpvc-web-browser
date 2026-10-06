@@ -80,6 +80,8 @@ html_body_open()
     </div>
 
     <div class='controls-row'>
+        <a class='btn-action' onclick="request('$PROGNAME?mpvc+replay')" title="Replay track">🔄</a>
+        <a class='btn-action' onclick="request('$PROGNAME?mpvc+prev')" title="Prev track">⏮️</a>
         <a class='btn-action' onclick="request('$PROGNAME?mpvc+next')" title="Next track">⏭️</a>
         <a class='btn-action' onclick="request('$PROGNAME?mpvc+cnext')" title="Next chapter">⏬</a>
         <a class='btn-action' onclick="request('$PROGNAME?mpvc+toggle')" title="Toggle playback (ProTip: accesskey=t)" accesskey=t>⏯️</a>
@@ -401,8 +403,6 @@ handle_generic()
         $cmdlist |
         while IFS= read -r item;
         do
-            item_id="${item%% *}"
-
             row_class="row file-row"
             case "$item" in
                 *"$highlight_match"*)
@@ -421,7 +421,7 @@ handle_generic()
 
                 echo "  <form action='$PROGNAME?browser&mode=$mode&action=${act_suffix}' method='POST' style='display:inline;'>"
                 echo "      <button type='submit' class='${act_class:-btn-compact}'>${act_emoji}</button>"
-                echo "      <input type='hidden' name='item' value='${item_id}'>"
+                echo "      <input type='hidden' name='item' value='${item}'>"
                 echo "  </form>"
             done
             echo "</div>"
