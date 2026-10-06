@@ -72,6 +72,7 @@ html_body_open()
 <div class='dir-header'>
     <div class='path-row'>
     <strong>
+        <a href="/" title=''>#</a>
         <a href="" title='Reload (ProTip: accesskey=r)' accesskey=r>&gt;</a>
         <a href="?browser&mode=media&dir=/">/</a>
         ${REQ_DIR#/}
@@ -345,7 +346,7 @@ handle_stash()
 
 handle_playlist()
 {
-    handle_generic "$MPVC fullplaylist" "$("$MPVC" -q filename || echo)" "playlist-play:▶️:btn-compact" "playlist-rm:🚫:btn-compact"
+    handle_generic "$MPVC fullplaylist" "$("$MPVC" -q filename current)" "playlist-play:▶️:btn-compact" "playlist-rm:🚫:btn-compact"
 }
 
 handle_chapters()
