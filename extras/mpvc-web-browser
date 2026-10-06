@@ -351,7 +351,7 @@ handle_playlist()
 
 handle_chapters()
 {
-    handle_generic "$MPVC chapter-list-nr" "" "chapter-play:▶️:btn-compact"
+    handle_generic "$MPVC chapter-list-nr" "$("$MPVC" -q expand-text '${chapter}' | sed 's/^([0-9]*) //')" "chapter-play:▶️:btn-compact"
 }
 
 handle_equalizer()
