@@ -396,7 +396,7 @@ handle_customfeed()
 handle_generic()
 {
     cmdlist="$1"
-    highlight_match="${2:-}"
+    itemcurr="${2:-}"
     shift 2
 
     items=$(
@@ -404,15 +404,12 @@ handle_generic()
         while IFS= read -r item;
         do
             row_class="row file-row"
-            case "$item" in
-                *"$highlight_match"*)
-                    [ -n "$highlight_match" ] && row_class=" row file-row itemlist-current" ;;
-            esac
+            if [ -n "$itemcurr" ]; then
+                case "$item" in *"$itemcurr"*) row_class="$row_class itemlist-current" ;; esac
+            fi
 
             echo "<div class='${row_class}'>"
             echo "  <span class='file-name'> 📝 ${item} </span>"
-
-            # Loop through and generate an inline form for every action argument passed
             for action_cfg in "$@"; do
                 act_suffix="${action_cfg%%:*}"
                 _rest="${action_cfg#*:}"
