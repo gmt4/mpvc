@@ -17,7 +17,7 @@ Section 1 - User Commands (man1)
 
 *   [mpvc(1)](mpvc.html) - Base command-line interface, local player queues, and core playback socket loops.
 *   [mpvc-fzf(1)](mpvc-fzf.html) - Interactive fuzzy-finder workflows, live streams, and online audio track parsing.
-*   [mpvc-installer(1)](mpvc-installer.html) - Environment checker deployments, system upgrades, and configuration template generators.
+*   [mpvc-installer(1)](mpvc-installer.html) - Automated deployment, updates, and configuration manager for mpvc.
 *   [mpvc-tui(1)](mpvc-tui.html) - Terminal dashboard matrix, album art injection hooks, and live tracker overlays.
 *   [mpvc-web(1)](mpvc-web.html) - Minimalist HTTP server control panel and zero-config browser interaction portal.
 *   [mpvc-chapter(1)](mpvc-chapter.html) - Manage and merge ffmetadata chapter files for mpvc
