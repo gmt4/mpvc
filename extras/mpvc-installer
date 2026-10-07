@@ -279,6 +279,27 @@ done
     echo "  [Fish]: Run fish -c fish_update_completions"
 }
 
+mpvc_quickstart_checks()
+{
+    case ":$PATH:" in
+        *:"$BINDIR":*)
+            ;;
+        *)
+            echo "⚠️  Note: '$BINDIR' not found in \$PATH. Update your shell config with:"
+            echo "  export PATH=\"\$PATH:$BINDIR\""
+            ;;
+    esac
+
+    case "$TERM" in
+        *-256color)
+            ;;
+        *)
+            echo "⚠️  Note: 'TERM=$TERM', TERM supports $(tput colors) colors, Fix with:"
+            echo "  export TERM=xterm-256color"
+            ;;
+    esac
+}
+
 mpvc_quickstart()
 {
     install_mode=$1
@@ -328,16 +349,8 @@ mpvc_quickstart()
         return 1
     fi
 
-    # 4. Path validation check
     echo "# Quickstart: Final checks..."
-    case ":$PATH:" in
-        *:"$BINDIR":*)
-            ;;
-        *)
-            echo "⚠️  Note: '$BINDIR' not found in \$PATH. Update your shell config with:"
-            echo "  export PATH=\"\$PATH:$BINDIR\""
-            ;;
-    esac
+    mpvc_quickstart_checks
 
     echo ""
     echo "# QuickStart setup completed successfully!"
@@ -412,6 +425,7 @@ main()
     quickstart)      shift; mpvc_quickstart fetch-user ;;
     quickstart-ln)   shift; mpvc_quickstart link-user ;;
     quickstart-rm)   shift; mpvc_quickstart_uninstall ;;
+    quickstart-ck)   shift; mpvc_quickstart_checks ;;
 
     version)         shift; mpvc_version;;
     check-reqs)      shift; mpvc_check_requirements;;
