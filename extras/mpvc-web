@@ -292,8 +292,8 @@ li {
 }
 
 a, button, .btn {
-    min-width: 32px;
-    min-height: 32px;
+    min-width: 20px;
+    min-height: 20px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -304,7 +304,7 @@ a, button, .btn {
     display: flex;
     gap: 12px; /* Enforces native separation spacing */
     flex-wrap: wrap; /* Prevents overflow clipping on narrow screens */
-    margin: 5px;
+    margin: 4px;
 }
 
 .btn {
@@ -313,8 +313,7 @@ a, button, .btn {
 }
 
 a.btn {
-  display: inline-block;
-  padding: 4px 8px;
+  padding: 2px 2px;
   background: var(--bg-tertiary);
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -455,7 +454,7 @@ legend {
   ul { gap: 6px; }
 
   a.btn {
-    padding: 4px 8px;
+    padding: 2px 4px;
     font-size: 11px;
   }
 }
