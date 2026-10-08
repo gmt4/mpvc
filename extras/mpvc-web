@@ -721,21 +721,13 @@ mpvc_web_index()
         </fieldset>
 
         <fieldset class="control-group">
-          <legend>[ Control ]</legend>
-            $(printf " +15\n+10\n+5\n+2\n+1\n0\n-1\n-2\n-5\n-10\n-15" | mpvc_web_select_form "mpvc -q track")
-            $(printf " +30\n+20\n+10\n+5\n+1\n0\n-1\n-5\n-10\n-20\n-30" | mpvc_web_select_form "mpvc -q cplay")
-            $(printf " +120\n+60\n+25\n0\n-25\n-60\n-120" | mpvc_web_select_form "mpvc -q seek" "${MPVC_WEB_SHORTCUT_SEEK}")
-        </fieldset>
-
-<!--
-        <fieldset class="control-group">
           <legend>[ Video ]</legend>
             <a class=btn href="?cmd=mpvc togglev" title="togglev">video</a>
             <a class=btn href="?cmd=mpvc aspect"  title="togglea">aspect</a>
             <a class=btn href="?cmd=mpvc togglew" title="togglew">win</a>
             <a class=btn href="?cmd=mpvc togglef" title="togglef">fs</a>
         </fieldset>
--->
+
         </details>
 
         <details>
