@@ -87,8 +87,8 @@ html_body_open()
         <a class='btn-action' onclick="request('$PROGNAME?mpvc+cnext')" title="Next chapter">⏬</a>
         <a class='btn-action' onclick="request('$PROGNAME?mpvc+toggle')" title="Toggle playback (ProTip: accesskey=t)" accesskey=t>⏯️</a>
         <a class='btn-action' onclick="request('$PROGNAME?mpvc+cycle-volume')" title="Cycle Volume">🔈</a>
-        <a class='btn-action' onclick="request('$PROGNAME?mpvc+volume-down')" title="Volume Down">🔉-</a>
-        <a class='btn-action' onclick="request('$PROGNAME?mpvc+volume-up')" title="Volume Up">🔊+</a>
+        <a class='btn-action' onclick="request('$PROGNAME?mpvc+volume-down')" title="Volume Down">🔉</a>
+        <a class='btn-action' onclick="request('$PROGNAME?mpvc+volume-up')" title="Volume Up">🔊</a>
     </div>
 </div>
 
