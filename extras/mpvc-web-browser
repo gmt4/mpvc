@@ -110,8 +110,6 @@ html_body_open()
     <option value=somafm>       SomaFM
     <option value=radioparadise>    RadioParadise
     <option value=customfeed>       CustomFeed
-    <option value=video>        Video
-    <option value=volume>       Volume
     </select>
 
     <input type='text' id='libSearch' name='filter' class='flex-grow' oninput='filterFiles()' onkeydown='filterKeyDown(event)' placeholder='🔍 Type to filter items ...' autocomplete='off' title='Search (ProTip: accesskey=s)' accesskey=s>
