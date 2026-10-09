@@ -1,4 +1,18 @@
 .\"
+.\" Define V font for inline verbatim, using C font in formats
+.\" that render this, and otherwise B font.
+.ie "\f[CB]x\f[]"x" \{\
+. ftr V B
+. ftr VI BI
+. ftr VB B
+. ftr VBI BI
+.\}
+.el \{\
+. ftr V CR
+. ftr VI CI
+. ftr VB CB
+. ftr VBI CBI
+.\}
 .TH "mpvc" "1" "April, 2026" "" ""
 .hy
 .SH NAME
@@ -13,9 +27,10 @@ usage: mpvc opts # \[at]version v1.9 (c) gmt4 https://github.com/gmt4/mpvc
  -r | --remove | rm       : Remove media by id from playlist (see searchrm for rm by title)
  -s | --stop | stop       : Always stop playback.
  -P | --play | play       : Always start playback.
- -p | --toggle            : Toggle playback.
-      --repeat | repeat   : Loop the playlist.
-      --single | single   : Loop a single file.
+ -m | (--)mute            : Toggle sound.
+ -p | (--)toggle          : Toggle playback.
+      (--)repeat          : Loop the playlist.
+      (--)single          : Loop a single file.
     | --next | next       : Jump to next entry in the playlist
     | --prev | prev       : Jump to previous entry in the playlist
  -i | --playlist          : Print filenames of tracks to fit within terminal.
@@ -35,14 +50,13 @@ usage: mpvc opts # \[at]version v1.9 (c) gmt4 https://github.com/gmt4/mpvc
  -c | --crop              : Clear the playlist except for the media currently playing.
  -l | --loop              : Loop currently playing playlist.
  -L | --loopfile          : Loop currently playing file.
- -m | --mute              : Toggle sound.
  -t | --seek              : Increase/decrease playback time relatively, accepts % values.
     | --seekrand          : Set a random playback time.
  -T | --time              : Set absolute playback time.
  -x | --speed             : Increase/decrease speed relative to the current speed.
  -X | --speedval          : Set absolute speed.
  -z | --shuffle           : Toggle the shuffle property
- -I | --images            : Enable adding of images to the queue.
+    | --images            : Enable adding of images to the queue.
     | --color             : Enable color (NO_COLOR=)
     | --nocolor           : Disable color (NO_COLOR=true)
  -k | --kill              : Kill the mpv process controlling the given socket.
@@ -84,7 +98,7 @@ control of playback without direct interaction with the mpv window.
 -P, --play, play
 Always start playback.
 .TP
--p, --toggle
+-p, --toggle, toggle
 Toggle playback.
 .TP
 -s, --stop, stop
@@ -162,7 +176,7 @@ Increase/decrease volume relative to current volume.
 -V, --volume
 Set absolute volume.
 .TP
--m, --mute
+-m, --mute, mute
 Toggle sound.
 .TP
 -t, --seek
@@ -196,7 +210,7 @@ Loop currently playing file.
 -z, --shuffle
 Toggle the shuffle property.
 .TP
--I, --images
+--images
 Enable adding of images to the queue.
 .TP
 --color

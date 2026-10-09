@@ -21,9 +21,10 @@ SYNOPSIS
      -r | --remove | rm       : Remove media by id from playlist (see searchrm for rm by title)
      -s | --stop | stop       : Always stop playback.
      -P | --play | play       : Always start playback.
-     -p | --toggle            : Toggle playback.
-          --repeat | repeat   : Loop the playlist.
-          --single | single   : Loop a single file.
+     -m | (--)mute            : Toggle sound.
+     -p | (--)toggle          : Toggle playback.
+          (--)repeat          : Loop the playlist.
+          (--)single          : Loop a single file.
         | --next | next       : Jump to next entry in the playlist
         | --prev | prev       : Jump to previous entry in the playlist
      -i | --playlist          : Print filenames of tracks to fit within terminal.
@@ -43,14 +44,13 @@ SYNOPSIS
      -c | --crop              : Clear the playlist except for the media currently playing.
      -l | --loop              : Loop currently playing playlist.
      -L | --loopfile          : Loop currently playing file.
-     -m | --mute              : Toggle sound.
      -t | --seek              : Increase/decrease playback time relatively, accepts % values.
         | --seekrand          : Set a random playback time.
      -T | --time              : Set absolute playback time.
      -x | --speed             : Increase/decrease speed relative to the current speed.
      -X | --speedval          : Set absolute speed.
      -z | --shuffle           : Toggle the shuffle property
-     -I | --images            : Enable adding of images to the queue.
+        | --images            : Enable adding of images to the queue.
         | --color             : Enable color (NO_COLOR=)
         | --nocolor           : Disable color (NO_COLOR=true)
      -k | --kill              : Kill the mpv process controlling the given socket.
@@ -95,7 +95,7 @@ Core Playback Commands
 -P, --play, play
 : Always start playback.
 
--p, --toggle
+-p, --toggle, toggle
 : Toggle playback.
 
 -s, --stop, stop
@@ -179,7 +179,7 @@ Audio, Speed & Time Controls
 -V, --volume
 : Set absolute volume.
 
--m, --mute
+-m, --mute, mute
 : Toggle sound.
 
 -t, --seek
@@ -215,7 +215,7 @@ Properties & Daemon Configuration
 -z, --shuffle
 : Toggle the shuffle property.
 
--I, --images
+--images
 : Enable adding of images to the queue.
 
 --color
