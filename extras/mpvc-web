@@ -563,18 +563,6 @@ mpvc_web_select_form()
     echo '</form>'
 }
 
-mpvc_web_cli()
-{
-cat <<EOF
-        <form action="/" method="get">
-            <label for="mpvc-cli-input"></label>
-            <input type="text" id="mpvc-cli-input" name="cli" accesskey="i" autocomplete="on"
-                   placeholder="💻Type mpvc commands" title="mpvc cli"
-                   onkeydown="if (event.keyCode == 13) { this.form.submit(); return false; }">
-        </form>
-EOF
-}
-
 mpvc_web_index_js()
 {
     cat <<EOF
