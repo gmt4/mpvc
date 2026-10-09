@@ -46,9 +46,10 @@ usage: $PROGNAME opts # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
  -r | --remove | rm       : Remove media by id from playlist (see searchrm for rm by title)
  -s | --stop | stop       : Always stop playback.
  -P | --play | play       : Always start playback.
- -p | --toggle            : Toggle playback.
-      --repeat | repeat   : Loop the playlist.
-      --single | single   : Loop a single file.
+ -m | (--)mute            : Toggle sound.
+ -p | (--)toggle          : Toggle playback.
+    | (--)repeat          : Loop the playlist.
+    | (--)single          : Loop a single file.
     | --next | next       : Jump to next entry in the playlist
     | --prev | prev       : Jump to previous entry in the playlist
  -i | --playlist          : Print filenames of tracks to fit within terminal.
@@ -71,14 +72,13 @@ EOF
  -c | --crop              : Clear the playlist except for the media currently playing.
  -l | --loop              : Loop currently playing playlist.
  -L | --loopfile          : Loop currently playing file.
- -m | --mute              : Toggle sound.
  -t | --seek              : Increase/decrease playback time relatively, accepts % values.
     | --seekrand          : Set a random playback time.
  -T | --time              : Set absolute playback time.
  -x | --speed             : Increase/decrease speed relative to the current speed.
  -X | --speedval          : Set absolute speed.
  -z | --shuffle           : Toggle the shuffle property
- -I | --images            : Enable adding of images to the queue.
+    | --images            : Enable adding of images to the queue.
     | --color             : Enable color (NO_COLOR=)
     | --nocolor           : Disable color (NO_COLOR=true)
  -k | --kill              : Kill the mpv process controlling the given socket.
@@ -1124,12 +1124,10 @@ main() {
             # mpc compatibility layer
             --repeat|repeat)shift; mpvc_toggle_loop "loop-playlist" "${1:-}" ;;
             --single|single)shift; mpvc_toggle_loop "loop-file" "${1:-}" ;;
-            pause)          mpvc_set "pause" "yes" ;;
-            --next|next)    mpvc_set_track 1 relative ;;
-            --prev|prev)    mpvc_set_track -1 relative;;
-            move|mv)        shift; mpvc_move_track "${1:-}" "${2:-}" ;;
-            mute)           mpvc_set "mute" "yes" ;;
-            unmute)         mpvc_set "mute" "no" ;;
+            pause)              mpvc_set "pause" "yes" ;;
+            --next|next)        mpvc_set_track 1 relative ;;
+            --prev|prev)        mpvc_set_track -1 relative;;
+            move|mv)            shift; mpvc_move_track "${1:-}" "${2:-}" ;;
 
             pretty)         die 1 "$PROGNAME: Error $1 not implemented" ;;
             find)           die 1 "$PROGNAME: Error $1 not implemented" ;;
@@ -1228,7 +1226,7 @@ main() {
             -k|--kill|kill)                  mpvc_ecmdr "quit"; QUIETFLAG=true ;;
             -K|--killall|killall)            quiet pkill -9 -f "$MPVC_MPV "; QUIETFLAG=true ;;
             -p|--toggle|toggle)              mpvc_cycle "pause" ;;
-            -m|--mute)                       mpvc_cycle "mute"  ;;
+            -m|--mute|mute)                  mpvc_cycle "mute"  ;;
             -i|--playlist|playlist)          mpvc_get_playlist "";            ;;
             -I|--fullplaylist|fullplaylist)  mpvc_get_playlist "full";        ;;
                --playlistjson|playlistjson)  mpvc_get_playlist_json ""        ;;
