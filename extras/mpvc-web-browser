@@ -473,7 +473,6 @@ mpvc_csv()   { "$@" | sed 's/;/ /g'; }
 mpvc_html()  { echo "Content-Type: text/html";  echo "Connection: close"; echo; echo "$@"; }
 mpvc_strip() { sed '/\x1b\[7m/ { s|\x1b\[7m||; s| |+|; }; s|\x1b\[0m||;'; }
 mpvc_redir() { if [ -n "$1" ] && [ "$1" != "null" ]; then mpvc_html '<meta http-equiv=refresh content="0.1;url='$1'" />'; fi; }
-mpvc_split() { for i in $@; do echo "$i"; done; }
 
 usage()
 {
@@ -505,13 +504,20 @@ main()
         mpvc+status)            write_request "$($MPVC status | mpvc_strip)" "text/plain" ;;
         mpvc+playlist)          write_request "$($MPVC playlist | mpvc_strip)" "text/plain" ;;
         mpvc+chapter-list)      write_request "$($MPVC chapter-list-nr | mpvc_strip)" "text/plain" ;;
+        mpvc+metadata)          write_request "$("$MPVC" metadata)" "text/plain" ;;
 
+        mpvc+toggle)            write_request "$("$MPVC" toggle)" "text/plain" ;;
+        mpvc+next)              write_request "$("$MPVC" next)" "text/plain" ;;
+        mpvc+prev)              write_request "$("$MPVC" prev)" "text/plain" ;;
+        mpvc+cnext)             write_request "$("$MPVC" cnext)" "text/plain" ;;
+        mpvc+cprev)             write_request "$("$MPVC" cprev)" "text/plain" ;;
+        mpvc+replay)            write_request "$("$MPVC" replay)" "text/plain" ;;
+
+        mpvc+cycle-volume)      write_request "$("$MPVC" cycle-volume)" "text/plain" ;;
         mpvc+volume-down)       write_request "$($MPVC volume -5)" "text/plain" ;;
         mpvc+volume-up)         write_request "$($MPVC volume +5)" "text/plain" ;;
 
-        mpvc-fzf[+\ ]*)         write_request "$(${MPVC%/*}/$(mpvc_split "$@"))" "text/plain" ;;
-        mpvc-equalizer[+\ ]*)   write_request "$(${MPVC%/*}/$(mpvc_split "$@"))" "text/plain" ;;
-        mpvc[+\ ]*)             write_request "$(${MPVC%/*}/$(mpvc_split "$@"))" "text/plain" ;;
+        mpvc*)                  write_request "Status: 403 Forbidden" "text/plain" ;;
     esac
 }
 
