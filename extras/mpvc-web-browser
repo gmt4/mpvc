@@ -280,6 +280,17 @@ handle_action()
     fi
 }
 
+# Run "$@" without injection
+run_split_cmd() {
+    # Runs in sub-shell (), disable globbing, splits string $1, enables globbing, and executes
+    (
+        set -f
+        set -- $1
+        set +f
+        "$@"
+    )
+}
+
 # Generate HTML listings
 handle_listing()
 {
@@ -399,7 +410,7 @@ handle_generic()
     shift 2
 
     items=$(
-        $cmdlist |
+        run_split_cmd "$cmdlist" |
         while IFS= read -r item;
         do
             row_class="row file-row"
