@@ -29,13 +29,14 @@ mpvc_web_defaults()
     MPVC=$(command -v mpvc)
 
     : "${XDG_CONFIG_HOME:="$HOME/.config"}"
+    : "${XDG_DATA_HOME:="$HOME/.local/share"}"
     : "${MPVC_CONFIG_DIR:=$XDG_CONFIG_HOME/mpvc}"
     : "${MPVC_CONFIG:=$MPVC_CONFIG_DIR/mpvc.conf}"
 
     : "${MPVC_WEB_HOSTNAME:=$(hostname)}"
     : "${MPVC_WEB_HOST:=localhost}"
     : "${MPVC_WEB_PORT:=8888}"
-    : "${MPVC_WEB_ROOT:=/tmp/mpvc-web/root}"
+    : "${MPVC_WEB_ROOT:=${XDG_DATA_HOME}/mpvc-web/root}"
     : "${MPVC_WEB_SSL_PORT:=8443}"
     : "${MPVC_WEB_SSL_PEM:=$MPVC_WEB_ROOT/../ssl.pem}"
     : "${MPVC_WEB_SSL_PID:=$MPVC_WEB_ROOT/../ssl.pid}"
@@ -854,11 +855,12 @@ mpvc_web_setup()
     (
         # setup http webroot
         echo "# $PROGNAME Setup $MPVC_WEB_ROOT"
-        mkdir -p "$MPVC_WEB_ROOT" || return
-        mkdir -p "$MPVC_WEB_CGI_DIR" || return
+        mkdir -p -m 0700 "$MPVC_WEB_ROOT" || return
+        mkdir -p -m 0700 "$MPVC_WEB_CGI_DIR" || return
 
         cd "$MPVC_WEB_ROOT" || return
         chmod -R u+w "${MPVC_WEB_ROOT%/*}"
+        umask 0077
 
         # setup streamable mpvc archive if requested
         if [ -n "${MPVC_WEB_ARCHIVE_ENABLE}" ]; then
