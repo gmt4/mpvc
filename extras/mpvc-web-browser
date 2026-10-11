@@ -206,7 +206,7 @@ write_request()
 
     #printf "HTTP/1.0 200 OK\r\n"
     printf "Status: 200 OK\r\n"
-    printf "Content-Type: $mime; charset=utf-8\r\n"
+    printf "Content-Type: %s; charset=utf-8\r\n" "$mime"
     printf "Content-Length: %d\r\n" "$byte_count"
     printf "Connection: close\r\n\r\n"
 
@@ -495,15 +495,15 @@ main()
 
         browser*)               mpvc_browser ;;
 
-        now-short)              mpvc_redir "$($MPVC-fzf now short)" ;;
-        lyrics)                 mpvc_redir "$($MPVC-fzf Lyrics '')" ;;
-        thumbnail64)            mpvc_redir "$($MPVC-fzf thumbnail64)" ;;
-        filename)               mpvc_redir "$($MPVC filename current full)" ;;
+        now-short)              mpvc_redir "$("$MPVC-fzf" now short)" ;;
+        lyrics)                 mpvc_redir "$("$MPVC-fzf" Lyrics '')" ;;
+        thumbnail64)            mpvc_redir "$("$MPVC-fzf" thumbnail64)" ;;
+        filename)               mpvc_redir "$("$MPVC" filename current full)" ;;
         #related)               write_request "$($MPVC-fzf \"$($MPVC get media-title)\")" "text/plain" ;;
 
-        mpvc+status)            write_request "$($MPVC status | mpvc_strip)" "text/plain" ;;
-        mpvc+playlist)          write_request "$($MPVC playlist | mpvc_strip)" "text/plain" ;;
-        mpvc+chapter-list)      write_request "$($MPVC chapter-list-nr | mpvc_strip)" "text/plain" ;;
+        mpvc+status)            write_request "$("$MPVC" status | mpvc_strip)" "text/plain" ;;
+        mpvc+playlist)          write_request "$("$MPVC" playlist | mpvc_strip)" "text/plain" ;;
+        mpvc+chapter-list)      write_request "$("$MPVC" chapter-list-nr | mpvc_strip)" "text/plain" ;;
         mpvc+metadata)          write_request "$("$MPVC" metadata)" "text/plain" ;;
 
         mpvc+toggle)            write_request "$("$MPVC" toggle)" "text/plain" ;;
@@ -514,8 +514,8 @@ main()
         mpvc+replay)            write_request "$("$MPVC" replay)" "text/plain" ;;
 
         mpvc+cycle-volume)      write_request "$("$MPVC" cycle-volume)" "text/plain" ;;
-        mpvc+volume-down)       write_request "$($MPVC volume -5)" "text/plain" ;;
-        mpvc+volume-up)         write_request "$($MPVC volume +5)" "text/plain" ;;
+        mpvc+volume-down)       write_request "$("$MPVC" volume -5)" "text/plain" ;;
+        mpvc+volume-up)         write_request "$("$MPVC" volume +5)" "text/plain" ;;
 
         mpvc*)                  write_request "Status: 403 Forbidden" "text/plain" ;;
     esac
