@@ -634,9 +634,10 @@ mpvc_web()
     (
         cd "$MPVC_WEB_ROOT" || return
 
+        # rework this to unify in a single: mpvcbin + cgi-bin
         mpvc_web_envclean python3 -u -m http.server --cgi --bind "$MPVC_WEB_HOST" "$MPVC_WEB_PORT" "$@" 2>&1 |
-            #mawk -W interactive -v mpvcbin="$MPVC_WEB_CGI_FILE"
-            mpvc_web_envclean awk -v mpvcbin="$MPVC_WEB_CGI_FILE" \
+            #mawk -W interactive -v mpvcbin="$MPVC"
+            mpvc_web_envclean awk -v mpvcbin="$MPVC" \
         '
         function mpvcsys(cmd) { system(mpvcbin" "cmd); }
         function mpvc(cmd)    { mpvcsys("mpvc -q "cmd); }
@@ -648,12 +649,12 @@ mpvc_web()
             for (i = 1; i <= n; i++) { allowCmdList[a[i]] = 1; }
         }
 
-        /GET \/\?cmd=mpvc%20.* / {
+        $0 ~ /"GET \/\?cmd=mpvc%20/ {
             cmd="";
 
-            if (match($0, /GET \/\?cmd=mpvc%20[-a-z]+/))
+            if (match($0, /"GET \/\?cmd=mpvc%20[-a-z]+/))
             {
-                n=length("GET /?cmd=mpvc%20")
+                n=length("\"GET /?cmd=mpvc%20")
                 cmd=substr($0, RSTART+n, RLENGTH-n)
             }
 
