@@ -8,7 +8,6 @@
 #
 
 # REMEMBER This is a hack, DISCLAIMER * Use at Your Own Risk *
-# A security hole in itself, with many open man-holes, evident ones are marked with XXX
 #
 # The sole reason for its existence is to mimic mpvc/tui when is not available,
 # like, controlling a remotely running mpv, accessing from a client without a CLI,
@@ -855,8 +854,9 @@ mpvc_web_setup()
     (
         # setup http webroot
         echo "# $PROGNAME Setup $MPVC_WEB_ROOT"
-        mkdir -p -m 0700 "$MPVC_WEB_ROOT" || return
-        mkdir -p -m 0700 "$MPVC_WEB_CGI_DIR" || return
+        mkdir -p "${MPVC_WEB_ROOT%/*}"
+        mkdir -m 0700 "$MPVC_WEB_ROOT" || return
+        mkdir -m 0700 "$MPVC_WEB_CGI_DIR" || return
 
         cd "$MPVC_WEB_ROOT" || return
         chmod -R u+w "${MPVC_WEB_ROOT%/*}"
