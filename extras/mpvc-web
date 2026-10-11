@@ -103,372 +103,83 @@ mpvc_web_style()
     cat <<-EOF
 /* mpvc-web style.css */
 
-.scheme-control { position: absolute; opacity: 0; pointer-events: none; }
-.theme-toggle-container { display: inline-flex; gap: 2px; }
-.theme-lbl { padding: 2px 6px; font-size: 12px; cursor: pointer; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-.theme-lbl { display: none; }
+html {
+  color-scheme: light dark;
+  --bg: light-dark(#ffffff, #0f0f0f);
+  --bg-sub: light-dark(#f5f5f5, #1a1a1a);
+  --text: light-dark(#1a1a1a, #e0e0e0);
+  --border: light-dark(#dddddd, #666666);
+  --accent: light-dark(#0066cc, #00d4ff);
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  padding: 10px;
+}
+
+/* Theme block */
+.scheme-control, .theme-lbl { display: none; }
 html:has(#scheme-auto:checked) .lbl-light { display: inline-block; }
 html:has(#scheme-light:checked) .lbl-dark { display: inline-block; }
 html:has(#scheme-dark:checked) .lbl-auto  { display: inline-block; }
 
-@supports (font: -apple-system-body) {
-    /* Old iOS/Safari workaround XXX */
-    :root {
-      --bg-primary: #0f0f0f;
-      --bg-secondary: #1a1a1a;
-      --bg-tertiary: #2a2a2a;
-      --text-primary: #e0e0e0;
-      --text-secondary: #a0a0a0;
-      --border: #666666;
-      --accent: #00d4ff;
-      --shadow: rgba(0, 0, 0, 0.5);
-    }
-
-    #scheme-dark:checked ~ main { filter: invert(--filter-dark); }
-    #scheme-light:checked ~ main { filter: invert(--filter-light); }
-    iframe { background: var(--text-primary); filter: var(--filter-dark); }
-}
-
-/* THEME */
-
-html {
-  color-scheme: dark light;
-
-  --bg-primary: light-dark(#0f0f0f, #ffffff);
-  --text-primary: light-dark(#e0e0e0, #1a1a1a);
-  --bg-primary: light-dark(#ffffff, #0f0f0f);
-  --bg-secondary: light-dark(#f5f5f5, #1a1a1a);
-  --bg-tertiary: light-dark(#ebebeb, #2a2a2a);
-  --text-primary: light-dark(#1a1a1a, #e0e0e0);
-  --text-secondary: light-dark(#666666, #a0a0a0);
-  --border: light-dark(#dddddd, #666666);
-  --accent: light-dark(#0066cc, #00d4ff);
-  --accent-hover: light-dark(#0052a3, #00e6ff);
-  --shadow: light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.5));
-
-  --filter-light: invert(0.0);
-  --filter-dark:  invert(0.7);
-}
-
 html:has(#scheme-light:checked) { color-scheme: light; }
-html:has(#scheme-light:checked) iframe { filter: var(--filter-light); }
-
 html:has(#scheme-dark:checked) { color-scheme: dark; }
-html:has(#scheme-dark:checked) iframe { background: var(--text-primary); filter: var(--filter-dark); } /*XXX*/
 
-/* TYPOGRAPHY */
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--text-primary) 250%);
-  background-attachment: fixed;
-  transition: background-color 0.5s ease, color 0.5s ease;
-}
-
-body {
-  color: var(--text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-  font-size: 16px;
-  line-height: 1.6;
-  min-height: 100vh;
-  //padding: 20px;
-}
-
-a {
-  color: var(--accent);
-  text-decoration: none;
-  transition: all 0.3s ease;
-  font-weight: 500;
-  position: relative;
-}
-
-a:hover {
-  color: var(--accent-hover);
-  text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
-}
-
-a::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: var(--accent);
-  transition: width 0.3s ease;
-}
-
-a:hover::after {
-  width: 100%;
-}
-
-/* CONTAINERS & SECTIONS */
-
+/* Interactive Block */
 details {
-  margin: 5px 0;
-  background: var(--bg-secondary);
+  margin: 4px 0;
+  background: var(--bg-sub);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px var(--shadow);
-  transition: all 0.3s ease;
-}
-
-details:hover {
-  border-color: var(--accent);
-  box-shadow: 0 8px 24px rgba(0, 212, 255, 0.1);
-}
-
-details[open] {
-  background: var(--bg-secondary);
+  border-radius: 6px;
 }
 
 summary {
-  padding: 4px 8px;
+  padding: 6px 6px;
   cursor: pointer;
-  user-select: none;
-  background: linear-gradient(90deg, var(--bg-tertiary), var(--bg-secondary));
   font-weight: 600;
-  font-size: 15px;
-  letter-spacing: 0.5px;
-  transition: all 0.3s ease;
-  //display: flex;
-  align-items: center;
-  gap: 10px;
 }
 
-summary:hover {
-  //background: linear-gradient(90deg, var(--accent), rgba(0, 212, 255, 0.1));
-  color: var(--accent-hover);
-}
+hr { border: 0; height: 1px; background: var(--border); }
 
-details > *:not(summary) {
-  //padding: 16px 20px;
-  animation: slideDown 0.5s ease-out;
-}
+/* Control block */
+ul { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; }
+.control-group { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px; padding: 8px; border: 1px solid var(--border); border-radius: 4px; }
+legend { padding: 0 4px; font-size: 0.85em; font-weight: bold; }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-hr {
-  border: none;
-  height: 4px;
-  background: linear-gradient(250deg, transparent, var(--accent), transparent);
-  margin: 0;
-  padding: 0 ;
-  opacity: 0.8;
-}
-
-/* LISTS & BUTTONS */
-
-ul {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding: 12px 0;
-}
-
-li {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-a, button, .btn {
-    min-width: 20px;
-    min-height: 20px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-}
-
-.control-group {
-    display: flex;
-    gap: 12px; /* Enforces native separation spacing */
-    flex-wrap: wrap; /* Prevents overflow clipping on narrow screens */
-    margin: 4px;
-}
-
-.btn {
-    touch-action: manipulation; /* Eradicates tap testing latency delays */
-    -webkit-text-size-adjust: none; /* Forces layout scaling stability */
-}
-
-a.btn {
-  padding: 2px 2px;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  transition: all 0.2s ease;
+a, button, select, input[type="text"], input[type="search"] {
+  color: inherit;
   font-size: 13px;
-  font-weight: 500;
-  white-space: nowrap;
-  text-shadow: none;
-}
-
-a a.btn:hover, a a:hover {
-  background: var(--accent);
-  color: var(--bg-primary);
-  border-color: var(--accent);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
-}
-
-/* FORMS & SELECTS */
-
-form {
-  display: inline-block;
-}
-
-button {
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
+  padding: 4px 6px;
   border: 1px solid var(--border);
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  transition: all 0.2s ease;
-  font-family: inherit;
-}
-
-select {
-  padding: 8px 12px;
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  transition: all 0.2s ease;
-  font-family: inherit;
-
-  overflow-y: auto;
-  transition: height 0.2s ease;
-}
-
-select:hover {
-  border-color: var(--accent);
-  background: var(--bg-tertiary);
-}
-
-select:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 8px rgba(0, 212, 255, 0.2);
-}
-
-option {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-}
-
-input[type="text"], input[type="search"] {
-  padding: 8px 12px;
-  background: var(--bg-secondary);
-  color: var(--text-secondary);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  transition: all 0.2s ease;
-  font-family: inherit;
-}
-
-input[type="color"] {
-  width: 32px !important;
-  height: 32px !important;
-  padding: 4px !important;
-  border: 2px solid var(--border);
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-input[type="color"]:hover {
-  border-color: var(--accent);
-  box-shadow: 0 0 12px rgba(0, 212, 255, 0.2);
-}
-
-/* IFRAMES */
-
-iframe {
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  transition: all 0.5s ease;
-}
-
-fieldset {
-  border: 1px solid #ccc;
   border-radius: 4px;
-  padding: 0.5rem;
-  margin: 0rem;
+  background: var(--bg);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  touch-action: manipulation;
 }
 
-legend {
-  font-weight: bold;
-  padding: 0 0.5rem;
-  font-size: 0.9rem;
-  color: #666;
+a.nobtn {
+  border: none;
+  background: none;
 }
 
-/* RESPONSIVE DESIGN */
-
-@media (max-width: 768px) {
-  body { padding: 12px; }
-  summary { padding: 4px 8px; font-size: 14px; }
-  ul { gap: 8px; }
-
-  a.btn {
-    padding: 4px 8px;
-    font-size: 12px;
-  }
-
-  select {
-    padding: 6px 10px;
-    font-size: 12px;
-  }
+a.btn:hover, button:hover, select:hover {
+  border-color: var(--accent);
+  background: var(--bg-sub);
 }
 
+:focus-visible { outline: 2px solid var(--accent); }
+iframe { border: 1px solid var(--border); border-radius: 4px; }
+
+/* Responsive block */
 @media (max-width: 480px) {
-  body { padding: 2px; }
-  details { margin: 4px 0; }
-  summary { padding: 4px 4px; font-size: 13px; }
-  ul { gap: 6px; }
-
-  a.btn {
-    padding: 2px 4px;
-    font-size: 11px;
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  * {
-    transition-property: background, color, border, box-shadow, transform;
-    transition-duration: 0.2s;
-  }
-}
-
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  html { padding: 4px; }
+  .control-group { gap: 4px; margin: 4px; }
+  a, button, select { padding: 4px 4px; font-size: 12px; }
 }
 
 EOF
@@ -757,11 +468,11 @@ mpvc_web_index()
         <footer>
         <hr>
         <small>
-        🎧 <a href="$PROGURL">${PROGNAME%%-*}</a> <a href="$PROGURL/releases/">$PROGVERSION</a>
-        • <a href="$PROGURL/issues">issues</a> <a href="$SITEURL">docs</a>
-        • <a href="client.p12">p12</a> <a href="server.crt">crt</a>
+        🎧 <a href="$PROGURL" class=nobtn>${PROGNAME%%-*}</a> <a href="$PROGURL/releases/" class=nobtn>$PROGVERSION</a>
+        • <a href="$PROGURL/issues" class=nobtn>issues</a> <a href="$SITEURL" class=nobtn>docs</a>
+        • <a href="client.p12" class=nobtn>p12</a> <a href="server.crt" class=nobtn>crt</a>
         $(date +%Y) ©
-        <a href="javascript:Help()" title="help" ${MPVC_WEB_SHORTCUT_HELP}>/h</a>
+        <a href="javascript:Help()" class=nobtn title="help" ${MPVC_WEB_SHORTCUT_HELP}>/h</a>
         </small>
         </footer>
     </body>
