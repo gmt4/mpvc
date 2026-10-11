@@ -672,7 +672,7 @@ mpvc_web_index()
             <a class=btn href="?cmd=mpvc clear">clear</a>
 
             <a class=btn href="?cmd=mpvc play">play</a>
-            <a class=btn href="?cmd=mpvc --mute" ${MPVC_WEB_SHORTCUT_MUTE}>mute</a>
+            <a class=btn href="?cmd=mpvc mute" ${MPVC_WEB_SHORTCUT_MUTE}>mute</a>
             <a class=btn href="?cmd=mpvc start">start</a>
             <a class=btn href="?cmd=mpvc play $">end</a>
             <a class=btn href="?cmd=mpvc prev" title="prev">prv</a>
@@ -855,8 +855,8 @@ mpvc_web_setup()
         # setup http webroot
         echo "# $PROGNAME Setup $MPVC_WEB_ROOT"
         mkdir -p "${MPVC_WEB_ROOT%/*}"
-        mkdir -m 0700 "$MPVC_WEB_ROOT" || return
-        mkdir -m 0700 "$MPVC_WEB_CGI_DIR" || return
+        mkdir -p "$MPVC_WEB_ROOT" && chmod 700 "$MPVC_WEB_ROOT" || return
+        mkdir -p "$MPVC_WEB_CGI_DIR" && chmod 700 "$MPVC_WEB_CGI_DIR" || return
 
         cd "$MPVC_WEB_ROOT" || return
         chmod -R u+w "${MPVC_WEB_ROOT%/*}"
@@ -923,7 +923,6 @@ mpvc_web()
     (
         cd "$MPVC_WEB_ROOT" || return
 
-        # XXX handle cli commands, rewrite this mess
         mpvc_web_envclean python3 -u -m http.server --cgi --bind "$MPVC_WEB_HOST" "$MPVC_WEB_PORT" "$@" 2>&1 |
             #mawk -W interactive -v mpvcbin="$MPVC_WEB_CGI_FILE"
             mpvc_web_envclean awk -v mpvcbin="$MPVC_WEB_CGI_FILE" \
@@ -933,7 +932,7 @@ mpvc_web()
 
         BEGIN {
             system("env")
-            allowCmdStr = "mpv clear kill --mute toggle play start stop prev next playrand shuffle unshuffle repeat single replay togglev aspect togglew togglef togglei creplay cloop cprev cnext cplayrand cycle-volume"
+            allowCmdStr = "mpv clear kill mute toggle play start stop prev next playrand shuffle unshuffle repeat single replay togglev aspect togglew togglef togglei creplay cloop cprev cnext cplayrand cycle-volume"
             n = split(allowCmdStr, a, /[[:space:]]+/)
             for (i = 1; i <= n; i++) { allowCmdList[a[i]] = 1; }
         }
