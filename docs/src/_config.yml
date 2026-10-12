@@ -21,11 +21,12 @@
 title: mpvc
 version: v1.9
 email: gmt4@localhost
-tagline: A fast, mpc-like CLI control interface for the mpv media player.
+tagline: A fast, mpc-like control interface for the mpv media player.
 description: A fast, mpc-like control interface for the mpv media player.
 baseurl: "/mpvc"              # the subpath of your site, e.g. /blog
 url: "https://gmt4.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 github_username:  gmt4
+image: "/assets/mpvc-tui.png"
 
 aux_links:
   "site":  "https://gmt4.github.io/mpvc/"

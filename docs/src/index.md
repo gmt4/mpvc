@@ -1,10 +1,12 @@
 ---
 layout: default
+title: "mpvc | A fast, mpc-like control interface for the mpv media player."
+description: "A fast, cross-platform mpc-like control interface for mpv. Manage playlists, streaming links, and volume natively using POSIX shell pipelines."
+image: "/assets/mpvc-tui.png"
 last_modified_date: 2026-09-26
 ---
 
 <!--
-title: "mpvc: The Modern mpv Control Interface"
 description: "A fast, lightweight mpc-like control interface for the mpv media player, built in POSIX shell."
 -->
 
@@ -15,7 +17,6 @@ description: "A fast, lightweight mpc-like control interface for the mpv media p
     An mpc-like control interface for the mpv media player. A fast, cross-platform tool built for the terminal and modern shell workflows.
   </p>
 
-  <!-- Native Just the Docs Button Group -->
   <div style="display: flex; gap: 1rem; justify-content: center; align-items: center; flex-wrap: wrap;">
     <a href="get-started.html" class="btn btn-purple fs-4">Get Started</a>
     <a href="screen-cast.html" class="btn btn-purple fs-4">Show Demo</a>
@@ -25,7 +26,6 @@ description: "A fast, lightweight mpc-like control interface for the mpv media p
 
 ---
 
-<!-- 2. FEATURES GRID AREA (Note the explicit markdown="1" attribute) -->
 ## Why mpvc?
 
 <div class="grid cards" markdown="1">
