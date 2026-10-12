@@ -388,11 +388,6 @@ mpvc_web_index()
             <a class=btn href="?cmd=mpvc play $">end</a>
             <a class=btn href="?cmd=mpvc prev" title="prev">prv</a>
             <a class=btn href="?cmd=mpvc next" title="next" ${MPVC_WEB_SHORTCUT_NEXT}>nxt</a>
-
-            <!--
-            <a class=btn href="?cmd=mpvc seek -10" title="seek fwd">s-</a>
-            <a class=btn href="?cmd=mpvc seek +10" title="seek bwd">s+</a>
-            -->
         </fieldset>
 
         <fieldset class="control-group">
