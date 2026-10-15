@@ -4,12 +4,10 @@ Contribute answers in a `Q: A:` format to your favorite Frequently Asked Questio
 
 ## Companion tools
 
-* [fish](https://github.com/fish-shell/fish-shell)
-* [fzf](https://github.com/junegunn/fzf)
-* [cava](https://github.com/karlstav/cava)
 * [beets](https://github.com/beetbox/beets)
-* [easyeffects](https://github.com/wwmm/easyeffects)
+* [cava](https://github.com/karlstav/cava)
 * [copyparty](https://github.com/9001/copyparty)
+* [easyeffects](https://github.com/wwmm/easyeffects)
 * [rescrobbled](https://github.com/InputUsername/rescrobbled)
 * [Home Assistant "Assist"](https://www.home-assistant.io/voice_control/)
 
