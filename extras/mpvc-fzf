@@ -323,7 +323,7 @@ mpvcfzf_thumb_somafm()
     channel=${channel%-*}
 
     mpvcfzf_feeds_search "$MPVC_FZF_SOMAFM_FILE" "https://somafm.com/channels.json" '.' |
-        jq -j '.channels | .[] | select(.id == "'"$channel"'") | .largeimage'
+        jq --arg chan "$channel" -j '.channels | .[] | select(.id == $chan) | .largeimage'
 }
 
 mpvcfzf_thumb_rp()
