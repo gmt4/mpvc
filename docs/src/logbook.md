@@ -461,11 +461,11 @@ This approach has some limitations, lets say, sometimes you want to
 fully disable mpvc-autopilot for a time, because:
 
 1.  Disable mpvc-autopilot from resuming audio, because you want to
-    concentrate and don't want music messing around.  
+    concentrate and don't want music messing around.
     Solution: just use the phone to access `mpvc-web` and set
     `mpvc vol 0` for a time.
 2.  Disable mpvc-autopilot from pausing audio, because your phone
-    disables wifi, so the audio gets paused when you don't want.  
+    disables wifi, so the audio gets paused when you don't want.
     Solution: as explained above playing with PERIOD and NCHECK
     parameters, increase the time without pauses, for example NCHECK=6
     or NCHECK=12 will pause audio when the device is not seen for 30 or
@@ -622,7 +622,7 @@ work directly for controlling Media players.
 Check [mpv-mpris](https://github.com/hoyon/mpv-mpris) for docs/setup,
 below is a quick setup:
 ` mkdir -p ~/.config/mpv/scripts; curl -fsSL -o ~/.config/mpv/scripts/mpris.so https://github.com/hoyon/mpv-mpris/releases/download/1.0/mpris.so `
-Then, start a new instance of mpv player that loads \`mpris.so\`  
+Then, start a new instance of mpv player that loads \`mpris.so\`
 Check that mpv speaks MPRIS by running \`mpvc-mpris status\`, or get
 [playerctl](https://github.com/altdesktop/playerctl)
 
@@ -814,6 +814,19 @@ recently, mainly focused on improving the mpvc-web,
 - Complete UI web interface rework
 - Dark/Light theme support
 - Performance improvements
+
+## Recent changes, 2 October 2026
+
+During the last months many things have landed in mpvc, among them are
+
+- Updates to documentation: 
+  - On the on-line side this includes both the repo README.md, as well as the website you are reading. 
+  - On the off-line side, each tool has now its manpage installed under `$HOME`, then the manpages are used do document each tool usage, and also to generate completions for the shells (bash/zsh/fish so far).
+- Updates to the tools:
+  - The mpvc-web can now work as as PWA (Progressive Web App) that can be installed on a mobile device.
+  - The mpvc-web also added support for p12 client/server-ca certificates so a trusted connection is recognized by the mobile device.
+  
+- LAN P2P: work in-progress, this is currently possible through mpvc-fzf custom feeds.
 
 # The End
 

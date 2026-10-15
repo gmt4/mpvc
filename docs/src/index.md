@@ -40,7 +40,7 @@ description: "A fast, lightweight mpc-like control interface for the mpv media p
 
 - 🎯 **Only Run What Changed**
 
-    Lightning-fast command execution layer powered entirely by zero-overhead standard coreutils utilities like `socat` and `gawk`.
+    Lightning-fast command execution layer powered entirely by zero-overhead standard coreutils utilities like `socat` and `awk`.
 
 - 🔗 **One Terminal, Every Tool**
 

@@ -59,7 +59,7 @@ check-update
 : Query the remote upstream Git repository to discover available software updates.
 
 check-reqs
-: Check the current mpvc installation, checking that required tools/deps are present, and their versions (`mpv`, `socat`, `gawk`).
+: Check the current mpvc installation, checking that required tools/deps are present, and their versions (`mpv`, `socat`, `awk`).
 
 config
 : Fetch the standard global baseline `mpv` communication parameters and configuration targets.
@@ -141,7 +141,7 @@ Completely purge and clean up environment trails introduced via the quickstart i
 
     mpvc-installer quickstart-rm
 
-Audit your current install for required tools/versions (such as socat or gawk):
+Audit your current install for required tools/versions (such as socat or awk):
 
     mpvc-installer check-reqs
 

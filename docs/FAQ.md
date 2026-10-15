@@ -7,6 +7,7 @@ Contribute answers in a `Q: A:` format to your favorite Frequently Asked Questio
 * [fish](https://github.com/fish-shell/fish-shell)
 * [fzf](https://github.com/junegunn/fzf)
 * [cava](https://github.com/karlstav/cava)
+* [beets](https://github.com/beetbox/beets)
 * [easyeffects](https://github.com/wwmm/easyeffects)
 * [copyparty](https://github.com/9001/copyparty)
 * [rescrobbled](https://github.com/InputUsername/rescrobbled)
@@ -26,7 +27,7 @@ Contribute answers in a `Q: A:` format to your favorite Frequently Asked Questio
 The current focus is on GNU/Linux OSes, however, as BSDs as Open/Free/Net BSD are UNIX with POSIX-sh, support is easy thanks to [pkg(1)](https://man.freebsd.org/cgi/man.cgi?pkg):
 
 
-    pkg install -y mpv curl socat fzf rlwrap jq libnotify # gawk gsed
+    pkg install -y mpv curl socat fzf rlwrap jq libnotify # awk gsed
 
 ⚠️ *Note*. When installing mpvc on BSD remember that BSD ships with different commands from the standard ones found in GNU/Linux. Since mpvc is targeted at GNU/Linux, mpvc expects its GNU command versions, instead of the BSD versions, like, ksh(1), sed(1), awk(1) etc. So, for now, in case of error, ensure that mpvc picks the GNU versions of the commands (easy to do by giving them preference on PATH).
 
@@ -34,7 +35,7 @@ The current focus is on GNU/Linux OSes, however, as BSDs as Open/Free/Net BSD ar
 
 The current focus is on GNU/Linux OSes, yet mpvc support on Mac is easy thanks to [brew](https://brew.sh/):
 
-    brew install mpv socat fzf rlwrap jq yt-dlp # gawk gnu-sed
+    brew install mpv socat fzf rlwrap jq yt-dlp # awk gnu-sed
 
 ⚠️ *Note*. When installing mpvc on Mac remember that macOS ships the BSD versions of sed, awk, etc that differ from the GNU/Linux ones, therefore be sure to read [BSD support](#bsd-support)
 

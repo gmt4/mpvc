@@ -165,7 +165,7 @@ For more  check the  [LogBook](#logbook) (remember your best chance is to try, p
 Debian (and APT derivatives such as Ubuntu):
 
 ```console
-apt install mpv gawk curl socat fzf rlwrap jq libnotify-bin # cava
+apt install mpv awk curl socat fzf rlwrap jq libnotify-bin # cava
 ```
 
 ### Arch [mpvc-git](https://aur.archlinux.org/packages/mpvc-git)
@@ -174,7 +174,7 @@ Arch (and derivatives):
 
 ```console
 pacaur -y mpvc-git
-pacman -Sy mpv gawk curl socat fzf rlwrap jq libnotify # cava
+pacman -Sy mpv awk curl socat fzf rlwrap jq libnotify # cava
 ````
 
 ### BSD
