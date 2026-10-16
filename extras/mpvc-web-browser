@@ -313,7 +313,7 @@ handle_listing()
                 </span>
                 <form action='$PROGNAME?browser&mode=$mode&action=playlist-add' method='POST' style='display:inline;'>
                     <button type='submit' class='btn-compact'>+</button>
-                    <input type='hidden' name='item' value=$item>
+                    <input type='hidden' name='item' value='$item'>
                 </form>
             </div>"
         fi
@@ -336,7 +336,7 @@ handle_listing()
                     <span class='file-name'><a href='${media_file}'>🎵${name}</a></span>
                     <form action='$PROGNAME?browser&mode=$mode&action=playlist-add' method='POST' style='display:inline;'>
                         <button type='submit' class='btn-compact'>+</button>
-                        <input type='hidden' name='item' value=$item>
+                        <input type='hidden' name='item' value='$item'>
                     </form>
                 </div>"
                 ;;
