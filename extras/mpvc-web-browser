@@ -267,8 +267,9 @@ handle_action()
     stash-apply)    "$MPVC" -q stash apply "$itemn" ;;
     stash-append)   "$MPVC" -q stash append "$itemn" ;;
     equalizer-load) "$MPVC-equalizer" load "$item" ;;
+    playlist-add)   "$MPVC" -q add "$item" ;;
+    playlist-add1)  "$MPVC" -q add "$item1" ;;
     playlist-play)  "$MPVC" -q play "$item1" ;;
-    playlist-add)   "$MPVC" -q add "$item1" ;;
     playlist-rm)    "$MPVC" -q rm "$item1" ;;
     chapter-play)   "$MPVC" -q chapter-play "$item1" ;;
     esac
@@ -380,34 +381,34 @@ handle_equalizer()
 
 handle_feeds()
 {
-    handle_generic "$MPVC-fzf feed" "" "playlist-add:▶️:btn-compact"
+    handle_generic "$MPVC-fzf feed" "" "playlist-add1:▶️:btn-compact"
 }
 
 handle_yewtube()
 {
     filter=$(gup 'filter=[^&]*' "$QUERY_STRING")
-    handle_generic "$MPVC-fzf search $filter" "" "playlist-add:▶️:btn-compact"
+    handle_generic "$MPVC-fzf search $filter" "" "playlist-add1:▶️:btn-compact"
 }
 
 handle_remote()
 {
     filter=$(gup 'filter=[^&]*' "$QUERY_STRING")
-    handle_generic "$MPVC-fzf search $filter" "" "playlist-add:▶️:btn-compact"
+    handle_generic "$MPVC-fzf search $filter" "" "playlist-add1:▶️:btn-compact"
 }
 
 handle_somafm()
 {
-    handle_generic "mpvc_csv $MPVC-fzf somafm-raw" "" "playlist-add:▶️:btn-compact"
+    handle_generic "mpvc_csv $MPVC-fzf somafm-raw" "" "playlist-add1:▶️:btn-compact"
 }
 
 handle_radioparadise()
 {
-    handle_generic "mpvc_csv $MPVC-fzf rp-raw" "" "playlist-add:▶️:btn-compact"
+    handle_generic "mpvc_csv $MPVC-fzf rp-raw" "" "playlist-add1:▶️:btn-compact"
 }
 
 handle_customfeed()
 {
-    handle_generic "mpvc_csv $MPVC-fzf custom-raw" "" "playlist-add:▶️:btn-compact"
+    handle_generic "mpvc_csv $MPVC-fzf custom-raw" "" "playlist-add1:▶️:btn-compact"
 }
 
 handle_generic()
