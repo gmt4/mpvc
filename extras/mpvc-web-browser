@@ -296,18 +296,16 @@ handle_listing()
 {
     ENC_CURRENT_DIR=$(printf '%s' "$REQ_DIR" | sed 's/ /%20/g')
 
-    dir_list=$(set +f; for d in "$RESOLVED_PATH"/*/; do if [ -d "$d" ]; then printf '%s\n' "$d"; fi; done)
-    fil_list=$(set +f; for d in "$RESOLVED_PATH"/*;  do if [ -f "$d" ]; then printf '%s\n' "$d"; fi; done)
-
-    item_list=$(
-    for item in "." ".." $dir_list $fil_list;
+    dir_list=$(
+    set +f
+    for item in "." ".." "$RESOLVED_PATH"/*
     do
         name=$(basename "${item}")
-        case "$name" in .);; ..);; .*) continue ;; esac
         enc_dir=$(printf '%s/%s' "$REQ_DIR" "$name" | tr -s '/' | sed 's/ /%20/g')
-
+        case "$name" in .) ;; ..) ;; .*) continue ;; esac
         # Handle subdirectories
         if [ -d "$item" ]; then
+            name=$(basename "${item}")
             echo "
             <div class='row dir-row'>
                 <span class='dir-name'>
@@ -319,6 +317,15 @@ handle_listing()
                 </form>
             </div>"
         fi
+    done
+    )
+
+    file_list=$(
+    set +f
+    for item in "$RESOLVED_PATH"/*
+    do
+        name=$(basename "${item}")
+        case "$name" in .) ;; ..) ;; .*) continue ;; esac
         # Handle files: audio / non-audio
         if [ -f "$item" ]; then
             media_file="${MEDIA_URL}${item##"$MEDIA_ROOT"}"
@@ -344,7 +351,7 @@ handle_listing()
     )
 
     HTML_BODY=$(html_body_open)
-    HTML_BODY="${HTML_BODY}${item_list}"
+    HTML_BODY="${HTML_BODY}${dir_list}${file_list}"
     HTML_BODY="${HTML_BODY}$(html_body_close)"
 
     # Handle the request
