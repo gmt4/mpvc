@@ -84,10 +84,10 @@ find ~/Music -name "*.mp3" | mpvc load  # Pipe local directories into the active
 ## 2. Interactive Search Controls (mpvc-fzf)
 ```bash
 mpvc-fzf -f         # Launch fzf to visually manage your current playlist queue
-mpvc-fzf -p 'query' # Search on Invidious/YouTube and stream matching audio
-mpvc-fzf --rp       # Instantly search and play live RadioParadise audio feeds
-mpvc-fzf --lofi     # Instantly search and play live Lo-Fi audio feeds
-mpvc-fzf --somafm   # Browse and stream live background channels from SomaFM
+mpvc-fzf -p 'query' # Search and play Invidious/YouTube videos
+mpvc-fzf --rp       # Search and play live RadioParadise audio feeds
+mpvc-fzf --lofi     # Search and play live Lo-Fi audio feeds
+mpvc-fzf --somafm   # Search and play live SomaFM audio feeds
 ```
 
 ## 3. Web Browser Control (mpvc-web)
