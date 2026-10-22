@@ -917,10 +917,11 @@ mpvc_chapter_search_play()
 
 ## Formatting and Printing Functions ##########################################
 
-# formats and prints according to $MPVC_FMTSTR
-mpvc_print_status() {
-    # not that nice, in fact way more ugly, but also way faster
-    F=$(echo "$MPVC_FMTSTR" |
+# formats and prints according to "$1" ($MPVC_FMTSTR)
+mpvc_status() {
+    fmtstr="${1:-"$MPVC_FMTSTR"}"
+    trunclen="${2:-0}"
+    F=$(echo "$fmtstr" |
         awk '
         {
             split("year genre album icy-title comment volume volume-max working-directory mute shuffle filename path height width playback-time ab-loop-[ab] speed force-window video screen aspect idle fullscreen chapter chapters =chapter", RE)
@@ -957,20 +958,23 @@ mpvc_print_status() {
         }
         '
     )
-    # trim/replace times: 00:01:59 -> 01:59
+    # trim/replace times: 00:01:59 -> 01:59 # trunc only %title% # XXX
     mpvc_cmd "expand-text" "${F}" |
-        awk '
+        awk -v tlen=$trunclen '
             BEGIN{ isgawk = PROCINFO["platform"]; cr = isgawk ? "\\r" : "\\\\r"; }
-            { gsub(" "cr,"\n"); gsub(" -?00:", " "); gsub("/00:", "/"); print }'
+            {
+                gsub(" "cr,"\n"); gsub(" -?00:", " "); gsub("/00:", "/");
+                print (tlen > 0 && length($0) > tlen) ? substr($0, 1, tlen-3) "..." : $0;
+            }'
 }
 
-mpvc_print_status_final() {
+mpvc_status_final() {
     if [ "$QUIETFLAG" = "true" ]; then return; fi
     # catches if mpv is idle or not
     case "$(mpvc_get idle-active)" in
     "true") warn "MPV on ${MPVC_SOCKET##"$HOME/"} is currently idle."; return;;
     esac
-    mpvc_print_status
+    mpvc_status "$MPVC_FMTSTR"
 }
 
 ## Misc Functions #############################################################
@@ -1246,7 +1250,7 @@ main() {
 
             --hifi|hifi)                     MPVC_FMTSTR="$MPVC_FMTSTR_DFLT" ;;
             --lowfi|lowfi)                   MPVC_FMTSTR="$MPVC_FMTSTR_LOFI" ;;
-            --status|status)                 ;;
+            --status|status|st)              shift; mpvc_status "$@"; QUIETFLAG=true;;
             --cstatus|cstatus|cs)            MPVC_FMTSTR=$(echo "$MPVC_FMTSTR"|sed 's/%title%/%chapter%/') ;;
             --config|config)                 "${EDITOR:-vi}" "${MPVC_CONFIG}"; QUIETFLAG=true;;
             --ascii|ascii)                   mpvc_ascii; return;;
@@ -1269,7 +1273,7 @@ main() {
         if [ $# -ge 1 ]; then shift; fi
     done
     # output mpvc status last
-    quietcheck mpvc_print_status_final
+    quietcheck mpvc_status_final
 }
 
 quietcheck main "$@"
