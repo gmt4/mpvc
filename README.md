@@ -22,7 +22,7 @@ curl -fsSLO https://github.com/gmt4/mpvc/raw/master/extras/mpvc-installer;
 BINDIR=$HOME/bin SHELL=/bin/sh $SHELL ./mpvc-installer quickstart
 ```
 
-*Prefer using package managers like Homebrew, Nix, Pkg, Gentoo, BSD or the Arch AUR? See the **[Detailed Installation steps in docs/README.md](https://github.com/gmt4/mpvc/docs/README.md#installation)**.*
+*Prefer using package managers like Homebrew, Nix, Pkg, Gentoo, BSD or the Arch AUR? See the **[Detailed Installation steps in docs/README.md](docs/README.md#installation)**.*
 
 ---
 

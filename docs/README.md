@@ -77,6 +77,7 @@ Recommended extras:
 - `jq`
 - `notify-send`
 - `yt-dlp`
+- `beets`
 - `cava`
 
 >[!WARNING]

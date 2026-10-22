@@ -132,7 +132,7 @@ Logbook
 : [https://gmt4.github.io/mpvc/logbook.html](https://gmt4.github.io/mpvc/logbook.html)
 
 FAQ
-: [https://github.com/gmt4/mpvc/docs/FAQ.md](docs/FAQ.md)
+: [https://github.com/gmt4/mpvc/blob/master/docs/FAQ.md](docs/FAQ.md)
 
 <!--
     📅 Mon, 15 Jun 2026 by gmt4
