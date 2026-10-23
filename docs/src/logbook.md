@@ -815,18 +815,9 @@ recently, mainly focused on improving the mpvc-web,
 - Dark/Light theme support
 - Performance improvements
 
-## Recent changes, 2 October 2026
+## Recent project updates and documentation/manpages, 2 October 2026
 
-During the last months many things have landed in mpvc, among them are
-
-- Updates to documentation: 
-  - On the on-line side this includes both the repo README.md, as well as the website you are reading. 
-  - On the off-line side, each tool has now its manpage installed under `$HOME`, then the manpages are used do document each tool usage, and also to generate completions for the shells (bash/zsh/fish so far).
-- Updates to the tools:
-  - The mpvc-web can now work as as PWA (Progressive Web App) that can be installed on a mobile device.
-  - The mpvc-web also added support for p12 client/server-ca certificates so a trusted connection is recognized by the mobile device.
-  
-- LAN P2P: work in-progress, this is currently possible through mpvc-fzf custom feeds.
+During the last months many things have landed in mpvc, notably documentation, manpages, and shell completions. And also discovered [beets](https://beets.io) which is kind of amazing when combined with `mpvc(1)`.
 
 # The End
 
