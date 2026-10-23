@@ -35,7 +35,7 @@ mpvc_web_defaults()
     : "${MPVC_WEB_HOSTNAME:=$(hostname)}"
     : "${MPVC_WEB_HOST:=localhost}"
     : "${MPVC_WEB_PORT:=8888}"
-    : "${MPVC_WEB_ROOT:=${XDG_DATA_HOME}/mpvc-web/root}"
+    : "${MPVC_WEB_ROOT:=${XDG_DATA_HOME}/mpvc/web/root}"
     : "${MPVC_WEB_SSL_PORT:=8443}"
     : "${MPVC_WEB_SSL_PEM:=$MPVC_WEB_ROOT/../ssl.pem}"
     : "${MPVC_WEB_SSL_PID:=$MPVC_WEB_ROOT/../ssl.pid}"
