@@ -363,7 +363,7 @@ handle_listing()
 handle_beets()
 {
     filter=$(gup 'filter=[^&]*' "$QUERY_STRING")
-    handle_generic "beet ls -p ${filter:-limit:20}" "" "playlist-add:➕:btn-compact"
+    handle_generic "beet ls -p ${filter}" "" "playlist-add:➕:btn-compact"
 }
 
 handle_stash()
