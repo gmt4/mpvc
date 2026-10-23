@@ -105,8 +105,9 @@ html_body_open()
     <option value=media>        Media
     <option value=yewtube>      YewtuBe
     <option value=stash>        Stash
-    <option value=feeds>        Feeds
+    <option value=beets>        Beets
 
+    <option value=feeds>        Feeds
     <option value=somafm>       SomaFM
     <option value=radioparadise>    RadioParadise
     <option value=customfeed>       CustomFeed
@@ -359,6 +360,12 @@ handle_listing()
     write_request "$HTML_BODY" "text/html"
 }
 
+handle_beets()
+{
+    filter=$(gup 'filter=[^&]*' "$QUERY_STRING")
+    handle_generic "beet ls -p ${filter:-limit:20}" "" "playlist-add:➕:btn-compact"
+}
+
 handle_stash()
 {
     handle_generic "$MPVC stash ls" "" "stash-apply:▶️:btn-compact" "stash-append:➕:btn-compact"
@@ -467,6 +474,7 @@ mpvc_browser()
     stash)          handle_stash ;;
     equalizer)      handle_equalizer ;;
 
+    beets)          handle_beets ;;
     feeds)          handle_feeds ;;
     somafm)         handle_somafm ;;
     radioparadise)  handle_radioparadise ;;
