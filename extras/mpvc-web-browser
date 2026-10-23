@@ -98,19 +98,19 @@ html_body_open()
     <input type='hidden' name='browser'>
 
     <select id='libMode' name=mode class='flex-fixed' onchange=this.form.submit() title='Mode (ProTip: accesskey=m)' accesskey=m>
-    <option value=playlist>  Playlist
-    <option value=chapters>  Chapters
-    <option value=equalizer> Equalizer
+    <option value=playlist      title='Current Playlist'>Playlist</option>
+    <option value=chapters      title='Internal Track Marks'>Chapters</option>
+    <option value=equalizer     title='Audio Controls'>Equalizer</option>
 
-    <option value=media>        Media
-    <option value=yewtube>      YewtuBe
-    <option value=stash>        Stash
-    <option value=beets>        Beets
+    <option value=stash         title='Saved Stashes'>Stash</option>
+    <option value=media         title='Local Media'>Media</option>
+    <option value=beets         title='Music Metadata Search'>Beets</option>
+    <option value=yewtube       title='YouTube Search'>YewtuBe</option>
 
-    <option value=feeds>        Feeds
-    <option value=somafm>       SomaFM
-    <option value=radioparadise>    RadioParadise
-    <option value=customfeed>       CustomFeed
+    <option value=feeds         title='Feeds Stream'>Feeds</option>
+    <option value=somafm        title='Radio Stream'>SomaFM</option>
+    <option value=radioparadise title='Radio Stream'>RadioParadise</option>
+    <option value=customfeed    title='Custom Feeds'>CustomFeed</option>
     </select>
 
     <input type='text' id='libSearch' name='filter' class='flex-grow' oninput='filterFiles()' onkeydown='filterKeyDown(event)' placeholder='🔍 Type to filter items ...' autocomplete='off' title='Search (ProTip: accesskey=s)' accesskey=s>
