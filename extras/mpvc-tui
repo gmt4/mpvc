@@ -151,6 +151,7 @@ mpvctui_watcher()
     chapters=$(equiet mpvc get chapters)
     if [ $(($mpvctui_count % 3)) -eq 0 ] && [ -n "$chapters" ] && [ "$chapters" != "null" ] && [ "$chapters" -ne 0 ]; then
         show_chapters=true
+        mpvctui_clear
     fi
 
     if [ "$tuimode" = "ttt" ] || [ "$tuimode" = "tt" ]; then
@@ -204,6 +205,9 @@ mpvctui_input()
     esac
 }
 
+mpvctui_cup()   { printf "${MPVC_TUI_CUP}"; }
+mpvctui_clear() { printf "${MPVC_TUI_CLEAR}"; }
+
 mpvctui_watch()
 {
     tuimode="${1:-}"
@@ -212,8 +216,8 @@ mpvctui_watch()
     while :
     do
         output=$(mpvctui_watcher "$tuimode" 2>&1)
-        if [ $(( mpvctui_count % MPVC_TUI_CLEARC )) -eq 0 ]; then printf "${MPVC_TUI_CLEAR}"; fi
-        printf "${MPVC_TUI_CUP}"
+        if [ $(( mpvctui_count % MPVC_TUI_CLEARC )) -eq 0 ]; then mpvctui_clear; fi
+        mpvctui_cup
         printf "%s" "$output"
         mpvctui_count=$(( mpvctui_count + 1 ))
         sleep "$MPVC_TUI_UPDATEC"
