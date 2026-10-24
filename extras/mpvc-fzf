@@ -422,6 +422,13 @@ mpvcfzf_iplay()
             mpvcfzf_awk 1
 }
 
+mpvcfzf_beet()
+{
+    beet ls -p "$@" |
+        mpvcfzf_preview --prompt="(beets) " |
+            mpvcfzf_awk 1
+}
+
 mpvcfzf_localfind()
 {
     (
@@ -754,9 +761,9 @@ usage: $PROGNAME opts # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
   -v|version    : Return the $PROGNAME version.
 
     (--)now     : Return a shareable URL to the "now listening" playlist
+    (--)beet    : Search & play using beets(1)
     (--)feed    : Search & play feeds channels
 
-    (--)lofi    : Search & play Lo-Fi channels
     (--)somafm  : Search & play SomaFM channels
     (--)rp      : Search & play RadioParadise channels
     (--)rapi    : Search & play Radio-Browser API channels
@@ -829,6 +836,7 @@ main()
 
         --now|now)              shift; mpvcfzf_now "${1:-}"; return ;;
 
+        --beet|beet)            shift; mpvcfzf_beet "${@:-}"; return ;;
         --feed|feed)            shift; mpvcfzf_feed_list "${@:-}"; return ;;
         --lofi|lofi)            shift; mpvcfzf_feed_lofi "${1:-}"; return ;;
         --somafm|somafm)        shift; mpvcfzf_feed_somafm_std "${1:-}"; return ;;
