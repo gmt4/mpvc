@@ -29,35 +29,37 @@ SYNOPSIS
       -G|Fetch      : Search on Invidious, fetch, and store locally
       -i|lyrics     : Search given media lyrics on Invidious
       -I|Lyrics     : Search given media lyrics on DDG
-      -k|dplay      : Search n play DuckDuckGo videos
+      -k|dplay      : Search & play DuckDuckGo videos
       -K|dsearch    : Search DuckDuckGo videos
-      -l|local      : Search n play local media at $1 (handy to pipe to m load)
+      -l|local      : Search & play local media at $1 (handy to pipe to m load)
       -q|quality    : Select and change yt-dlp video quality (ytdl-format)
-      -r|explorer   : Shortcut to search n play local media at ytdl-archive/
+      -r|explorer   : Shortcut to search & play local media at ytdl-archive/
       -R|Explorer   : Shortcut to search local media at ytdl-archive/
       -s|search     : Search on Invidious
       -S|socket     : Set mpv socket [default: ].
      -SS|socklist   : Select and set the current mpv socket to operate
       -t|thumbnail  : Retrieve thumbnail_url from metadata of the current YT-URL
       -T|Thumbnail  : Display thumbnail_url from metadata of the provided YT-URL
-      -p|splay      : Search n play media found using Invidious
+      -p|splay      : Search & play media found using Invidious
       -u|url        : Search the given YT URL (supports vids,channels,playlist feeds)
-      -U|Url        : Search n play the given YT URL
+      -U|Url        : Search & play the given YT URL
       -x|launch     : Starts mpvc-fzf in a new xterm (config $MPVC_TERM) [combine -x with other opts]
       -y|related    : Search related media on Invidious
-      -Y|Related    : Search n play related media using Invidious
+      -Y|Related    : Search & play related media using Invidious
       -z|relatedo   : Search current media-title on Invidious and return related media
       -v|version    : Return the mpvc-fzf version.
 
         (--)now     : Return a shareable URL to the "now listening" playlist
-        (--)lofi    : Search n play Lo-Fi channels
-        (--)somafm  : Search n play SomaFM channels
-        (--)rapi    : Search n play Radio-Browser API channels
-        (--)ntsr    : Search n play NTS-Radio API channels
-        (--)custom  : Search n play your custom feeds (channels, playlists, ...)
+        (--)beet    : Search & play using beets(1)
+        (--)feed    : Search & play feeds channels
+
+        (--)somafm  : Search & play SomaFM channels
+        (--)rp      : Search & play RadioParadise channels
+        (--)rapi    : Search & play Radio-Browser API channels
+        (--)ntsr    : Search & play NTS-Radio API channels
+        (--)custom  : Search & play your custom feeds (channels, playlists, ...)
         custom-gen  : Generate a template for your custom feeds (channels, playlists, ...)
         invid-list  : List available Invidious instances (set MPVC_FZF_INVID_URL)
-
     *tips: If unsure about where to begin, start: mpvc-fzf -p 'kupla mirage'
 
 DESCRIPTION

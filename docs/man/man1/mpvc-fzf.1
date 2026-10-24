@@ -1,4 +1,18 @@
 .\"
+.\" Define V font for inline verbatim, using C font in formats
+.\" that render this, and otherwise B font.
+.ie "\f[CB]x\f[]"x" \{\
+. ftr V B
+. ftr VI BI
+. ftr VB B
+. ftr VBI BI
+.\}
+.el \{\
+. ftr V CR
+. ftr VI CI
+. ftr VB CB
+. ftr VBI CBI
+.\}
 .TH "mpvc-fzf" "1" "April, 2026" "" ""
 .hy
 .SH NAME
@@ -22,35 +36,37 @@ usage: mpvc-fzf opts # \[at]version v1.9 (c) gmt4 https://github.com/gmt4/mpvc
   -G|Fetch      : Search on Invidious, fetch, and store locally
   -i|lyrics     : Search given media lyrics on Invidious
   -I|Lyrics     : Search given media lyrics on DDG
-  -k|dplay      : Search n play DuckDuckGo videos
+  -k|dplay      : Search & play DuckDuckGo videos
   -K|dsearch    : Search DuckDuckGo videos
-  -l|local      : Search n play local media at $1 (handy to pipe to m load)
+  -l|local      : Search & play local media at $1 (handy to pipe to m load)
   -q|quality    : Select and change yt-dlp video quality (ytdl-format)
-  -r|explorer   : Shortcut to search n play local media at ytdl-archive/
+  -r|explorer   : Shortcut to search & play local media at ytdl-archive/
   -R|Explorer   : Shortcut to search local media at ytdl-archive/
   -s|search     : Search on Invidious
   -S|socket     : Set mpv socket [default: ].
  -SS|socklist   : Select and set the current mpv socket to operate
   -t|thumbnail  : Retrieve thumbnail_url from metadata of the current YT-URL
   -T|Thumbnail  : Display thumbnail_url from metadata of the provided YT-URL
-  -p|splay      : Search n play media found using Invidious
+  -p|splay      : Search & play media found using Invidious
   -u|url        : Search the given YT URL (supports vids,channels,playlist feeds)
-  -U|Url        : Search n play the given YT URL
+  -U|Url        : Search & play the given YT URL
   -x|launch     : Starts mpvc-fzf in a new xterm (config $MPVC_TERM) [combine -x with other opts]
   -y|related    : Search related media on Invidious
-  -Y|Related    : Search n play related media using Invidious
+  -Y|Related    : Search & play related media using Invidious
   -z|relatedo   : Search current media-title on Invidious and return related media
   -v|version    : Return the mpvc-fzf version.
 
     (--)now     : Return a shareable URL to the \[dq]now listening\[dq] playlist
-    (--)lofi    : Search n play Lo-Fi channels
-    (--)somafm  : Search n play SomaFM channels
-    (--)rapi    : Search n play Radio-Browser API channels
-    (--)ntsr    : Search n play NTS-Radio API channels
-    (--)custom  : Search n play your custom feeds (channels, playlists, ...)
+    (--)beet    : Search & play using beets(1)
+    (--)feed    : Search & play feeds channels
+
+    (--)somafm  : Search & play SomaFM channels
+    (--)rp      : Search & play RadioParadise channels
+    (--)rapi    : Search & play Radio-Browser API channels
+    (--)ntsr    : Search & play NTS-Radio API channels
+    (--)custom  : Search & play your custom feeds (channels, playlists, ...)
     custom-gen  : Generate a template for your custom feeds (channels, playlists, ...)
     invid-list  : List available Invidious instances (set MPVC_FZF_INVID_URL)
-
 *tips: If unsure about where to begin, start: mpvc-fzf -p \[aq]kupla mirage\[aq]
 \f[R]
 .fi
@@ -68,122 +84,122 @@ selection, equalizer management, and playlist manipulation.
 .SH OPTIONS
 .SS Search and Playback
 .TP
-\f[B]\f[CB]-p\f[B]\f[R], \f[B]\f[CB]--splay\f[B]\f[R]
+\f[V]-p\f[R], \f[V]--splay\f[R]
 Search and play media on Invidious.
 .TP
-\f[B]\f[CB]-s\f[B]\f[R], \f[B]\f[CB]--search\f[B]\f[R]
+\f[V]-s\f[R], \f[V]--search\f[R]
 Search for media on Invidious without auto-playing.
 .TP
-\f[B]\f[CB]-U\f[B]\f[R], \f[B]\f[CB]--Url\f[B]\f[R]
+\f[V]-U\f[R], \f[V]--Url\f[R]
 Search and play from a given YouTube URL.
 .TP
-\f[B]\f[CB]-u\f[B]\f[R], \f[B]\f[CB]--url\f[B]\f[R]
+\f[V]-u\f[R], \f[V]--url\f[R]
 Search a given YouTube URL (videos, channels, playlists).
 .TP
-\f[B]\f[CB]-l\f[B]\f[R], \f[B]\f[CB]--local PATH\f[B]\f[R]
+\f[V]-l\f[R], \f[V]--local PATH\f[R]
 Search and play local media at the specified path.
 .TP
-\f[B]\f[CB]-k\f[B]\f[R], \f[B]\f[CB]--dplay\f[B]\f[R]
+\f[V]-k\f[R], \f[V]--dplay\f[R]
 Search and play videos from DuckDuckGo.
 .TP
-\f[B]\f[CB]-K\f[B]\f[R], \f[B]\f[CB]--dsearch\f[B]\f[R]
+\f[V]-K\f[R], \f[V]--dsearch\f[R]
 Search DuckDuckGo videos without auto-playing.
 .TP
-\f[B]\f[CB]-y\f[B]\f[R], \f[B]\f[CB]--related\f[B]\f[R]
+\f[V]-y\f[R], \f[V]--related\f[R]
 Search for related media on Invidious based on current selection.
 .TP
-\f[B]\f[CB]-Y\f[B]\f[R], \f[B]\f[CB]--Related\f[B]\f[R]
+\f[V]-Y\f[R], \f[V]--Related\f[R]
 Search and play related media on Invidious.
 .TP
-\f[B]\f[CB]-z\f[B]\f[R], \f[B]\f[CB]--relatedo\f[B]\f[R]
+\f[V]-z\f[R], \f[V]--relatedo\f[R]
 Search currently playing media on Invidious for related videos.
 .SS Download and Fetch
 .TP
-\f[B]\f[CB]-g\f[B]\f[R], \f[B]\f[CB]--fetch\f[B]\f[R]
+\f[V]-g\f[R], \f[V]--fetch\f[R]
 Fetch a YouTube URL and store locally.
 .TP
-\f[B]\f[CB]-G\f[B]\f[R], \f[B]\f[CB]--Fetch\f[B]\f[R]
+\f[V]-G\f[R], \f[V]--Fetch\f[R]
 Search Invidious, fetch the media, and store locally.
 .TP
-\f[B]\f[CB]-C\f[B]\f[R], \f[B]\f[CB]--cache\f[B]\f[R]
+\f[V]-C\f[R], \f[V]--cache\f[R]
 Search cache by URL for remote media.
 .TP
-\f[B]\f[CB]-r\f[B]\f[R], \f[B]\f[CB]--explorer\f[B]\f[R]
+\f[V]-r\f[R], \f[V]--explorer\f[R]
 Shortcut to search ytdl-archive directory.
 .TP
-\f[B]\f[CB]-b\f[B]\f[R], \f[B]\f[CB]--browse\f[B]\f[R]
+\f[V]-b\f[R], \f[V]--browse\f[R]
 Manage ytdl-archive URL collections.
 .SS Playlist and Media Management
 .TP
-\f[B]\f[CB]-f\f[B]\f[R], \f[B]\f[CB]--playlist\f[B]\f[R]
+\f[V]-f\f[R], \f[V]--playlist\f[R]
 Manage the current mpv playlist interactively with fzf.
 .TP
-\f[B]\f[CB]-a\f[B]\f[R], \f[B]\f[CB]--stash\f[B]\f[R]
+\f[V]-a\f[R], \f[V]--stash\f[R]
 Manage mpvc stashes (saved playlists or media collections).
 .TP
-\f[B]\f[CB]-c\f[B]\f[R], \f[B]\f[CB]--chapters\f[B]\f[R]
+\f[V]-c\f[R], \f[V]--chapters\f[R]
 Manage mpv chapter list interactively.
 .TP
-\f[B]\f[CB]-e\f[B]\f[R], \f[B]\f[CB]--eqz\f[B]\f[R]
+\f[V]-e\f[R], \f[V]--eqz\f[R]
 Manage equalizer settings with preset selection.
 .TP
-\f[B]\f[CB]-q\f[B]\f[R], \f[B]\f[CB]--quality\f[B]\f[R]
+\f[V]-q\f[R], \f[V]--quality\f[R]
 Select and change video quality for playback.
 .SS Metadata and Information
 .TP
-\f[B]\f[CB]-i\f[B]\f[R], \f[B]\f[CB]--lyrics\f[B]\f[R]
+\f[V]-i\f[R], \f[V]--lyrics\f[R]
 Search media lyrics on Invidious.
 .TP
-\f[B]\f[CB]-I\f[B]\f[R], \f[B]\f[CB]--Lyrics\f[B]\f[R]
+\f[V]-I\f[R], \f[V]--Lyrics\f[R]
 Search media lyrics on DuckDuckGo.
 .TP
-\f[B]\f[CB]-t\f[B]\f[R], \f[B]\f[CB]--thumbnail\f[B]\f[R]
+\f[V]-t\f[R], \f[V]--thumbnail\f[R]
 Retrieve thumbnail URL from media metadata.
 .TP
-\f[B]\f[CB]-T\f[B]\f[R], \f[B]\f[CB]--Thumbnail\f[B]\f[R]
+\f[V]-T\f[R], \f[V]--Thumbnail\f[R]
 Display thumbnail image from metadata.
 .SS Radio and Streaming Services
 .TP
-\f[B]\f[CB]--now\f[B]\f[R], \f[B]\f[CB]now\f[B]\f[R],
+\f[V]--now\f[R], \f[V]now\f[R],
 Return shareable \[dq]now listening\[dq] playlist with current media
 information.
 .TP
-\f[B]\f[CB]--lofi\f[B]\f[R], \f[B]\f[CB]lofi\f[B]\f[R]
+\f[V]--lofi\f[R], \f[V]lofi\f[R]
 Search and play Lo-Fi music channels.
 .TP
-\f[B]\f[CB]--somafm\f[B]\f[R], \f[B]\f[CB]somafm\f[B]\f[R]
+\f[V]--somafm\f[R], \f[V]somafm\f[R]
 Search and play SomaFM streaming channels.
 .TP
-\f[B]\f[CB]--rapi\f[B]\f[R], \f[B]\f[CB]rapi\f[B]\f[R]
+\f[V]--rapi\f[R], \f[V]rapi\f[R]
 Search and play stations from Radio Browser API.
 .TP
-\f[B]\f[CB]--ntsr\f[B]\f[R], \f[B]\f[CB]ntsr\f[B]\f[R]
+\f[V]--ntsr\f[R], \f[V]ntsr\f[R]
 Search and play stations from NTS Radio API.
 .TP
-\f[B]\f[CB]--custom\f[B]\f[R], \f[B]\f[CB]custom\f[B]\f[R]
+\f[V]--custom\f[R], \f[V]custom\f[R]
 Search and play custom media feeds.
 .TP
-\f[B]\f[CB]custom-gen\f[B]\f[R], \f[B]\f[CB]custom-gen\f[B]\f[R]
+\f[V]custom-gen\f[R], \f[V]custom-gen\f[R]
 Generate a custom feeds template for configuration.
 .TP
-\f[B]\f[CB]invid-list\f[B]\f[R]
+\f[V]invid-list\f[R]
 List available Invidious instances.
 .SS Socket and Display Options
 .TP
-\f[B]\f[CB]-S\f[B]\f[R], \f[B]\f[CB]--socket SOCKET\f[B]\f[R]
+\f[V]-S\f[R], \f[V]--socket SOCKET\f[R]
 Set the path to the mpv Unix socket for communication.
 .TP
-\f[B]\f[CB]-SS\f[B]\f[R], \f[B]\f[CB]--socklist\f[B]\f[R]
+\f[V]-SS\f[R], \f[V]--socklist\f[R]
 Select and set mpv socket from available sockets.
 .TP
-\f[B]\f[CB]-x\f[B]\f[R], \f[B]\f[CB]--launch\f[B]\f[R]
+\f[V]-x\f[R], \f[V]--launch\f[R]
 Start mpvc-fzf in a new xterm window.
 Information
 .TP
-\f[B]\f[CB]-v\f[B]\f[R], \f[B]\f[CB]--version\f[B]\f[R]
+\f[V]-v\f[R], \f[V]--version\f[R]
 Display mpvc-fzf version information.
 .TP
-\f[B]\f[CB]-h\f[B]\f[R], \f[B]\f[CB]--help\f[B]\f[R]
+\f[V]-h\f[R], \f[V]--help\f[R]
 Display help message with usage information.
 .SH EXAMPLES
 .PP
