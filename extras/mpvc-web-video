@@ -1,0 +1,341 @@
+#!/usr/bin/env sh
+#
+# @file mpvc-web-video
+# @description mpvc web, A hack to remotely control mpvc from web/http
+# @author gmt4 <gmt4 at github.com> (c) Copyright 2022 GPLv2+
+# @url github.com/gmt4/mpvc
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+
+PROGNAME=${0##*/}
+PROGVERSION="v1.9"
+PROGAUTHOR=gmt4
+PROGURL="https://github.com/gmt4/mpvc"
+
+set -euf
+
+# user config
+ARCHIVE_DIR="$HOME/.config/mpvc/ytdl-archive"
+MEDIA_URL_PREFIX="/ytdl-archive"
+FFMPEG_CMD="nice -n 19 ffmpeg -y -threads 1"
+FFMPEG_MAX_WORKERS=4
+
+# internal config
+THUMB_CACHE_DIR="$HOME/.cache/mpvc/web/video/mpvc-web-video-thumbs"
+CACHE_HTML_FILE="$HOME/.cache/mpvc/web/video/mpvc-web-grid-cache.html"
+CACHE_STATE_FILE="$HOME/.cache/mpvc/web/video/mpvc-web-grid-cache.state"
+WORKER_LOCK_DIR="$HOME/.cache/mpvc/web/video/ffmpeg-worker-lock"
+
+escape_html() {
+    echo "$1" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g; s/'"'"'/\&#39;/g'
+}
+
+url_encode() {
+    echo "$1" | sed 's/+/%2B/g; s/ /%20/g; s/&/%26/g; s/'"'"'/%27/g'
+}
+
+serve_thumbnail()
+{
+    filename="$1"
+    file_path="$ARCHIVE_DIR/$filename"
+
+    if [ ! -f "$file_path" ]; then
+        echo "Status: 404 Not Found"
+        echo "Content-type: text/plain"
+        echo ""
+        echo "Not Found"
+        exit 0
+    fi
+
+    hash_id=$(echo "$filename" | md5sum | cut -d' ' -f1)
+    target_thumb="$THUMB_CACHE_DIR/${hash_id}.jpg"
+
+    if [ ! -f "$target_thumb" ] || [ ! -s "$target_thumb" ]; then
+        raw_ext="${filename##*.}"
+        ext=$(echo "$raw_ext" | tr 'G-Z' 'g-z' | tr 'A-F' 'a-f')
+        rm -f "$target_thumb"
+        extract_art "$file_path" "$target_thumb" "$ext"
+    fi
+
+    if [ -f "$target_thumb" ] && [ -s "$target_thumb" ]; then
+        echo "Content-type: image/jpeg"
+        echo ""
+        cat "$target_thumb"
+    else
+        echo "Content-type: image/svg+xml"
+        echo ""
+        echo "<svg xmlns='http://w3.org' width='100' height='50' viewBox='0 0 100 50'><rect width='100%' height='100%' fill='%23222'/><text x='50%' y='60%' font-family='monospace' font-size='10' fill='%23666' text-anchor='middle'>🎵 NO ART</text></svg>"
+    fi
+}
+
+extract_art()
+{
+    file_path="$1"
+    thumb_path="$2"
+    ext="$3"
+
+    # ffprobe to check if an attached picture/art stream exists (stream type 'v')
+    has_art=$(ffprobe -v error -select_streams v -show_entries stream=codec_name -of default=nw=1:nk=1 "$file_path" 2>/dev/null)
+    if [ -n "$has_art" ]; then
+        $FFMPEG_CMD -i "$file_path" -an -vframes:v 1 "$thumb_path" >/dev/null 2>&1
+        if [ -f "$thumb_path" ] && [ -s "$thumb_path" ]; then
+            return 0
+        fi
+        rm -f "$thumb_path"
+    fi
+
+    # drop request to clean text-fallback if pipeline limits are saturated
+    current_workers=$(find "$WORKER_LOCK_DIR" -type f 2>/dev/null | wc -l)
+    if [ "$current_workers" -ge "$FFMPEG_MAX_WORKERS" ]; then
+        return 1
+    fi
+
+    # reserve execution slot via unique PID-based token tracking file
+    worker_token="$WORKER_LOCK_DIR/worker_$$.lock"
+    touch "$worker_token"
+
+    case "$ext" in
+        mp4|mkv|webm|avi|mov|flv)
+            $FFMPEG_CMD -i "$file_path" -map 0:v:1 -frames:v 1 "$thumb_path" >/dev/null 2>&1
+            if [ ! -f "$thumb_path" ] || [ ! -s "$thumb_path" ]; then
+                rm -f "$thumb_path"
+                $FFMPEG_CMD -ss 00:00:02 -i "$file_path" -frames:v 1 -vf "scale=320:-1" "$thumb_path" >/dev/null 2>&1
+            fi
+            ;;
+
+        mp3|flac|m4a|ogg|wav|opus)
+            $FFMPEG_CMD -i "$file_path" -an -vframes:v 1 "$thumb_path" >/dev/null 2>&1
+            if [ ! -f "$thumb_path" ] || [ ! -s "$thumb_path" ]; then
+                rm -f "$thumb_path"
+                $FFMPEG_CMD -i "$file_path" -ac 1 -filter_complex "showwavespic=s=320x180:colors=#10b981" -frames:v 1 "$thumb_path" >/dev/null 2>&1
+            fi
+            ;;
+
+        jpg|jpeg|png|webp|gif)
+            $FFMPEG_CMD -i "$file_path" -vf "scale=320:-1" "$thumb_path" >/dev/null 2>&1
+            ;;
+    esac
+
+    rm -f "$worker_token"
+}
+
+get_media_type()
+{
+    case "$1" in
+        mp4|mkv|webm|avi|mov|flv)  echo "video:#f43f5e" ;;
+        mp3|flac|m4a|ogg|opus|wav) echo "audio:#10b981" ;;
+        jpg|jpeg|png|webp|gif)     echo "image:#a855f7" ;;
+        *)                         echo "unknown:#666666" ;;
+    esac
+}
+
+render_grid_html()
+{
+    find "$ARCHIVE_DIR" -maxdepth 1 -type f |
+        while read -r file; do
+
+        [ -n "$file" ] || continue
+        filename="${file##*/}"
+        raw_ext="${filename##*.}"
+        ext=$(echo "$raw_ext" | tr 'G-Z' 'g-z' | tr 'A-F' 'a-f')
+
+        profile=$(get_media_type "$ext")
+        media_kind="${profile%%:*}"
+        badge_color="${profile#*:}"
+
+        [ "$media_kind" = "unknown" ] && continue
+
+        safe_filename_html=$(escape_html "$filename")
+        encoded_filename=$(url_encode "$filename")
+
+        img_src="?thumb=${encoded_filename}"
+        media_url="${MEDIA_URL_PREFIX}/${encoded_filename}"
+
+        cat << HTML
+        <div class="card" data-filename="${safe_filename_html}" onclick="openTheater('${media_url}', '${media_kind}')">
+            <div class="thumb-box">
+                <span class="badge" style="color: ${badge_color};">${media_kind}</span>
+                <img src="${img_src}" alt="Asset Preview" loading="lazy">
+            </div>
+            <div class="meta">${safe_filename_html}</div>
+        </div>
+HTML
+    done
+}
+
+render_grid_cached()
+{
+    current_state=$(stat -c "%Y" "$ARCHIVE_DIR" 2>/dev/null || stat -f "%m" "$ARCHIVE_DIR" 2>/dev/null)
+    old_state=""
+    [ -f "$CACHE_STATE_FILE" ] && old_state=$(cat "$CACHE_STATE_FILE")
+    if [ "$current_state" != "$old_state" ] || [ ! -f "$CACHE_HTML_FILE" ] || [ ! -s "$CACHE_HTML_FILE" ]; then
+        render_grid_html > "$CACHE_HTML_FILE"
+        echo "$current_state" > "$CACHE_STATE_FILE"
+    fi
+
+    cat "$CACHE_HTML_FILE"
+}
+
+render_header()
+{
+    echo "Content-type: text/html"
+    echo ""
+    cat <<'EOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🗂️ mpvc-web-video</title>
+    <style>
+        :root { --bg: #121214; --surface: #1e1e24; --text: #e2e8f0; --accent: #3b82f6; }
+        body { font-family: ui-monospace, monospace; background: var(--bg); color: var(--text); margin: 0; padding: 24px; }
+        h1 { font-size: 1.5rem; border-bottom: 1px solid #2d2d34; padding-bottom: 8px; margin-bottom: 16px; }
+
+        .search-container { margin-bottom: 24px; width: 100%; max-width: 96%; }
+        .search-input {
+            width: 100%; padding: 10px 14px; font-family: inherit; font-size: 14px;
+            background: var(--surface); color: var(--text); border: 1px solid #2d2d34;
+            border-radius: 6px; outline: none;
+        }
+        .search-input:focus { border-color: var(--accent); }
+
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; width: 100%; }
+        .card { background: var(--surface); border: 1px solid #2d2d34; border-radius: 8px; overflow: hidden; cursor: pointer; }
+        .card:hover { border-color: var(--accent); }
+        .thumb-box { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; display: flex; align-items: center; justify-content: center; }
+        .thumb-box img { width: 100%; height: 100%; object-fit: cover; }
+        .badge { position: absolute; top: 8px; right: 8px; padding: 2px 6px; font-size: 10px; background: rgba(0,0,0,0.75); border-radius: 4px; font-weight: bold; text-transform: uppercase; z-index: 10; }
+        .meta { padding: 12px; font-size: 12px; word-break: break-word; overflow-wrap: anywhere; line-height: 1.4; }
+
+        .theater { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(8,8,10,0.96); z-index: 999; justify-content: center; align-items: center; }
+        .viewport { width: 90%; max-width: 1000px; max-height: 80vh; display: flex; justify-content: center; }
+        .viewport video, .viewport img { max-width: 100%; max-height: 80vh; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+        .viewport audio { width: 100%; max-width: 500px; background: #222; border-radius: 8px; padding: 20px; }
+        .close { position: absolute; top: 20px; right: 30px; font-size: 32px; color: #fff; cursor: pointer; }
+    </style>
+    <script>
+        function filterMedia(query) {
+            const cleanQuery = query.toLowerCase().trim();
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                const filename = card.getAttribute('data-filename').toLowerCase();
+                if (filename.includes(cleanQuery)) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function openTheater(src, type) {
+            const theater = document.getElementById('theater');
+            const viewport = document.getElementById('viewport');
+            if (!theater || !viewport) return;
+            viewport.innerHTML = '';
+            let playerNode;
+
+            if (type === 'video') {
+                playerNode = document.createElement('video');
+                playerNode.controls = true;
+                playerNode.autoplay = true;
+                playerNode.src = src;
+            } else if (type === 'audio') {
+                playerNode = document.createElement('audio');
+                playerNode.controls = true;
+                playerNode.autoplay = true;
+                playerNode.src = src;
+            } else if (type === 'image') {
+                playerNode = document.createElement('img');
+                playerNode.src = src;
+            }
+
+            document.title = 'mpvc-web-video: ' + src.replace("/ytdl-archive/","") ;
+            viewport.appendChild(playerNode);
+            theater.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeTheater(e) {
+            const theater = document.getElementById('theater');
+            const viewport = document.getElementById('viewport');
+            if (!theater || !viewport) return;
+
+            document.title = 'mpvc-web-video';
+            if (e.target === theater || e.target.classList.contains('close')) {
+                theater.style.display = 'none';
+                const activePlayer = viewport.firstChild;
+                if (activePlayer && (activePlayer.tagName === 'VIDEO' || activePlayer.tagName === 'AUDIO')) {
+                    activePlayer.pause();
+                }
+                viewport.innerHTML = '';
+                document.body.style.overflow = '';
+            }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            const theater = document.getElementById('theater');
+            if (e.key === 'Escape' && theater && theater.style.display === 'flex') {
+                closeTheater({target: theater});
+            }
+        });
+    </script>
+</head>
+<body>
+    <h2>🗂️mpvc-web-video </h2>
+
+    <div class="search-container">
+        <input type="text" class="search-input" placeholder="Search archive..." oninput="filterMedia(this.value)" autofocus>
+    </div>
+
+    <div class="grid-container">
+EOF
+}
+
+render_footer()
+{
+    cat << 'EOF'
+    </div>
+
+    <div id="theater" class="theater" onclick="closeTheater(event)">
+        <span class="close" onclick="closeTheater(event)">&times;</span>
+        <div id="viewport" class="viewport"></div>
+    </div>
+</body>
+</html>
+EOF
+}
+
+init_environment()
+{
+    mkdir -p "$THUMB_CACHE_DIR"
+    mkdir -p "$WORKER_LOCK_DIR"
+}
+
+handle_routes()
+{
+    QUERY_STRING=${QUERY_STRING:-}
+
+    if [ -z "$QUERY_STRING" ]; then return 0; fi
+
+    case "$QUERY_STRING" in
+        thumb=*)
+            sanitized_file="${QUERY_STRING#thumb=}"
+            sanitized_file="${sanitized_file##*/}"
+            serve_thumbnail "$sanitized_file"
+            exit 0
+            ;;
+    esac
+}
+
+main()
+{
+    init_environment
+    handle_routes
+
+    render_header
+    render_grid_cached
+    render_footer
+}
+
+main "$@"
