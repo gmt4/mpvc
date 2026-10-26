@@ -47,8 +47,8 @@ serve_thumbnail()
         exit 0
     fi
 
-    hash_id=$(echo "$filename" | md5sum | cut -d' ' -f1)
-    target_thumb="$THUMB_CACHE_DIR/${hash_id}.jpg"
+    hash_id=$(echo "$filename" | cksum | cut -d' ' -f1)
+    target_thumb="$THUMB_CACHE_DIR/thumb-${hash_id}.jpg"
 
     if [ ! -f "$target_thumb" ] || [ ! -s "$target_thumb" ]; then
         raw_ext="${filename##*.}"
@@ -192,13 +192,17 @@ render_header()
         body { font-family: ui-monospace, monospace; background: var(--bg); color: var(--text); margin: 0; padding: 24px; }
         h1 { font-size: 1.5rem; border-bottom: 1px solid #2d2d34; padding-bottom: 8px; margin-bottom: 16px; }
 
-        .search-container { margin-bottom: 24px; width: 100%; max-width: 96%; }
+        .search-container { margin-bottom: 24px; width: 100%; max-width: 100%; }
         .search-input {
-            width: 100%; padding: 10px 14px; font-family: inherit; font-size: 14px;
+            width: 94%; padding: 10px 14px; font-family: inherit; font-size: 14px;
             background: var(--surface); color: var(--text); border: 1px solid #2d2d34;
             border-radius: 6px; outline: none;
         }
         .search-input:focus { border-color: var(--accent); }
+
+	#list-view-toggle:checked ~ .grid-container { grid-template-columns: 1fr; }
+	#list-view-toggle:checked ~ .grid-container .card .meta { padding : 4px; }
+	#list-view-toggle:checked ~ .grid-container .card .thumb-box { display: none; }
 
         .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; width: 100%; }
         .card { background: var(--surface); border: 1px solid #2d2d34; border-radius: 8px; overflow: hidden; cursor: pointer; }
@@ -287,6 +291,7 @@ render_header()
     <div class="search-container">
         <input type="text" class="search-input" placeholder="Search archive..." oninput="filterMedia(this.value)" autofocus>
     </div>
+    <input type="checkbox" id="list-view-toggle" title="Grid/List Toggle"> Grid/List Toggle
 
     <div class="grid-container">
 EOF
