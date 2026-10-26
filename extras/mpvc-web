@@ -69,8 +69,8 @@ mpvc_web_defaults()
     : "${MPVC_WEB_SHORTCUT_HELP:=accesskey=h}"
 
     MPVC_WEB_CGI_DIR="$MPVC_WEB_ROOT/cgi-bin/"
-    MPVC_WEB_CGI_CMD="/cgi-bin/mpvc-web-browser"
-    MPVC_WEB_CGI_FILE="$MPVC_WEB_CGI_DIR/mpvc-web-browser"
+    MPVC_WEB_CGI_BROWSER="/cgi-bin/mpvc-web-browser"
+    MPVC_WEB_CGI_VIDEO="/cgi-bin/mpvc-web-video"
 
     # if present load user config
     if [ -r "$MPVC_CONFIG" ] && [ -O "$MPVC_CONFIG" ]; then
@@ -426,36 +426,37 @@ mpvc_web_index()
         <details>
         <summary>
             <a href="#mpvc-web-tools" name="mpvc-web-browse">📁 Browser</a>
-            <a href="$MPVC_WEB_CGI_CMD?browser">#n</a>
+            <a href="$MPVC_WEB_CGI_BROWSER?browser">#n</a>
+            <a href="$MPVC_WEB_CGI_VIDEO?video">#v</a>
             $(for x in $MPVC_WEB_EXTRAS_URL; do n=$((${n:-0} + 1)); echo "<a href=$x title=#url-$n>#$n</a>"; done)
             <span style="float:right">
-                <a class=btn href="$MPVC_WEB_CGI_CMD?now-short" title="Now Playing (share)" aria-label="Now Playing">💿</a>
+                <a class=btn href="$MPVC_WEB_CGI_BROWSER?now-short" title="Now Playing (share)" aria-label="Now Playing">💿</a>
                 $([ -n "$MPVC_WEB_ARCHIVE_ENABLE" ] && echo '<a class=btn href="ytdl-archive" title="Archive" aria-label="Archive">🗃️</a>'; )
             </span>
         </summary>
-        <iframe name="mpvc-browser" title="mpvc-status" width="100%" height="420" frameborder="0" allowtransparency="true" src="$MPVC_WEB_CGI_CMD?browser" defer ></iframe>
+        <iframe name="mpvc-browser" title="mpvc-status" width="100%" height="420" frameborder="0" allowtransparency="true" src="$MPVC_WEB_CGI_BROWSER?browser" defer ></iframe>
         </details>
 
         <details open>
         <summary>
             <a href="#mpvc-web-status" name="mpvc-web-status">Status</a>
-            <a href="$MPVC_WEB_CGI_CMD?mpvc+metadata">#me</a>
-            <a href="$MPVC_WEB_CGI_CMD?lyrics">#lyric</a>
-            <a href="$MPVC_WEB_CGI_CMD?filename">#url</a>
+            <a href="$MPVC_WEB_CGI_BROWSER?mpvc+metadata">#me</a>
+            <a href="$MPVC_WEB_CGI_BROWSER?lyrics">#lyric</a>
+            <a href="$MPVC_WEB_CGI_BROWSER?filename">#url</a>
         </summary>
         <hr>
-        <iframe name="mpvc-status" title="mpvc-status" width="100%" height="80" frameborder="0" allowtransparency="true" src="$MPVC_WEB_CGI_CMD?mpvc+status" defer ></iframe>
+        <iframe name="mpvc-status" title="mpvc-status" width="100%" height="80" frameborder="0" allowtransparency="true" src="$MPVC_WEB_CGI_BROWSER?mpvc+status" defer ></iframe>
         </details>
 
         <details $(if [ -n "$MPVC_WEB_THUMBNAIL_ENABLE" ]; then echo open; fi)>
         <summary>
             <a href="#mpvc-web-thumbnail" name="mpvc-web-thumbnail">Thumbnail</a>
-            <a href="$MPVC_WEB_CGI_CMD?mpvc-fzf+thumbnail">#url</a>
-            <a href="$MPVC_WEB_CGI_CMD?thumbnail64">#img</a>
-            <a href="$MPVC_WEB_CGI_CMD?mpvc-fzf+related">#rel</a>
+            <a href="$MPVC_WEB_CGI_BROWSER?mpvc-fzf+thumbnail">#url</a>
+            <a href="$MPVC_WEB_CGI_BROWSER?thumbnail64">#img</a>
+            <a href="$MPVC_WEB_CGI_BROWSER?mpvc-fzf+related">#rel</a>
         </summary>
         <hr>
-            <iframe src="$MPVC_WEB_CGI_CMD?thumbnail64" alt="thumbnail" title="thumbnail" style="$MPVC_WEB_THUMBNAIL_STYLE" defer ></iframe>
+            <iframe src="$MPVC_WEB_CGI_BROWSER?thumbnail64" alt="thumbnail" title="thumbnail" style="$MPVC_WEB_THUMBNAIL_STYLE" defer ></iframe>
         </details>
 
         </main>
