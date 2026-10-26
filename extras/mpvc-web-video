@@ -23,8 +23,8 @@ FFMPEG_MAX_WORKERS=4
 # internal config
 THUMB_CACHE_DIR="$HOME/.cache/mpvc/web/video/mpvc-web-video-thumbs"
 CACHE_HTML_FILE="$HOME/.cache/mpvc/web/video/mpvc-web-grid-cache.html"
-CACHE_STATE_FILE="$HOME/.cache/mpvc/web/video/mpvc-web-grid-cache.state"
-WORKER_LOCK_DIR="$HOME/.cache/mpvc/web/video/ffmpeg-worker-lock"
+CACHE_STAT_FILE="$HOME/.cache/mpvc/web/video/mpvc-web-grid-cache.state"
+WORKER_LOCK_DIR="$HOME/.cache/mpvc/web/video/mpvc-ffmpeg-worker-lock"
 
 escape_html() {
     echo "$1" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g; s/'"'"'/\&#39;/g'
@@ -167,10 +167,10 @@ render_grid_cached()
 {
     current_state=$(stat -c "%Y" "$ARCHIVE_DIR" 2>/dev/null || stat -f "%m" "$ARCHIVE_DIR" 2>/dev/null)
     old_state=""
-    [ -f "$CACHE_STATE_FILE" ] && old_state=$(cat "$CACHE_STATE_FILE")
+    [ -f "$CACHE_STAT_FILE" ] && old_state=$(cat "$CACHE_STAT_FILE")
     if [ "$current_state" != "$old_state" ] || [ ! -f "$CACHE_HTML_FILE" ] || [ ! -s "$CACHE_HTML_FILE" ]; then
         render_grid_html > "$CACHE_HTML_FILE"
-        echo "$current_state" > "$CACHE_STATE_FILE"
+        echo "$current_state" > "$CACHE_STAT_FILE"
     fi
 
     cat "$CACHE_HTML_FILE"
