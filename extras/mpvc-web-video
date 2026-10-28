@@ -273,18 +273,18 @@ render_header()
         .theater.video-mode .viewport { width: 90%; max-width: 1000px; max-height: 80vh; display: flex; justify-content: center; }
         .theater.video-mode .viewport video, .theater.video-mode .viewport img { max-width: 100%; max-height: 80vh; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6); }
 
-        .theater.video-mode .close { position: absolute; top: 20px; right: 30px; font-size: 32px; color: #fff; cursor: pointer; }
+        .theater.video-mode .close { position: absolute; right: 10px; font-size: 32px; color: #fff; cursor: pointer; }
 
-        .theater.audio-mode { bottom: 0; top: auto; left: 0; width: 100vw; height: auto; background: #1e1e24; border-top: 2px solid #3b82f6; padding: 16px 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5); }
+        .theater.audio-mode { bottom: 0; top: auto; left: 0; width: 100vw; height: auto; background: #1e1e24; border-top: 2px solid #3b82f6; padding: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5); }
 
         .theater.audio-mode .viewport { width: 100%; max-width: 800px; display: flex; align-items: center; gap: 20px; }
-        .theater.audio-mode .viewport audio { flex-grow: 1; height: 40px; border-radius: 4px; background: #121214; }
+        .theater.audio-mode .viewport audio { flex-grow: 1; height: 0.5rem; border-radius: 4px; background: #121214; }
         .theater.audio-mode .close { position: relative; font-size: 28px; color: #f43f5e; cursor: pointer; margin-left: 16px; line-height: 1; }
         .theater.audio-mode .close:hover { color: #ff7e93; }
 
         .viewport { width: 90%; max-width: 1000px; max-height: 80vh; display: flex; justify-content: center; }
         .viewport video, .viewport img { max-width: 100%; max-height: 80vh; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
-        .viewport audio { width: 100%; background: #222; border-radius: 8px; padding: 20px; }
+        .viewport audio { width: 100%; background: #222; border-radius: 8px; padding: 10px; }
         .close { position: absolute; top: 20px; right: 30px; font-size: 32px; color: #fff; cursor: pointer; }
     </style>
     <script>
