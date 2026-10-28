@@ -140,7 +140,7 @@ render_grid_html()
         if [ "$parent_dir" = "$REQ_DIR" ]; then parent_dir=""; fi
         encoded_parent=$(url_encode "$parent_dir")
         cat << HTML
-        <div class="card folder-card" onclick="window.location.search='?dir=${encoded_parent}'">
+        <div class="card folder-card" data-filename="" onclick="window.location.search='?dir=${encoded_parent}'">
             <div class="thumb-box folder-box">
                 <span class="badge" style="color: #eab308;">SYSTEM</span>
                 <div style="font-size: 2rem;">⬆️</div>
@@ -162,7 +162,7 @@ HTML
         safe_foldername_html=$(escape_html "$foldername")
 
         cat << HTML
-        <div class="card folder-card" onclick="window.location.search='?dir=${encoded_folder}'">
+        <div class="card folder-card" data-filename="" onclick="window.location.search='?dir=${encoded_folder}'">
             <div class="thumb-box folder-box" style="background: #27272a;">
                 <span class="badge" style="color: #3b82f6;">DIR</span>
                 <div style="font-size: 2.5rem;">📁</div>
@@ -195,7 +195,7 @@ HTML
         media_url="${MEDIA_URL_PREFIX}/${encoded_rel_file}"
 
         cat << HTML
-        <div class="card" data-filename="${safe_filename_html}" onclick="openTheater('${media_url}', '${media_kind}')">
+        <div class="card file-card" data-filename="${safe_filename_html}" onclick="openTheater('${media_url}', '${media_kind}')">
             <div class="thumb-box">
                 <span class="badge" style="color: ${badge_color};">${media_kind}</span>
                 <img src="${img_src}" alt="Asset Preview" loading="lazy">
@@ -326,7 +326,7 @@ render_header()
                 theater.classList.add('video-mode');
             }
 
-            document.title = 'mpvc-web-video: ' + src.replace("/ytdl-archive/","") ;
+            document.title = '🗂️mpvc-web-video: ' + src.replace("/ytdl-archive/","") ;
             viewport.appendChild(playerNode);
             theater.style.display = 'flex';
             document.body.style.overflow = '';
@@ -337,7 +337,7 @@ render_header()
             const viewport = document.getElementById('viewport');
             if (!theater || !viewport) return;
 
-            document.title = 'mpvc-web-video';
+            document.title = '🗂️mpvc-web-video';
             if (e.target === theater || e.target.classList.contains('close')) {
                 theater.style.display = 'none';
                 const activePlayer = viewport.firstChild;
@@ -368,7 +368,6 @@ render_header()
     <snap class="search-container">
         <input type="text" class="search-input" placeholder="Search current directory..." oninput="filterMedia(this.value)" autofocus>
     </snap>
-    <br>
 
     <div class="grid-container">
 EOF
