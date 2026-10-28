@@ -21,9 +21,8 @@ FFMPEG_CMD="nice -n 19 ffmpeg -y -threads 1"
 FFMPEG_MAX_WORKERS=4
 
 # internal config
+HTML_CACHE_DIR="$HOME/.cache/mpvc/web/video/mpvc-web-html-cache/"
 THUMB_CACHE_DIR="$HOME/.cache/mpvc/web/video/mpvc-web-video-thumbs"
-CACHE_HTML_FILE="$HOME/.cache/mpvc/web/video/mpvc-web-grid-cache.html"
-CACHE_STAT_FILE="$HOME/.cache/mpvc/web/video/mpvc-web-grid-cache.state"
 WORKER_LOCK_DIR="$HOME/.cache/mpvc/web/video/mpvc-ffmpeg-worker-lock"
 
 escape_html() {
@@ -31,12 +30,16 @@ escape_html() {
 }
 
 url_encode() {
-    echo "$1" | sed 's/+/%2B/g; s/ /%20/g; s/&/%26/g; s/'"'"'/%27/g'
+    echo "$1" | sed 's/+/%2B/g; s/ /%20/g; s/&/%26/g; s/'"'"'/%27/g; s/(/%28/g; s/)/%29/g'
 }
 
 serve_thumbnail()
 {
     filename="$1"
+    
+    # SECURITY SHIELD: Block structural parent directory lookup jumps
+    case "$filename" in *..*) exit 1 ;; esac
+    
     file_path="$ARCHIVE_DIR/$filename"
 
     if [ ! -f "$file_path" ]; then
@@ -74,37 +77,37 @@ extract_art()
     thumb_path="$2"
     ext="$3"
 
-    # ffprobe to check if an attached picture/art stream exists (stream type 'v')
-    has_art=$(ffprobe -v error -select_streams v -show_entries stream=codec_name -of default=nw=1:nk=1 "$file_path" 2>/dev/null)
-    if [ -n "$has_art" ]; then
-        $FFMPEG_CMD -i "$file_path" -an -vframes:v 1 "$thumb_path" >/dev/null 2>&1
+    has_art=$(ffprobe -v error -select_streams v -show_entries stream_disposition=attached_pic -of default=nw=1:nk=1 "$file_path" 2>/dev/null)
+    if [ "$has_art" = "1" ]; then
+        $FFMPEG_CMD -i "$file_path" -an -c:v copy "$thumb_path"  >/dev/null 2>&1
         if [ -f "$thumb_path" ] && [ -s "$thumb_path" ]; then
             return 0
         fi
         rm -f "$thumb_path"
     fi
 
-    # drop request to clean text-fallback if pipeline limits are saturated
     current_workers=$(find "$WORKER_LOCK_DIR" -type f 2>/dev/null | wc -l)
     if [ "$current_workers" -ge "$FFMPEG_MAX_WORKERS" ]; then
-        return 1
+        return 0
     fi
 
-    # reserve execution slot via unique PID-based token tracking file
     worker_token="$WORKER_LOCK_DIR/worker_$$.lock"
+    trap 'rm -f "$worker_token"' EXIT HUP INT TERM
     touch "$worker_token"
 
     case "$ext" in
         mp4|mkv|webm|avi|mov|flv)
-            $FFMPEG_CMD -i "$file_path" -map 0:v:1 -frames:v 1 "$thumb_path" >/dev/null 2>&1
+            $FFMPEG_CMD -i "$file_path" -vf "blackframe=amount=0:threshold=60,metadata=select:key=lavfi.blackframe.pblack:value=30:function=less,scale=320:-1" -frames:v 1 "$thumb_path" >/dev/null 2>&1
             if [ ! -f "$thumb_path" ] || [ ! -s "$thumb_path" ]; then
                 rm -f "$thumb_path"
-                $FFMPEG_CMD -ss 00:00:02 -i "$file_path" -frames:v 1 -vf "scale=320:-1" "$thumb_path" >/dev/null 2>&1
+                $FFMPEG_CMD -i "$file_path" -map 0:v:1 -frames:v 1 "$thumb_path" >/dev/null 2>&1
             fi
             ;;
 
         mp3|flac|m4a|ogg|wav|opus)
-            $FFMPEG_CMD -i "$file_path" -an -vframes:v 1 "$thumb_path" >/dev/null 2>&1
+            if [ "$has_art" = "1" ]; then
+                $FFMPEG_CMD -i "$file_path" -an -vframes:v 1 "$thumb_path" >/dev/null 2>&1
+            fi
             if [ ! -f "$thumb_path" ] || [ ! -s "$thumb_path" ]; then
                 rm -f "$thumb_path"
                 $FFMPEG_CMD -i "$file_path" -ac 1 -filter_complex "showwavespic=s=320x180:colors=#10b981" -frames:v 1 "$thumb_path" >/dev/null 2>&1
@@ -131,9 +134,47 @@ get_media_type()
 
 render_grid_html()
 {
-    find "$ARCHIVE_DIR" -maxdepth 1 -type f |
-        while read -r file; do
+    # 1. Provide "Go Up" navigation link if inside a subfolder
+    if [ -n "$REQ_DIR" ]; then
+        parent_dir="${REQ_DIR%/*}"
+        if [ "$parent_dir" = "$REQ_DIR" ]; then parent_dir=""; fi
+        encoded_parent=$(url_encode "$parent_dir")
+        cat << HTML
+        <div class="card folder-card" onclick="window.location.search='?dir=${encoded_parent}'">
+            <div class="thumb-box folder-box">
+                <span class="badge" style="color: #eab308;">SYSTEM</span>
+                <div style="font-size: 2rem;">⬆️</div>
+            </div>
+            <div class="meta" style="color: #eab308; font-weight: bold;">.. (Go Up)</div>
+        </div>
+HTML
+    fi
 
+    # 2. Render Directories first (alpha-sorted)
+    find "$CURRENT_SCAN_DIR" -maxdepth 1 -type d ! -path "$CURRENT_SCAN_DIR" | sort |
+        while read -r folder; do
+        [ -n "$folder" ] || continue
+        foldername="${folder##*/}"
+        
+        # Calculate relative path string from archive root
+        rel_folder_path="${folder#$ARCHIVE_DIR/}"
+        encoded_folder=$(url_encode "$rel_folder_path")
+        safe_foldername_html=$(escape_html "$foldername")
+
+        cat << HTML
+        <div class="card folder-card" onclick="window.location.search='?dir=${encoded_folder}'">
+            <div class="thumb-box folder-box" style="background: #27272a;">
+                <span class="badge" style="color: #3b82f6;">DIR</span>
+                <div style="font-size: 2.5rem;">📁</div>
+            </div>
+            <div class="meta" style="font-weight: bold; color: #60a5fa;">${safe_foldername_html}/</div>
+        </div>
+HTML
+    done
+
+    # 3. Render Media Files
+    find "$CURRENT_SCAN_DIR" -maxdepth 1 -type f | sort |
+        while read -r file; do
         [ -n "$file" ] || continue
         filename="${file##*/}"
         raw_ext="${filename##*.}"
@@ -145,11 +186,13 @@ render_grid_html()
 
         [ "$media_kind" = "unknown" ] && continue
 
+        # Compute relative paths for playback references and asset indexing
+        rel_file_path="${file#$ARCHIVE_DIR/}"
         safe_filename_html=$(escape_html "$filename")
-        encoded_filename=$(url_encode "$filename")
+        encoded_rel_file=$(url_encode "$rel_file_path")
 
-        img_src="?thumb=${encoded_filename}"
-        media_url="${MEDIA_URL_PREFIX}/${encoded_filename}"
+        img_src="?thumb=${encoded_rel_file}"
+        media_url="${MEDIA_URL_PREFIX}/${encoded_rel_file}"
 
         cat << HTML
         <div class="card" data-filename="${safe_filename_html}" onclick="openTheater('${media_url}', '${media_kind}')">
@@ -165,9 +208,11 @@ HTML
 
 render_grid_cached()
 {
-    current_state=$(stat -c "%Y" "$ARCHIVE_DIR" 2>/dev/null || stat -f "%m" "$ARCHIVE_DIR" 2>/dev/null)
+    # Track the targeted directory for change validation states
+    current_state=$(stat -c "%Y" "$CURRENT_SCAN_DIR" 2>/dev/null || stat -f "%m" "$CURRENT_SCAN_DIR" 2>/dev/null)
     old_state=""
     [ -f "$CACHE_STAT_FILE" ] && old_state=$(cat "$CACHE_STAT_FILE")
+    
     if [ "$current_state" != "$old_state" ] || [ ! -f "$CACHE_HTML_FILE" ] || [ ! -s "$CACHE_HTML_FILE" ]; then
         render_grid_html > "$CACHE_HTML_FILE"
         echo "$current_state" > "$CACHE_STAT_FILE"
@@ -180,17 +225,21 @@ render_header()
 {
     echo "Content-type: text/html"
     echo ""
-    cat <<'EOF'
+    cat <<EOF
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🗂️ mpvc-web-video</title>
+    <title>🗂️ mpvc-web-video ${REQ_DIR:+/ $REQ_DIR}</title>
     <style>
         :root { --bg: #121214; --surface: #1e1e24; --text: #e2e8f0; --accent: #3b82f6; }
         body { font-family: ui-monospace, monospace; background: var(--bg); color: var(--text); margin: 0; padding: 24px; }
         h1 { font-size: 1.5rem; border-bottom: 1px solid #2d2d34; padding-bottom: 8px; margin-bottom: 16px; }
+
+        .breadcrumbs { font-size: 14px; margin-bottom: 16px; color: #8b949e; }
+        .breadcrumbs a { color: var(--accent); text-decoration: none; }
+        .breadcrumbs a:hover { text-decoration: underline; }
 
         .search-container { margin-bottom: 24px; width: 100%; max-width: 100%; }
         .search-input {
@@ -200,15 +249,20 @@ render_header()
         }
         .search-input:focus { border-color: var(--accent); }
 
-	#list-view-toggle:checked ~ .grid-container { grid-template-columns: 1fr; }
-	#list-view-toggle:checked ~ .grid-container .card .meta { padding : 4px; }
-	#list-view-toggle:checked ~ .grid-container .card .thumb-box { display: none; }
+        #list-view-toggle:checked ~ .grid-container { grid-template-columns: 1fr; }
+        #list-view-toggle:checked ~ .grid-container .card .meta { padding : 4px; }
+        #list-view-toggle:checked ~ .grid-container .card .thumb-box { display: none; }
 
         .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; width: 100%; }
         .card { background: var(--surface); border: 1px solid #2d2d34; border-radius: 8px; overflow: hidden; cursor: pointer; }
         .card:hover { border-color: var(--accent); }
         .thumb-box { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; display: flex; align-items: center; justify-content: center; }
         .thumb-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Directory folder card specific overrides */
+        .card.folder-card { border-style: dashed; border-color: #444; }
+        .folder-icon { font-size: 32px; color: #e3b341; }
+
         .badge { position: absolute; top: 8px; right: 8px; padding: 2px 6px; font-size: 10px; background: rgba(0,0,0,0.75); border-radius: 4px; font-weight: bold; text-transform: uppercase; z-index: 10; }
         .meta { padding: 12px; font-size: 12px; word-break: break-word; overflow-wrap: anywhere; line-height: 1.4; }
 
@@ -286,15 +340,38 @@ render_header()
     </script>
 </head>
 <body>
-    <h2>🗂️mpvc-web-video </h2>
+    <h2>🗂️ mpvc-web-video</h2>
+
+    <div class="breadcrumbs">
+        <a href="?dir=">ytdl-archive</a> / $(escape_html "$REQ_DIR")
+    </div>
 
     <div class="search-container">
-        <input type="text" class="search-input" placeholder="Search archive..." oninput="filterMedia(this.value)" autofocus>
+        <input type="text" class="search-input" placeholder="Search current directory..." oninput="filterMedia(this.value)" autofocus>
     </div>
     <input type="checkbox" id="list-view-toggle" title="Grid/List Toggle"> Grid/List Toggle
 
     <div class="grid-container">
 EOF
+
+    # If we are inside a subdirectory, seamlessly inject a "Go Up" navigation card
+    # as the very first grid element before render_grid_cached evaluates files
+    if [ -n "$REQ_DIR" ]; then
+        # Calculate parent folder by cutting trailing path layer
+        parent_dir="${REQ_DIR%/*}"
+        [ "$parent_dir" = "$REQ_DIR" ] && parent_dir="" # Root resolution fallback
+
+        encoded_parent=$(url_encode "$parent_dir")
+        cat <<EOF
+        <div class="card folder-card" data-filename=".." onclick="window.location.search='?dir=${encoded_parent}'">
+            <div class="thumb-box">
+                <span class="badge" style="color: #e3b341;">System</span>
+                <div class="folder-icon">⇪</div>
+            </div>
+            <div class="meta">.. (Go Up)</div>
+        </div>
+EOF
+    fi
 }
 
 render_footer()
@@ -315,20 +392,44 @@ init_environment()
 {
     mkdir -p "$THUMB_CACHE_DIR"
     mkdir -p "$WORKER_LOCK_DIR"
+    mkdir -p "$HTML_CACHE_DIR"
 }
 
 handle_routes()
 {
     QUERY_STRING=${QUERY_STRING:-}
+    REQ_DIR=""
 
     if [ -z "$QUERY_STRING" ]; then return 0; fi
 
     case "$QUERY_STRING" in
         thumb=*)
             sanitized_file="${QUERY_STRING#thumb=}"
-            sanitized_file="${sanitized_file##*/}"
+            sanitized_file=$(echo "$sanitized_file" | sed 's/%20/ /g; s/%2F/\//g; s/%2b/+/g; s/%2B/+/g; s/%26/\&/g; s/%27/'"'"'/g; s/%28/(/g; s/%29/)/g')
+            case "$sanitized_file" in
+                *..*)
+                    echo "Status: 403 Forbidden"
+                    echo "Content-type: text/plain"
+                    echo ""
+                    echo "Directory traversal detected and blocked."
+                    exit 1
+                    ;;
+            esac
             serve_thumbnail "$sanitized_file"
             exit 0
+            ;;
+        *dir=*)
+            REQ_DIR=$(echo "$QUERY_STRING" | sed -n 's/.*dir=\([^&]*\).*/\1/p')
+            REQ_DIR=$(echo "$REQ_DIR" | sed 's/%20/ /g; s/%2F/\//g; s/%2b/+/g; s/%2B/+/g')
+            case "$REQ_DIR" in
+                *..*)
+                    echo "Status: 403 Forbidden"
+                    echo "Content-type: text/plain"
+                    echo ""
+                    echo "Directory traversal detected and blocked."
+                    exit 1
+                    ;;
+            esac
             ;;
     esac
 }
@@ -337,6 +438,21 @@ main()
 {
     init_environment
     handle_routes
+
+    CURRENT_SCAN_DIR="$ARCHIVE_DIR/$REQ_DIR"
+    if [ ! -d "$CURRENT_SCAN_DIR" ]; then
+        CURRENT_SCAN_DIR="$ARCHIVE_DIR"
+        REQ_DIR=""
+    fi
+
+    if [ -z "$REQ_DIR" ]; then
+        DIR_HASH="root"
+    else
+        DIR_HASH=$(echo "$REQ_DIR" | cksum | cut -d' ' -f1)
+    fi
+
+    CACHE_HTML_FILE="$HTML_CACHE_DIR/grid-${DIR_HASH}.html"
+    CACHE_STAT_FILE="$HTML_CACHE_DIR/grid-${DIR_HASH}.state"
 
     render_header
     render_grid_cached
