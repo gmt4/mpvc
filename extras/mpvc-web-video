@@ -234,8 +234,8 @@ render_header()
     <title>🗂️ mpvc-web-video ${REQ_DIR:+/ $REQ_DIR}</title>
     <style>
         :root { --bg: #121214; --surface: #1e1e24; --text: #e2e8f0; --accent: #3b82f6; }
-        body { font-family: ui-monospace, monospace; background: var(--bg); color: var(--text); margin: 0; padding: 24px; }
-        h1 { font-size: 1.5rem; border-bottom: 1px solid #2d2d34; padding-bottom: 8px; margin-bottom: 16px; }
+        body { font-family: ui-monospace, monospace; background: var(--bg); color: var(--text); margin: 0; padding: 16px; }
+        h2 { font-size: 1.5rem; border-bottom: 1px solid #2d2d34; padding-bottom: 8px; margin-bottom: 16px; }
 
         .breadcrumbs { font-size: 14px; margin-bottom: 16px; color: #8b949e; }
         .breadcrumbs a { color: var(--accent); text-decoration: none; }
@@ -278,14 +278,14 @@ render_header()
         .theater.audio-mode { bottom: 0; top: auto; left: 0; width: 100vw; height: auto; background: #1e1e24; border-top: 2px solid #3b82f6; padding: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5); }
 
         .theater.audio-mode .viewport { width: 100%; max-width: 800px; display: flex; align-items: center; gap: 20px; }
-        .theater.audio-mode .viewport audio { flex-grow: 1; height: 0.5rem; border-radius: 4px; background: #121214; }
+        .theater.audio-mode .viewport audio { flex-grow: 1; height: 1rem; border-radius: 4px; background: #121214; }
         .theater.audio-mode .close { position: relative; font-size: 28px; color: #f43f5e; cursor: pointer; margin-left: 16px; line-height: 1; }
         .theater.audio-mode .close:hover { color: #ff7e93; }
 
         .viewport { width: 90%; max-width: 1000px; max-height: 80vh; display: flex; justify-content: center; }
         .viewport video, .viewport img { max-width: 100%; max-height: 80vh; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
         .viewport audio { width: 100%; background: #222; border-radius: 8px; padding: 10px; }
-        .close { position: absolute; top: 20px; right: 30px; font-size: 32px; color: #fff; cursor: pointer; }
+        .close { position: absolute; right: 10px; font-size: 32px; color: #fff; cursor: pointer; }
     </style>
     <script>
         function filterMedia(query) {
@@ -360,14 +360,14 @@ render_header()
 <body>
     <h2>🗂️ mpvc-web-video</h2>
 
-    <div class="breadcrumbs">
-        <a href="?dir=">ytdl-archive</a> / $(escape_html "$REQ_DIR")
-    </div>
+    <input type="checkbox" id="list-view-toggle" title="Grid/List Toggle">
+    <span class="breadcrumbs">
+        <a href="?dir=">root</a> / $(escape_html "$REQ_DIR")
+    </span>
 
-    <input type="checkbox" id="list-view-toggle" title="Grid/List Toggle"> Grid/List
-    <snap class="search-container">
+    <div class="search-container">
         <input type="text" class="search-input" placeholder="Search current directory..." oninput="filterMedia(this.value)" autofocus>
-    </snap>
+    </div>
 
     <div class="grid-container">
 EOF
