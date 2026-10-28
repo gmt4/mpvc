@@ -162,7 +162,7 @@ HTML
         safe_foldername_html=$(escape_html "$foldername")
 
         cat << HTML
-        <div class="card folder-card" data-filename="" onclick="window.location.search='?dir=${encoded_folder}'">
+        <div class="card folder-card" data-filename='$rel_folder_path' onclick="window.location.search='?dir=${encoded_folder}'">
             <div class="thumb-box folder-box" style="background: #27272a;">
                 <span class="badge" style="color: #3b82f6;">DIR</span>
                 <div style="font-size: 2.5rem;">📁</div>
@@ -361,6 +361,8 @@ render_header()
     <h2>🗂️ mpvc-web-video</h2>
 
     <input type="checkbox" id="list-view-toggle" title="Grid/List Toggle">
+    <!--<label for="list-view-toggle" style="cursor: pointer;">[grid]</label>-->
+
     <span class="breadcrumbs">
         <a href="?dir=">root</a> / $(escape_html "$REQ_DIR")
     </span>
