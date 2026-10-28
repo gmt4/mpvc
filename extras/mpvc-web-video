@@ -36,10 +36,10 @@ url_encode() {
 serve_thumbnail()
 {
     filename="$1"
-    
+
     # SECURITY SHIELD: Block structural parent directory lookup jumps
     case "$filename" in *..*) exit 1 ;; esac
-    
+
     file_path="$ARCHIVE_DIR/$filename"
 
     if [ ! -f "$file_path" ]; then
@@ -155,9 +155,9 @@ HTML
         while read -r folder; do
         [ -n "$folder" ] || continue
         foldername="${folder##*/}"
-        
+
         # Calculate relative path string from archive root
-        rel_folder_path="${folder#$ARCHIVE_DIR/}"
+        rel_folder_path="${folder#"$ARCHIVE_DIR/"}"
         encoded_folder=$(url_encode "$rel_folder_path")
         safe_foldername_html=$(escape_html "$foldername")
 
@@ -187,7 +187,7 @@ HTML
         [ "$media_kind" = "unknown" ] && continue
 
         # Compute relative paths for playback references and asset indexing
-        rel_file_path="${file#$ARCHIVE_DIR/}"
+        rel_file_path="${file#"$ARCHIVE_DIR/"}"
         safe_filename_html=$(escape_html "$filename")
         encoded_rel_file=$(url_encode "$rel_file_path")
 
@@ -212,7 +212,7 @@ render_grid_cached()
     current_state=$(stat -c "%Y" "$CURRENT_SCAN_DIR" 2>/dev/null || stat -f "%m" "$CURRENT_SCAN_DIR" 2>/dev/null)
     old_state=""
     [ -f "$CACHE_STAT_FILE" ] && old_state=$(cat "$CACHE_STAT_FILE")
-    
+
     if [ "$current_state" != "$old_state" ] || [ ! -f "$CACHE_HTML_FILE" ] || [ ! -s "$CACHE_HTML_FILE" ]; then
         render_grid_html > "$CACHE_HTML_FILE"
         echo "$current_state" > "$CACHE_STAT_FILE"
@@ -266,10 +266,25 @@ render_header()
         .badge { position: absolute; top: 8px; right: 8px; padding: 2px 6px; font-size: 10px; background: rgba(0,0,0,0.75); border-radius: 4px; font-weight: bold; text-transform: uppercase; z-index: 10; }
         .meta { padding: 12px; font-size: 12px; word-break: break-word; overflow-wrap: anywhere; line-height: 1.4; }
 
-        .theater { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(8,8,10,0.96); z-index: 999; justify-content: center; align-items: center; }
+        .theater { display: none; position: fixed; z-index: 999; box-sizing: border-box; transition: all 0.2s ease-in-out; }
+
+        .theater.video-mode { top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(8, 8, 10, 0.96); display: flex; justify-content: center; align-items: center; }
+
+        .theater.video-mode .viewport { width: 90%; max-width: 1000px; max-height: 80vh; display: flex; justify-content: center; }
+        .theater.video-mode .viewport video, .theater.video-mode .viewport img { max-width: 100%; max-height: 80vh; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6); }
+
+        .theater.video-mode .close { position: absolute; top: 20px; right: 30px; font-size: 32px; color: #fff; cursor: pointer; }
+
+        .theater.audio-mode { bottom: 0; top: auto; left: 0; width: 100vw; height: auto; background: #1e1e24; border-top: 2px solid #3b82f6; padding: 16px 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5); }
+
+        .theater.audio-mode .viewport { width: 100%; max-width: 800px; display: flex; align-items: center; gap: 20px; }
+        .theater.audio-mode .viewport audio { flex-grow: 1; height: 40px; border-radius: 4px; background: #121214; }
+        .theater.audio-mode .close { position: relative; font-size: 28px; color: #f43f5e; cursor: pointer; margin-left: 16px; line-height: 1; }
+        .theater.audio-mode .close:hover { color: #ff7e93; }
+
         .viewport { width: 90%; max-width: 1000px; max-height: 80vh; display: flex; justify-content: center; }
         .viewport video, .viewport img { max-width: 100%; max-height: 80vh; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
-        .viewport audio { width: 100%; max-width: 500px; background: #222; border-radius: 8px; padding: 20px; }
+        .viewport audio { width: 100%; background: #222; border-radius: 8px; padding: 20px; }
         .close { position: absolute; top: 20px; right: 30px; font-size: 32px; color: #fff; cursor: pointer; }
     </style>
     <script>
@@ -298,20 +313,23 @@ render_header()
                 playerNode.controls = true;
                 playerNode.autoplay = true;
                 playerNode.src = src;
+                theater.classList.add('video-mode');
             } else if (type === 'audio') {
                 playerNode = document.createElement('audio');
                 playerNode.controls = true;
                 playerNode.autoplay = true;
                 playerNode.src = src;
+                theater.classList.add('audio-mode');
             } else if (type === 'image') {
                 playerNode = document.createElement('img');
                 playerNode.src = src;
+                theater.classList.add('video-mode');
             }
 
             document.title = 'mpvc-web-video: ' + src.replace("/ytdl-archive/","") ;
             viewport.appendChild(playerNode);
             theater.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
+            document.body.style.overflow = '';
         }
 
         function closeTheater(e) {
@@ -346,32 +364,15 @@ render_header()
         <a href="?dir=">ytdl-archive</a> / $(escape_html "$REQ_DIR")
     </div>
 
-    <div class="search-container">
+    <input type="checkbox" id="list-view-toggle" title="Grid/List Toggle"> Grid/List
+    <snap class="search-container">
         <input type="text" class="search-input" placeholder="Search current directory..." oninput="filterMedia(this.value)" autofocus>
-    </div>
-    <input type="checkbox" id="list-view-toggle" title="Grid/List Toggle"> Grid/List Toggle
+    </snap>
+    <br>
 
     <div class="grid-container">
 EOF
 
-    # If we are inside a subdirectory, seamlessly inject a "Go Up" navigation card
-    # as the very first grid element before render_grid_cached evaluates files
-    if [ -n "$REQ_DIR" ]; then
-        # Calculate parent folder by cutting trailing path layer
-        parent_dir="${REQ_DIR%/*}"
-        [ "$parent_dir" = "$REQ_DIR" ] && parent_dir="" # Root resolution fallback
-
-        encoded_parent=$(url_encode "$parent_dir")
-        cat <<EOF
-        <div class="card folder-card" data-filename=".." onclick="window.location.search='?dir=${encoded_parent}'">
-            <div class="thumb-box">
-                <span class="badge" style="color: #e3b341;">System</span>
-                <div class="folder-icon">⇪</div>
-            </div>
-            <div class="meta">.. (Go Up)</div>
-        </div>
-EOF
-    fi
 }
 
 render_footer()
