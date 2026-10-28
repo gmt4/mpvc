@@ -249,7 +249,7 @@ mpvcfzf_thumb_attachment()
     ytfd="${ytfd%.*}"      # extension
     thumb="$MPVC_CACHE_DIR/thumbnail/$ytfd.png"
     if [ ! -r "$thumb" ]; then
-        ffmpeg -hide_banner -loglevel error -dump_attachment:t "" -i "$1" "$thumb"
+        ffmpeg -hide_banner -loglevel error -dump_attachment:t "" -i "$yturl" "$thumb"
     fi
     echo "$thumb"
 }
@@ -278,10 +278,13 @@ mpvcfzf_thumb_cache()
 {
     yturl=$(mpvcfzf_thumb_url "$1")
     case "$yturl" in
-    ${MPVC_YTDL_OUTPUT}*)            mpvcfzf_thumb_attachment "$yturl" ;;
-    https://img.radioparadise.com/*) mpvcfzf_thumb_cache_url "$yturl" ;;
-    https://api.somafm.com/logos/*)  mpvcfzf_thumb_cache_url "$yturl" ;;
-    https://i.ytimg.com/*)           mpvcfzf_thumb_cache_url "$yturl" ;;
+    ${MPVC_YTDL_OUTPUT}*)                         mpvcfzf_thumb_attachment "$yturl" ;;
+    http://localhost:${MPVC_WEB_PORT:-}/*)        mpvcfzf_thumb_attachment "$yturl" ;;
+    https://localhost:${MPVC_WEB_SSL_PORT:-}/*)   mpvcfzf_thumb_attachment "$yturl" ;;
+
+    https://img.radioparadise.com/*)     mpvcfzf_thumb_cache_url "$yturl" ;;
+    https://api.somafm.com/logos/*)      mpvcfzf_thumb_cache_url "$yturl" ;;
+    https://i.ytimg.com/*)               mpvcfzf_thumb_cache_url "$yturl" ;;
     esac
 }
 
@@ -295,6 +298,9 @@ mpvcfzf_thumb_url()
 
     yturl=$(mpvcfzf_getvideo_id_from_fd "$yturl")
     case "$yturl" in
+    http://localhost:${MPVC_WEB_PORT:-}/*)      echo "$yturl" ;;
+    https://localhost:${MPVC_WEB_SSL_PORT:-}/*) echo "$yturl" ;;
+
     https://ice?.somafm.com/*-*-aac)            mpvcfzf_thumb_somafm "$yturl";;
 
     https://stream.radioparadise.com/aac*)      mpvcfzf_thumb_rp chan=0 ;;
@@ -312,7 +318,8 @@ mpvcfzf_thumb_url()
     https://yewtu.be/watch*)                    mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
     https://youtu.be/???????????)               mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
     https://yewtu.be/???????????)               mpvc -q ytqueryfield thumbnail_url "$yturl" ;;
-    #*)                                         echo "$yturl" ;;
+
+    #*)                                          echo "$yturl" ;;
     esac
 }
 
