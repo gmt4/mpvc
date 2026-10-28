@@ -152,7 +152,7 @@ mpvcfzf_curlsearch()
 
 mpvcfzf_curlsearch_play()
 {
-    mpvcfzf_curlsearch "$1" |
+    mpvcfzf_curlsearch "$@" |
         mpvcfzf_preview --prompt="(csearch) " |
             mpvcfzf_awk 1
 }
@@ -510,20 +510,17 @@ mpvcfzf_ddg_play()
 
 mpvcfzf_urlget()
 {
-    url="https://localhost:8443/ytdl-archive/"
-    for url in "$@"
-    do
-        mpvcfzf_curl "$url" |
-            awk -v url="$url" '
-                /<a href=".*">.*<\/a>/ {
-                    match(url, "https?://[^/]+/");
-                    host = substr($0, RSTART, RLENGTH)
-                    href=$0; sub("^.*href=\"", "", href) sub("\".*$", "", href)
-                    if (href ~ "^/") href = host"/"href
-                    print (href !~ host) ? url"/"href : href
-                }
-            '
-    done
+    url=$(echo "$@" | grep -oe 'https\?://[^ ]\+')
+    mpvcfzf_curl "$@" |
+        awk -v url="$url" '
+            /<a href=".*">.*<\/a>/ {
+                match(url, "https?://[^/]+/");
+                host = substr($0, RSTART, RLENGTH)
+                href=$0; sub("^.*href=\"", "", href) sub("\".*$", "", href)
+                if (href ~ "^/") href = host"/"href
+                print (href !~ host) ? url"/"href : href
+            }
+        '
 }
 
 mpvcfzf_urlbrowser()
