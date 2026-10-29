@@ -110,7 +110,7 @@ mpvc-web -c start -s1   # Start, and open `https://localhost:8443` in your brows
 ## ⚙️ System Requirements
 
 *   **Required:** POSIX-compliant shell (`sh`), `mpv`, `socat`.
-*   **Recommended:** `fzf`, `yt-dlp`.
+*   **Recommended:** `fzf`, `yt-dlp`, `mpv-mpris`.
 
 *For package manager setups or troubleshooting tips, consult the **[Prerequisites Guide in docs/README.md](docs/README.md#requirements)**.*
 
