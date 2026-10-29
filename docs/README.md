@@ -75,8 +75,9 @@ Recommended extras:
 - `curl`
 - `fzf`
 - `jq`
-- `notify-send`
 - `yt-dlp`
+- `mpv-mpris`
+- `notify-send`
 - `beets`
 - `cava`
 
@@ -166,7 +167,7 @@ For more  check the  [LogBook](#logbook) (remember your best chance is to try, p
 Debian (and APT derivatives such as Ubuntu):
 
 ```console
-apt install mpv awk curl socat fzf rlwrap jq libnotify-bin # cava
+apt install mpv awk curl socat fzf rlwrap jq libnotify-bin # mpv-mpris cava
 ```
 
 ### Arch [mpvc-git](https://aur.archlinux.org/packages/mpvc-git)
