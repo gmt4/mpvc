@@ -142,7 +142,7 @@ render_grid_html()
         cat << HTML
         <div class="card folder-card" data-filename="" onclick="window.location.search='?dir=${encoded_parent}'">
             <div class="thumb-box folder-box">
-                <span class="badge" style="color: #eab308;">SYSTEM</span>
+                <span class="badge" style="color: #3b82f6;">SYSTEM</span>
                 <div style="font-size: 2rem;">⬆️</div>
             </div>
             <div class="meta" style="color: #eab308; font-weight: bold;">.. (Go Up)</div>
@@ -198,6 +198,8 @@ HTML
         <div class="card file-card" data-filename="${safe_filename_html}" onclick="openTheater('${media_url}', '${media_kind}')">
             <div class="thumb-box">
                 <span class="badge" style="color: ${badge_color};">${media_kind}</span>
+                <span class="badge now" onclick="request('mpvc-web-browser?browser&action=playlist-add', 'POST', 'item=$file')" style="color: ${badge_color};">!</span>
+                <span class="badge add" onclick="request('mpvc-web-browser?browser&action=playlist-add', 'POST', 'item=$file');" style="color: ${badge_color};">+</span>
                 <img src="${img_src}" alt="Asset Preview" loading="lazy">
             </div>
             <div class="meta">${safe_filename_html}</div>
@@ -263,7 +265,10 @@ render_header()
         .card.folder-card { border-style: dashed; border-color: #444; }
         .folder-icon { font-size: 32px; color: #e3b341; }
 
-        .badge { position: absolute; top: 8px; right: 8px; padding: 2px 6px; font-size: 10px; background: rgba(0,0,0,0.75); border-radius: 4px; font-weight: bold; text-transform: uppercase; z-index: 10; }
+        .badge { position: absolute; top: 8px; right: 20px; padding: 2px 6px; font-size: 10px; background: rgba(0,0,0,0.75); border-radius: 4px; font-weight: bold; text-transform: uppercase; z-index: 10; }
+        .badge.add { position: absolute; top: 8px; right: 8px; }
+        .badge.now { position: absolute; top: 8px; right: 8px; }
+
         .meta { padding: 12px; font-size: 12px; word-break: break-word; overflow-wrap: anywhere; line-height: 1.4; }
 
         .theater { display: none; position: fixed; z-index: 999; box-sizing: border-box; transition: all 0.2s ease-in-out; }
@@ -288,73 +293,94 @@ render_header()
         .close { position: absolute; right: 10px; font-size: 32px; color: #fff; cursor: pointer; }
     </style>
     <script>
-        function filterMedia(query) {
-            const cleanQuery = query.toLowerCase().trim();
-            const cards = document.querySelectorAll('.card');
-            cards.forEach(card => {
-                const filename = card.getAttribute('data-filename').toLowerCase();
-                if (filename.includes(cleanQuery)) {
-                    card.style.display = '';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-
-        function openTheater(src, type) {
-            const theater = document.getElementById('theater');
-            const viewport = document.getElementById('viewport');
-            if (!theater || !viewport) return;
-            viewport.innerHTML = '';
-            let playerNode;
-
-            if (type === 'video') {
-                playerNode = document.createElement('video');
-                playerNode.controls = true;
-                playerNode.autoplay = true;
-                playerNode.src = src;
-                theater.classList.add('video-mode');
-            } else if (type === 'audio') {
-                playerNode = document.createElement('audio');
-                playerNode.controls = true;
-                playerNode.autoplay = true;
-                playerNode.src = src;
-                theater.classList.add('audio-mode');
-            } else if (type === 'image') {
-                playerNode = document.createElement('img');
-                playerNode.src = src;
-                theater.classList.add('video-mode');
-            }
-
-            document.title = '🗂️mpvc-web-video: ' + src.replace("/ytdl-archive/","") ;
-            viewport.appendChild(playerNode);
-            theater.style.display = 'flex';
-            document.body.style.overflow = '';
-        }
-
-        function closeTheater(e) {
-            const theater = document.getElementById('theater');
-            const viewport = document.getElementById('viewport');
-            if (!theater || !viewport) return;
-
-            document.title = '🗂️mpvc-web-video';
-            if (e.target === theater || e.target.classList.contains('close')) {
-                theater.style.display = 'none';
-                const activePlayer = viewport.firstChild;
-                if (activePlayer && (activePlayer.tagName === 'VIDEO' || activePlayer.tagName === 'AUDIO')) {
-                    activePlayer.pause();
-                }
-                viewport.innerHTML = '';
-                document.body.style.overflow = '';
-            }
-        }
-
-        window.addEventListener('keydown', (e) => {
-            const theater = document.getElementById('theater');
-            if (e.key === 'Escape' && theater && theater.style.display === 'flex') {
-                closeTheater({target: theater});
+    function filterMedia(query) {
+        const cleanQuery = query.toLowerCase().trim();
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            const filename = card.getAttribute('data-filename').toLowerCase();
+            if (filename.includes(cleanQuery)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
             }
         });
+    }
+
+    function openTheater(src, type) {
+        const theater = document.getElementById('theater');
+        const viewport = document.getElementById('viewport');
+        if (!theater || !viewport) return;
+        viewport.innerHTML = '';
+        let playerNode;
+
+        if (type === 'video') {
+            playerNode = document.createElement('video');
+            playerNode.controls = true;
+            playerNode.autoplay = true;
+            playerNode.src = src;
+            theater.classList.add('video-mode');
+        } else if (type === 'audio') {
+            playerNode = document.createElement('audio');
+            playerNode.controls = true;
+            playerNode.autoplay = true;
+            playerNode.src = src;
+            theater.classList.add('audio-mode');
+        } else if (type === 'image') {
+            playerNode = document.createElement('img');
+            playerNode.src = src;
+            theater.classList.add('video-mode');
+        }
+
+        document.title = '🗂️mpvc-web-video: ' + src.replace("/ytdl-archive/","") ;
+        viewport.appendChild(playerNode);
+        theater.style.display = 'flex';
+        document.body.style.overflow = '';
+    }
+
+    function closeTheater(e) {
+        const theater = document.getElementById('theater');
+        const viewport = document.getElementById('viewport');
+        if (!theater || !viewport) return;
+
+        document.title = '🗂️mpvc-web-video';
+        if (e.target === theater || e.target.classList.contains('close')) {
+            theater.style.display = 'none';
+            const activePlayer = viewport.firstChild;
+            if (activePlayer && (activePlayer.tagName === 'VIDEO' || activePlayer.tagName === 'AUDIO')) {
+                activePlayer.pause();
+            }
+            viewport.innerHTML = '';
+            document.body.style.overflow = '';
+        }
+    }
+
+    async function request(url, method = "GET", body = null) {
+        const options = { method, headers: {} };
+        if (body !== null && body !== undefined) {
+            //options.headers["Content-Type"] = "application/json";
+            //options.body = JSON.stringify(body);
+            options.body = body;
+        }
+
+        const response = await fetch(url, options);
+        if (!response.ok) {
+            throw new Error("HTTP error: "+response.status);
+        }
+
+        const contentType = response.headers.get("content-type");
+        if (contentType?.includes("application/json")) {
+            return response.json();
+        }
+
+        return response.text();
+    }
+
+    window.addEventListener('keydown', (e) => {
+        const theater = document.getElementById('theater');
+        if (e.key === 'Escape' && theater && theater.style.display === 'flex') {
+            closeTheater({target: theater});
+        }
+    });
     </script>
 </head>
 <body>
