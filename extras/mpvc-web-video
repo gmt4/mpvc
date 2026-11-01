@@ -198,7 +198,7 @@ HTML
         <div class="card file-card" data-filename="${safe_filename_html}" onclick="openTheater('${media_url}', '${media_kind}')">
             <div class="thumb-box">
                 <span class="badge" style="color: ${badge_color};">${media_kind}</span>
-                <span class="badge now" onclick="request('mpvc-web-browser?browser&action=playlist-add', 'POST', 'item=$file')" style="color: ${badge_color};">!</span>
+                <span class="badge now" onclick="request('mpvc-web-browser?browser&action=playlist-now', 'POST', 'item=$file')" style="color: ${badge_color};">!</span>
                 <span class="badge add" onclick="request('mpvc-web-browser?browser&action=playlist-add', 'POST', 'item=$file');" style="color: ${badge_color};">+</span>
                 <img src="${img_src}" alt="Asset Preview" loading="lazy">
             </div>
@@ -265,9 +265,9 @@ render_header()
         .card.folder-card { border-style: dashed; border-color: #444; }
         .folder-icon { font-size: 32px; color: #e3b341; }
 
-        .badge { position: absolute; top: 8px; right: 20px; padding: 2px 6px; font-size: 10px; background: rgba(0,0,0,0.75); border-radius: 4px; font-weight: bold; text-transform: uppercase; z-index: 10; }
-        .badge.add { position: absolute; top: 8px; right: 8px; }
-        .badge.now { position: absolute; top: 8px; right: 8px; }
+        .badge { position: absolute; top: 8px; right: 20px; padding: 2px 2px; font-size: 10px; background: rgba(0,0,0,0.75); border-radius: 4px; font-weight: bold; text-transform: uppercase; z-index: 10; }
+        .badge.add { position: absolute; top: 8px; right: 12px; }
+        .badge.now { position: absolute; top: 8px; right:  4px; }
 
         .meta { padding: 12px; font-size: 12px; word-break: break-word; overflow-wrap: anywhere; line-height: 1.4; }
 
