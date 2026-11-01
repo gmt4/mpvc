@@ -268,6 +268,7 @@ handle_action()
     stash-apply)    "$MPVC" -q stash apply "$itemn" ;;
     stash-append)   "$MPVC" -q stash append "$itemn" ;;
     equalizer-load) "$MPVC-equalizer" load "$item" ;;
+    playlist-now)   "$MPVC" -q playnow "$item" ;;
     playlist-add)   "$MPVC" -q add "$item" ;;
     playlist-add1)  "$MPVC" -q add "$item1" ;;
     playlist-play)  "$MPVC" -q play "$item1" ;;
