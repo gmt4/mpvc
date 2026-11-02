@@ -18,7 +18,7 @@ set -euf
 ARCHIVE_DIR="$HOME/.config/mpvc/ytdl-archive"
 MEDIA_URL_PREFIX="/ytdl-archive"
 FFMPEG_CMD="nice -n 19 ffmpeg -y -threads 1"
-FFMPEG_MAX_WORKERS=4
+FFMPEG_MAX_WORKERS=$(getconf _NPROCESSORS_ONLN 2>/dev/null || sysctl -n hw.ncpu || echo 2)
 
 # internal config
 HTML_CACHE_DIR="$HOME/.cache/mpvc/web/video/mpvc-web-html-cache/"
