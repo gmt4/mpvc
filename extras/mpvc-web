@@ -108,9 +108,9 @@ mpvc_web_style()
 html {
   color-scheme: light dark;
   --bg: light-dark(#ffffff, #0f0f0f);
-  --bg-sub: light-dark(#f5f5f5, #1a1a1a);
+  --bg-sub: light-dark(#f2f2f2, #1a1a1a);
   --text: light-dark(#1a1a1a, #e0e0e0);
-  --border: light-dark(#dddddd, #666666);
+  --border: light-dark(#cccccc, #666666);
   --accent: light-dark(#0066cc, #00d4ff);
   background: var(--bg);
   color: var(--text);
@@ -130,7 +130,7 @@ html:has(#scheme-dark:checked) { color-scheme: dark; }
 
 /* Interactive Block */
 details {
-  margin: 2px 0px;
+  margin: 4px 2px;
   background: var(--bg-sub);
   border: 1px solid var(--border);
   border-radius: 6px;
