@@ -463,7 +463,7 @@ mpvcfzf_local_play()
 
 mpvcfzf_playlist()
 {
-    len=$(mpvc gets playlist-count)
+    len=$(mpvc -q gets playlist-count)
     (if [ -z "$len" ]; then echo; else mpvc fullplaylist; fi) |
         mpvcfzf_preview --prompt="(playlist) " \
         --bind='ctrl-o:execute-silent(mpvc play {1})' \
@@ -472,7 +472,7 @@ mpvcfzf_playlist()
 
 mpvcfzf_chapterlist()
 {
-    len=$(mpvc gets chapter-list/count)
+    len=$(mpvc -q gets chapter-list/count)
     (if [ -z "$len" ]; then echo; else mpvc chapter-list-nr; fi) |
         mpvcfzf_preview --prompt="(chapter) " \
         --bind='ctrl-o:execute-silent(mpvc set chapter {1})' \
