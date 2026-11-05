@@ -23,6 +23,8 @@ SITEURL="https://gmt4.github.io/mpvc"
 
 set -euf
 
+equiet() { "$@" 2> /dev/null; }
+
 mpvc_web_defaults()
 {
     MPVC=$(command -v mpvc)
@@ -74,8 +76,12 @@ mpvc_web_defaults()
 
     # if present load user config
     if [ -r "$MPVC_CONFIG" ] && [ -O "$MPVC_CONFIG" ]; then
+        chmod "640" "$MPVC_CONFIG";
+        mpvc_check_user_perms "$MPVC_CONFIG" "640";
         # shellcheck source=docs/config/mpvc.conf
         . "$MPVC_CONFIG"
+    else
+        warn "# $PROGNAME Warning: ${MPVC_CONFIG##"$HOME/"} not found, see docs/mpvc.conf for defaults"
     fi
 }
 
@@ -96,6 +102,19 @@ mpvc_web_config()
         echo "$PROGNAME: Warning: Found mawk, check you are running a recent > 2025 version."
     fi
 
+}
+
+mpvc_check_user_perms() {
+    # check file perms
+    perms=$(equiet stat -Lc '%a' "$1" || equiet stat -Lf '%Lp' "$1")
+    if [ "$perms" != "$2" ]; then
+        die 2 "$PROGNAME: Error: File ${1##"$HOME/"} has unsafe permissions: $perms (should be $2)."
+    fi
+    # check file owner
+    owner=$(equiet stat -c '%u' "$1" || equiet stat -f '%Du' "$1")
+    if [ "$owner" != "$(id -u)" ] && [ "$owner" != "0" ]; then
+        die 2 "$PROGNAME: Error: File ${1##"$HOME/"} unexpected owner: $owner (should be $(id -u))."
+    fi
 }
 
 mpvc_web_style()
