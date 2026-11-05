@@ -38,6 +38,107 @@ MPVC_CONFIG="docs/config/mpvc.conf docs/config/yt-dlp.conf docs/config/curlrc"
 MPVC_INSTALL_TOOLS_REQUIRED="sh mpv fzf socat sed awk"
 MPVC_INSTALL_TOOLS_RECOMMENDED="awk curl jq rlwrap notify-send qrencode yt-dlp deno"
 
+
+mpvc_verify_sha256()
+{
+    lfile="$1"
+    expected="$2"
+    actual=$(sha256sum "$lfile" | awk '{print $1}')
+    if [ "$actual" != "$expected" ]; then
+        echo "$PROGNAME: Error: SHA256 mismatch for $lfile" >&2
+        echo "$PROGNAME:   expected: $expected" >&2
+        echo "$PROGNAME:   actual:   $actual" >&2
+        rm -f "$lfile"
+        return 1
+    fi
+    echo "$PROGNAME: OK: SHA256 verified for $lfile"
+    return 0
+}
+
+mpvc_verify_github_blob()
+{
+    file="$1"
+    repo="$2"
+    path="$3"
+    api_url="https://api.github.com/repos/${repo}/contents/${path}"
+    expected_sha=$(curl -fsSL "$api_url" 2>/dev/null | grep '"sha"' | head -1 | sed 's/.*"sha": *"//;s/".*//')
+    if [ -z "$expected_sha" ]; then
+        echo "$PROGNAME: Warning: Could not fetch GitHub blob SHA for $path (skipping)" >&2
+        return 0
+    fi
+    size=$(wc -c < "$file")
+    actual_sha=$(perl -se "print \"blob \${n}\x00\"" -- -n=$size | cat - "$file" | sha1sum | awk '{print $1}')
+    if [ "$actual_sha" != "$expected_sha" ]; then
+        echo "$PROGNAME: Error: GitHub blob SHA1 mismatch for $file" >&2
+        echo "$PROGNAME:   expected: $expected_sha" >&2
+        echo "$PROGNAME:   actual:   $actual_sha" >&2
+        rm -f "$file"
+        return 1
+    fi
+    echo "$PROGNAME: OK: GitHub blob SHA1 verified for $file"
+    return 0
+}
+
+mpvc_verify_ytdlp()
+{
+    file="$1"
+    filename=$(basename "$file")
+    sums_url="https://github.com/yt-dlp/yt-dlp/releases/latest/download/SHA2-256SUMS"
+    tmpsum=$(mktemp)
+    if ! curl -fsSL -o "$tmpsum" "$sums_url"; then
+        echo "$PROGNAME: Warning: Could not fetch yt-dlp SHA2-256SUMS (skipping)" >&2
+        rm -f "$tmpsum"
+        return 0
+    fi
+    expected=$(grep "^[0-9a-f]*  ${filename}$" "$tmpsum" | awk '{print $1}')
+    rm -f "$tmpsum"
+    if [ -z "$expected" ]; then
+        echo "$PROGNAME: Warning: No checksum entry for $filename in SHA2-256SUMS" >&2
+        return 0
+    fi
+    mpvc_verify_sha256 "$file" "$expected"
+}
+
+mpvc_verify_deno()
+{
+    lfile="$1"
+    arch=$(uname -m)
+    zipname="deno-${arch}-unknown-linux-gnu.zip"
+    sum_url="https://github.com/denoland/deno/releases/latest/download/${zipname}.sha256sum"
+    zip_url="https://github.com/denoland/deno/releases/latest/download/${zipname}"
+    tmpsum=$(mktemp)
+    tmpzip=$(mktemp)
+    if ! curl -m 200 -fsSL -o "$tmpsum" "$sum_url"; then
+        echo "$PROGNAME: Warning: Could not fetch deno sha256sum (skipping)" >&2
+        rm -f "$tmpsum" "$tmpzip"
+        return 0
+    fi
+    expected=$(awk '{print $1}' "$tmpsum")
+    rm -f "$tmpsum"
+    if [ -z "$expected" ]; then
+        echo "$PROGNAME: Warning: Could not parse deno sha256sum" >&2
+        rm -f "$tmpzip"
+        return 0
+    fi
+    echo "$PROGNAME: Downloading deno zip for integrity verification..."
+    if ! curl -m 200 -fsSL -o "$tmpzip" "$zip_url"; then
+        echo "$PROGNAME: Warning: Could not download deno zip for verification" >&2
+        rm -f "$tmpzip"
+        return 0
+    fi
+    if ! mpvc_verify_sha256 "$tmpzip" "$expected"; then
+        rm -f "$tmpzip" "$lfile"
+        return 1
+    fi
+    if command -v unzip >/dev/null 2>&1; then
+        unzip -p "$tmpzip" deno > "$file" 2>/dev/null
+    else
+        gunzip -c "$tmpzip" > "$file" 2>/dev/null
+    fi
+    rm -f "$tmpzip"
+    return 0
+}
+
 mpvc_config()
 {
     mkdir -p "$MPV_CONFIG_DIR/scripts/"
@@ -80,12 +181,19 @@ mpvc_config()
             case "$bin" in
             yt-dlp)
                 if curl -fsSL -o "$file" "https://github.com/$bin/$bin/releases/latest/download/$bin"; then
+                    if ! mpvc_verify_ytdlp "$file"; then
+                        echo "$PROGNAME: Error: yt-dlp integrity check failed. Aborting." >&2
+                        exit 1
+                    fi
                     chmod a+rx "$file"
                 fi
                 ;;
             deno)
-                if curl -m 200 -fsSL -o - "https://github.com/denoland/$bin/releases/latest/download/$bin-$(uname -m)-unknown-linux-gnu.zip" | gunzip > "$file"; then
+                if mpvc_verify_deno "$file"; then
                     chmod a+rx "$file"
+                else
+                    echo "$PROGNAME: Error: deno integrity check failed. Aborting." >&2
+                    exit 1
                 fi
                 ;;
             esac
@@ -103,6 +211,10 @@ mpvc_fetch()
         url="$PROGURL/raw/master/$script"
         echo "Fetch $file"
         if curl -fsSL -o "$file" "$url"; then
+            if ! mpvc_verify_github_blob "$file" "gmt4/mpvc" "$script"; then
+                echo "$PROGNAME: Error: integrity check failed for $script. Aborting." >&2
+                exit 1
+            fi
             chmod u+x "$file"
         fi
     done
