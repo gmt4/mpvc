@@ -175,7 +175,7 @@ mpvcfzf_related_search()
 {
     id=${1:-$(mpvc get filename)}
     id=$(mpvcfzf_getvideo_id "$id")
-    output=$(mpvcfzf_curl "${MPVC_FZF_INVID_URL}/watch?v=$id" | tee /tmp/out)
+    output=$(mpvcfzf_curl "${MPVC_FZF_INVID_URL}/watch?v=$id")
     echo "$output" |
         awk '
             /<div class="video-card-row">/ { c++; next }
