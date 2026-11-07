@@ -46,6 +46,7 @@ mpvc_web_defaults()
     : "${MPVC_WEB_ARCHIVE_ENABLE:=}"
     : "${MPVC_WEB_THUMBNAIL_ENABLE:=}"
     : "${MPVC_WEB_THUMBNAIL_STYLE:=filter:invert(0.1);height:15em;width:100%}"
+    : "${MPVC_WEB_AVAHI_PUBLISH_ENABLE:=}"
     : "${MPVC_WEB_EXTRAS_URL:=}"
     : "${MPVC_WEB_HTML_THEME:=}"
     : "${MPVC_WEB_HTML_REFRESH:=}"
@@ -540,11 +541,9 @@ mpvc_web_https()
     #echo "$$" > "$MPVC_WEB_SSL_PID"
 }
 
-mpvc_web_qrcode()
+mpvc_web_host()
 {
     host=$MPVC_WEB_HOST
-    if ! command -v qrencode >/dev/null; then return; fi
-
     if [ "$host" = "0" ]; then
         if command -v ip >/dev/null 2>&1; then
             host=$(ip route get 1.1.1.1 | awk '/src/ {for(i=1;i<=NF;i++) if($i=="src") print $(i+1)}')
@@ -552,6 +551,13 @@ mpvc_web_qrcode()
             host=$(ifconfig "$(route -n get 1.1.1.1 | awk '/interface:/ {print $2}')" | awk '/inet / {print $2}')
         fi
     fi
+    echo "$host"
+}
+
+mpvc_web_qrcode()
+{
+    host=$(mpvc_web_host)
+    if ! command -v qrencode >/dev/null; then return; fi
 
     qrurl="http://$host:$MPVC_WEB_PORT";
     if [ -n "${MPVC_WEB_SSL_ENABLE}" ]; then
@@ -559,12 +565,41 @@ mpvc_web_qrcode()
     fi
 
     if command -v qrencode >/dev/null; then
-        echo "# $PROGNAME Client QR code $qrurl"
+        echo "# $PROGNAME Setup QR code $qrurl"
         echo
         qrencode -s 6 -l H -t ansiutf8 "$qrurl";
         echo
     fi
 }
+
+mpvc_web_avahi()
+{
+    host=$(mpvc_web_host)
+    http_url="http://$host:$MPVC_WEB_PORT";
+    https_url="https://$host:$MPVC_WEB_SSL_PORT";
+    # pkill -f "avahi-publish-service.*mpvc-player" >/dev/null 2>&1
+
+    # Start beacons if avahi is present
+    if [ "$MPVC_WEB_AVAHI_PUBLISH_ENABLE" = "true" ] && command -v avahi-publish-service >/dev/null 2>&1; then
+        echo "# mpvc-web Setup Avahi: Broadcasting network beacons"
+    else
+        echo "# mpvc-web Setup Avahi: Not broadcasting network beacon"
+        return
+    fi
+
+    # Standard HTTP
+    avahi-publish-service "mpvc-player" _http._tcp $MPVC_WEB_PORT \
+        "path=/" \
+        "description=mpvc-web (HTTP)" \
+        "url=$http_url" >/dev/null 2>&1 &
+
+    # Secure HTTPS
+    avahi-publish-service "mpvc-player-secure" _https._tcp $MPVC_WEB_SSL_PORT \
+        "path=/" \
+        "description=mpvc-Web (HTTPS)" \
+        "url=$https_url" >/dev/null 2>&1 &
+}
+
 
 mpvc_web_setup()
 {
@@ -619,6 +654,7 @@ mpvc_web_setup()
 
         fi
 
+        mpvc_web_avahi
         mpvc_web_qrcode
 
         if [ -n "${MPVC_WEB_EXTRAS_URL:-}" ]; then
