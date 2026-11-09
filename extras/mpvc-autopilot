@@ -27,7 +27,7 @@ mpvcap_defaults()
 }
 
 mpvcap_date() { echo "[$(date +%H:%M)]"; }
-mpvcap_pingcheck() { ping -c 5 "$@" | awk 'NR == 2 && /time=/ { sub(":.*time=",": time="); print }'; }
+mpvcap_pingcheck() { for h in "$@"; do ping -c 4 "$h" | awk 'NR == 2 && /time=/ { sub(":.*time=",": time="); print }'; done; }
 mpvcap_btcheck()   { hcitool scan | awk "/$*/ {print}"; }
 
 # autopilot play tracks at random from musicdir each PERIOD secs
@@ -118,7 +118,7 @@ usage()
 {
     cat <<EOF
 usage: $PROGNAME -[$optflags] args # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
- -i : The IP of the device to detect ping presence for $PROGNAME (*required)
+ -i : The IPs of the device/s to detect ping presence for $PROGNAME (*required)
  -c : The operation cmd to run $PROGNAME (default: $MPVC_AP_CMD [mpvcap_autostart,mpvcap_autopilot])
  -C : The presence check to run $PROGNAME (default: $MPVC_AP_CHECK)
  -p : The number of seconds between ping presence checks (default: $MPVC_AP_PERIOD)
