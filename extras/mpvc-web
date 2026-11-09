@@ -574,7 +574,7 @@ mpvc_web_qrcode()
 
 mpvc_web_avahi_discover()
 {
-    avahi-browse -art | awk '/^ *txt/ { gsub("[\[\"]",""); if (! seen[$3]) { print $4,$3; seen[$3]=1;} }'
+    avahi-browse -art | awk '/^ *txt.*mpvc-web/ { gsub("[\[\"]",""); if (! seen[$3]) { print $4,$3; seen[$3]=1;} }'
 }
 
 mpvc_web_avahi_publish()
