@@ -572,7 +572,12 @@ mpvc_web_qrcode()
     fi
 }
 
-mpvc_web_avahi()
+mpvc_web_avahi_discover()
+{
+    avahi-browse -art | awk '/^ *txt/ { gsub("[\[\"]",""); if (! seen[$3]) { print $4,$3; seen[$3]=1;} }'
+}
+
+mpvc_web_avahi_publish()
 {
     host=$(mpvc_web_host)
     http_url="http://$host:$MPVC_WEB_PORT";
@@ -590,13 +595,13 @@ mpvc_web_avahi()
     # Standard HTTP
     avahi-publish-service "mpvc-player" _http._tcp $MPVC_WEB_PORT \
         "path=/" \
-        "description=mpvc-web (HTTP)" \
+        "description=mpvc-web-http" \
         "url=$http_url" >/dev/null 2>&1 &
 
     # Secure HTTPS
     avahi-publish-service "mpvc-player-secure" _https._tcp $MPVC_WEB_SSL_PORT \
         "path=/" \
-        "description=mpvc-Web (HTTPS)" \
+        "description=mpvc-web-https" \
         "url=$https_url" >/dev/null 2>&1 &
 }
 
@@ -654,7 +659,7 @@ mpvc_web_setup()
 
         fi
 
-        mpvc_web_avahi
+        mpvc_web_avahi_publish
         mpvc_web_qrcode
 
         if [ -n "${MPVC_WEB_EXTRAS_URL:-}" ]; then
@@ -720,7 +725,7 @@ usage()
 {
     cat <<EOF
 usage: $PROGNAME -[$optflags] args # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
-  -c : Set $PROGNAME HTTP server command: [start,stop] (*required)
+  -c : Set $PROGNAME HTTP server command: [start,stop,status,discover] (*required)
   -b : Set $PROGNAME HTTP server bind address (default $MPVC_WEB_HOST)
   -p : Set $PROGNAME HTTP server port (default $MPVC_WEB_PORT)
   -r : Set $PROGNAME HTTP server root dir (default $MPVC_WEB_ROOT)
@@ -760,10 +765,11 @@ main()
     shift $((OPTIND - 1))
 
     case "${MPVC_WEB_CMD:-}" in
-    status) ps auxww | grep "$PROGNAME" ;;
-    start)  mpvc_web "$@";;
-    stop)   pkill -f "$PROGNAME" ;;
-    *)      usage ;;
+    discover)   mpvc_web_avahi_discover ;;
+    status)     ps auxww | grep "$PROGNAME" ;;
+    start)      mpvc_web "$@";;
+    stop)       pkill -f "$PROGNAME" ;;
+    *)          usage ;;
     esac
 }
 
