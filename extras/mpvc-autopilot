@@ -76,7 +76,6 @@ mpvcap_autopilot()
 # autostart checks for device/phone: if present resume audio, otherwise, pause.
 mpvcap_autostart()
 {
-    target="$1"
     ncheck=0
 
     echo "# $PROGNAME $* $MPVC_AP_CMD $MPVC_AP_CHECK PERIOD=$MPVC_AP_PERIOD NCHECK=$MPVC_AP_NCHECK [$MPVC_AP_HOURMIN,$MPVC_AP_HOURMAX]"
@@ -84,7 +83,7 @@ mpvcap_autostart()
     do
         hour=$(date +%_H)
         pause=$(mpvc -q get pause || true)
-        check="$($MPVC_AP_CHECK "$target")"
+        check="$($MPVC_AP_CHECK "$@")"
 
         # Device present/absent
         if [ -n "$check" ]; then
@@ -139,7 +138,7 @@ main()
     do
         case "$flag" in
         h) usage ;;
-        i) ARGS="$OPTARG"; ;;
+        i) ARGS=$OPTARG; ;;
         c) MPVC_AP_CMD="$OPTARG"; ;;
         p) MPVC_AP_PERIOD="$OPTARG"; ;;
         n) MPVC_AP_NCHECK="$OPTARG"; ;;
@@ -152,7 +151,7 @@ main()
 
     [ -z "${ARGS:-}" ] && usage "Error: No -i option provided (required)"
     case "$MPVC_AP_CMD" in
-    mpvcap_autostart) mpvcap_autostart "$ARGS" ;;
+    mpvcap_autostart) mpvcap_autostart $ARGS ;;
     mpvcap_autopilot) mpvcap_autopilot "$ARGS" ;;
     *) usage ;;
     esac
