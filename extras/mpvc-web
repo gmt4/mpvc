@@ -582,7 +582,8 @@ mpvc_web_avahi_publish()
     host=$(mpvc_web_host)
     http_url="http://$host:$MPVC_WEB_PORT";
     https_url="https://$host:$MPVC_WEB_SSL_PORT";
-    # pkill -f "avahi-publish-service.*mpvc-player" >/dev/null 2>&1
+
+    #pkill -f "avahi-publish-service mpvc-player" >/dev/null 2>&1
 
     # Start beacons if avahi is present
     if [ "$MPVC_WEB_AVAHI_PUBLISH_ENABLE" = "true" ] && command -v avahi-publish-service >/dev/null 2>&1; then
@@ -765,10 +766,11 @@ main()
     shift $((OPTIND - 1))
 
     case "${MPVC_WEB_CMD:-}" in
-    discover)   mpvc_web_avahi_discover ;;
-    status)     ps auxww | grep "$PROGNAME" ;;
     start)      mpvc_web "$@";;
     stop)       pkill -f "$PROGNAME" ;;
+    status)     ps auxww | grep "$PROGNAME" ;;
+    discover)   mpvc_web_avahi_discover ;;
+    publish)    mpvc_web_avahi_publish ;;
     *)          usage ;;
     esac
 }
