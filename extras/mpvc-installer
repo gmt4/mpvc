@@ -201,6 +201,11 @@ mpvc_config()
     done
 }
 
+mpvc_lint()
+{
+    shellcheck --rcfile=.shellcheckrc --severity=warning --format=gcc ${SCRIPT}
+}
+
 mpvc_fetch()
 {
     mkdir -p "$BINDIR"
@@ -551,6 +556,7 @@ main()
     install)         shift; mpvc_install "$@";;
     uninstall)       shift; mpvc_uninstall "$@";;
     config)          shift; mpvc_config "$@";;
+    lint)            shift; mpvc_lint "$@";;
 
     comp-user)        shift; MANDIR="$XDG_DATA_HOME/man/man1" $SHELL "$0" comp;;
     comp-sys)         shift; MANDIR="$XDG_DATA_HOME/man/man1" $SHELL "$0" man;;
