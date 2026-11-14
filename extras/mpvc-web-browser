@@ -108,6 +108,7 @@ html_body_open()
     <option value=yewtube       title='YouTube Search'>YewtuBe</option>
 
     <option value=feeds         title='Feeds Stream'>Feeds</option>
+    <option value=ntsr          title='Radio Stream'>NTSRadio</option>
     <option value=somafm        title='Radio Stream'>SomaFM</option>
     <option value=radioparadise title='Radio Stream'>RadioParadise</option>
     <option value=customfeed    title='Custom Feeds'>CustomFeed</option>
@@ -405,6 +406,11 @@ handle_remote()
     handle_generic "$MPVC-fzf search $filter" "" "playlist-add1:▶️:btn-compact"
 }
 
+handle_ntsr()
+{
+    handle_generic "mpvc_csv $MPVC-fzf ntsr-raw" "" "playlist-now1:▶️:btn-compact" "playlist-add1:➕:btn-compact"
+}
+
 handle_somafm()
 {
     handle_generic "mpvc_csv $MPVC-fzf somafm-raw" "" "playlist-now1:▶️:btn-compact" "playlist-add1:➕:btn-compact"
@@ -478,6 +484,7 @@ mpvc_browser()
 
     beets)          handle_beets ;;
     feeds)          handle_feeds ;;
+    ntsr)           handle_ntrs ;;
     somafm)         handle_somafm ;;
     radioparadise)  handle_radioparadise ;;
     customfeed)     handle_customfeed ;;
