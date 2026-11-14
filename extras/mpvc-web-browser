@@ -269,6 +269,7 @@ handle_action()
     stash-append)   "$MPVC" -q stash append "$itemn" ;;
     equalizer-load) "$MPVC-equalizer" load "$item" ;;
     playlist-now)   "$MPVC" -q playnow "$item" ;;
+    playlist-now1)  "$MPVC" -q playnow "$item1" ;;
     playlist-add)   "$MPVC" -q add "$item" ;;
     playlist-add1)  "$MPVC" -q add "$item1" ;;
     playlist-play)  "$MPVC" -q play "$item1" ;;
@@ -406,17 +407,17 @@ handle_remote()
 
 handle_somafm()
 {
-    handle_generic "mpvc_csv $MPVC-fzf somafm-raw" "" "playlist-add1:▶️:btn-compact"
+    handle_generic "mpvc_csv $MPVC-fzf somafm-raw" "" "playlist-now1:▶️:btn-compact" "playlist-add1:➕:btn-compact"
 }
 
 handle_radioparadise()
 {
-    handle_generic "mpvc_csv $MPVC-fzf rp-raw" "" "playlist-add1:▶️:btn-compact"
+    handle_generic "mpvc_csv $MPVC-fzf rp-raw" "" "playlist-now1:▶️:btn-compact" "playlist-add1:➕:btn-compact"
 }
 
 handle_customfeed()
 {
-    handle_generic "mpvc_csv $MPVC-fzf custom-raw" "" "playlist-add1:▶️:btn-compact"
+    handle_generic "mpvc_csv $MPVC-fzf custom-raw" "" "playlist-now1:▶️:btn-compact" "playlist-add1:➕:btn-compact"
 }
 
 handle_generic()
