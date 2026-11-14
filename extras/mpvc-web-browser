@@ -484,7 +484,7 @@ mpvc_browser()
 
     beets)          handle_beets ;;
     feeds)          handle_feeds ;;
-    ntsr)           handle_ntrs ;;
+    ntsr)           handle_ntsr ;;
     somafm)         handle_somafm ;;
     radioparadise)  handle_radioparadise ;;
     customfeed)     handle_customfeed ;;
