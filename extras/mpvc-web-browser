@@ -366,7 +366,7 @@ handle_listing()
 handle_beets()
 {
     filter=$(gup 'filter=[^&]*' "$QUERY_STRING")
-    handle_generic "beet ls -p ${filter}" "" "playlist-add:➕:btn-compact"
+    handle_generic "beet ls -p ${filter}" "" "playlist-now1:▶️:btn-compact" "playlist-add1:➕:btn-compact"
 }
 
 handle_stash()
@@ -376,12 +376,14 @@ handle_stash()
 
 handle_playlist()
 {
-    handle_generic "$MPVC fullplaylist" "$("$MPVC" -q filename current)" "playlist-play:▶️:btn-compact" "playlist-rm:🚫:btn-compact"
+    current=$("$MPVC" -q filename current)
+    handle_generic "$MPVC fullplaylist" "$current" "playlist-play:▶️:btn-compact" "playlist-rm:🚫:btn-compact"
 }
 
 handle_chapters()
 {
-    handle_generic "$MPVC chapter-list-nr" "$("$MPVC" -q expand-text '${chapter}' | sed 's/^([0-9]*) //')" "chapter-play:▶️:btn-compact"
+    current=$("$MPVC" -q expand-text '${chapter}' | sed 's/^([0-9]*) //')
+    handle_generic "$MPVC chapter-list-nr" "$current" "chapter-play:▶️:btn-compact"
 }
 
 handle_equalizer()
@@ -391,13 +393,13 @@ handle_equalizer()
 
 handle_feeds()
 {
-    handle_generic "$MPVC-fzf feed" "" "playlist-add1:▶️:btn-compact"
+    handle_generic "$MPVC-fzf feed" "" "playlist-now1:▶️:btn-compact" "playlist-add1:➕:btn-compact"
 }
 
 handle_yewtube()
 {
     filter=$(gup 'filter=[^&]*' "$QUERY_STRING")
-    handle_generic "$MPVC-fzf search $filter" "" "playlist-add1:▶️:btn-compact"
+    handle_generic "$MPVC-fzf search $filter" "" "playlist-now1:▶️:btn-compact" "playlist-add1:➕:btn-compact"
 }
 
 handle_remote()
