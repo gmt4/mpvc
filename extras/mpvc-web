@@ -306,6 +306,12 @@ function request(url) {
         });
 }
 
+function handle_request(event, url) {
+    event.preventDefault();
+    event.stopPropagation();
+    request(url)
+}
+
 function Help()
 {
     var help = (
@@ -376,13 +382,13 @@ mpvc_web_index()
             <a href="." name="top" ${MPVC_WEB_SHORTCUT_REFRESH}>🎧 Player</a>
         <span style="float:right">
 
-            <a class='btn' onclick="request('/cgi-bin/$PROGNAME-browser?mpvc+next')" title="Next track">⏭️</a>
-            <a class='btn' onclick="request('/cgi-bin/$PROGNAME-browser?mpvc+cnext')" title="Next chapter">⏬</a>
-            <a class='btn' onclick="request('/cgi-bin/$PROGNAME-browser?mpvc+toggle')" title="Toggle playback (ProTip: accesskey=t)" accesskey=t>⏯️</a>
+            <a class='btn' onclick="handle_request(event, '/cgi-bin/$PROGNAME-browser?mpvc+next')" title="Next track">⏭️</a>
+            <a class='btn' onclick="handle_request(event, '/cgi-bin/$PROGNAME-browser?mpvc+cnext')" title="Next chapter">⏬</a>
+            <a class='btn' onclick="handle_request(event, '/cgi-bin/$PROGNAME-browser?mpvc+toggle')" title="Toggle playback (ProTip: accesskey=t)" accesskey=t>⏯️</a>
 
-            <a class='btn' onclick="request('/cgi-bin/$PROGNAME-browser?mpvc+cycle-volume')" title="Cycle Volume">🔈</a>
-            <a class='btn' onclick="request('/cgi-bin/$PROGNAME-browser?mpvc+volume-down')" title="Volume Down">🔉</a>
-            <a class='btn' onclick="request('/cgi-bin/$PROGNAME-browser?mpvc+volume-up')" title="Volume Up">🔊</a>
+            <a class='btn' onclick="handle_request(event, '/cgi-bin/$PROGNAME-browser?mpvc+cycle-volume')" title="Cycle Volume">🔈</a>
+            <a class='btn' onclick="handle_request(event, '/cgi-bin/$PROGNAME-browser?mpvc+volume-down')" title="Volume Down">🔉</a>
+            <a class='btn' onclick="handle_request(event, '/cgi-bin/$PROGNAME-browser?mpvc+volume-up')" title="Volume Up">🔊</a>
 
             <span class="theme-toggle-container">
                 <label for="scheme-auto" class="theme-lbl lbl-auto" title="System Theme">🌓</label>
