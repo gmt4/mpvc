@@ -48,6 +48,7 @@ html_body_open()
         a { color: #3498db; text-decoration: none; }
         .row { display: flex; justify-content: space-between; align-items: center; padding: 4px 4px; border-bottom: 1px solid #555; }
         .folder-link { font-weight: bold; color: #f1c40f; display: block; width: 100%; padding: 4px 0; }
+        .dir-name { padding-right: 15px; word-break: break-all; flex-grow: 1; }
         .file-name { padding-right: 15px; word-break: break-all; flex-grow: 1; }
         button.btn-compact { background: #444; color: #fff; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; min-width: 24px; min-height: 24px; font-size: 1.0rem; padding: 0; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
         button.btn-compact:active  { background: #219653; }
@@ -311,16 +312,10 @@ handle_listing()
         # Handle subdirectories
         if [ -d "$item" ]; then
             name=$(basename "${item}")
-            echo "
-            <div class='row dir-row'>
-                <span class='dir-name'>
-                    <a href='$PROGNAME?browser&mode=media&dir=${enc_dir}' class='folder-link'>📁 ${name}/</a>
-                </span>
-                <form action='$PROGNAME?browser&mode=$mode&action=playlist-add' method='POST' style='display:inline;'>
-                    <button type='submit' class='btn-compact'>+</button>
-                    <input type='hidden' name='item' value='$item'>
-                </form>
-            </div>"
+            echo "<div class='row dir-row'>"
+            echo "<span class='dir-name'><a href='$PROGNAME?browser&mode=media&dir=${enc_dir}' class='folder-link'>📁 ${name}/</a></span>"
+            handle_generic_action "playlist-now1:▶️:btn-compact" "playlist-add1:➕:btn-compact"
+            echo "</div>"
         fi
     done
     )
@@ -336,20 +331,17 @@ handle_listing()
             media_file="${MEDIA_URL}${item##"$MEDIA_ROOT"}"
             case "$name" in
             *.mp3|*.flac|*.m4a|*.ogg|*.opus|*.wav|*.mp4|*.mkv|*.webm|*webp)
-                echo "
-                <div class='row file-row'>
-                    <span class='file-name'><a href='${media_file}'>🎵${name}</a></span>
-                    <form action='$PROGNAME?browser&mode=$mode&action=playlist-add' method='POST' style='display:inline;'>
-                        <button type='submit' class='btn-compact'>+</button>
-                        <input type='hidden' name='item' value='$item'>
-                    </form>
-                </div>"
+                echo "<div class='row file-row'>"
+                echo "<span class='file-name'><a href='${media_file}'>🎵${name}</a></span>"
+                handle_generic_action "playlist-now1:▶️:btn-compact" "playlist-add1:➕:btn-compact"
+                echo "</div>"
                 ;;
             *)
                 echo "
                 <div class='row file-row'>
                     <span class='file-name'><a href='${media_file}'>📄${name}</a></span>
                 </div>"
+                ;;
             esac
         fi
     done
@@ -388,7 +380,8 @@ handle_chapters()
 
 handle_equalizer()
 {
-    handle_generic "$MPVC-equalizer preset-list" "" "equalizer-load:▶️:btn-compact"
+    current=$("$MPVC-equalizer" preset-curr)
+    handle_generic "$MPVC-equalizer preset-list" "$current" "equalizer-load:▶️:btn-compact"
 }
 
 handle_feeds()
@@ -445,17 +438,7 @@ handle_generic()
 
             echo "<div class='${row_class}'>"
             echo "  <span class='file-name'> 📝 ${item} </span>"
-            for action_cfg in "$@"; do
-                act_suffix="${action_cfg%%:*}"
-                _rest="${action_cfg#*:}"
-                act_emoji="${_rest%%:*}"
-                act_class="${_rest#*:}"
-
-                echo "  <form action='$PROGNAME?browser&mode=$mode&action=${act_suffix}' method='POST' style='display:inline;'>"
-                echo "      <button type='submit' class='${act_class:-btn-compact}'>${act_emoji}</button>"
-                echo "      <input type='hidden' name='item' value='${item}'>"
-                echo "  </form>"
-            done
+            handle_generic_action "$@"
             echo "</div>"
         done
     )
@@ -465,6 +448,22 @@ handle_generic()
     HTML_BODY="${HTML_BODY}$(html_body_close)"
 
     write_request "$HTML_BODY" "text/html"
+}
+
+handle_generic_action()
+{
+    for action_cfg in "$@";
+    do
+        act_prefix="${action_cfg%%:*}"
+        _rest="${action_cfg#*:}"
+        act_emoji="${_rest%%:*}"
+        act_class="${_rest#*:}"
+
+        echo "  <form action='$PROGNAME?browser&mode=$mode&action=${act_prefix}' method='POST' style='display:inline;'>"
+        echo "      <button type='submit' class='${act_class:-btn-compact}' title='${act_prefix}'>${act_emoji}</button>"
+        echo "      <input type='hidden' name='item' value='${item}'>"
+        echo "  </form>"
+    done
 }
 
 mpvc_browser()
