@@ -948,7 +948,7 @@ mpvc_status() {
             gsub("%abloop%", "${!ab-loop-a==no:yes}${?ab-loop-a==no:no}${!ab-loop-a:NA}")
             gsub("%frame%", "${estimated-frame-number}")
             gsub("%remaining%", "${playtime-remaining:no-playtime}")
-            gsub("%length%", "${duration:no-duration}")
+            gsub("%length%", "${duration:no-dur}")
             gsub("%time%", "${playback-time}")
             gsub("%precisetime%", "${playback-time}")
             gsub("%playlistlength%", "${playlist-count}")
