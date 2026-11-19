@@ -641,7 +641,7 @@ mpvc_web_setup()
         mpvc_web_manifest > "$MPVC_WEB_ROOT/manifest.json"
         mpvc_web_icon_svg > "$MPVC_WEB_ROOT/apple-touch-icon.svg"
         # Setup apple-touch-icon.png for manifest.json
-        if [ ! -e "$MPVC_WEB_ROOT/apple-touch-icon.png" ]; then
+        if [ ! -e "$MPVC_WEB_ROOT/apple-touch-icon.png" ] && command -v convert; then
             convert -background none -density 300 "$MPVC_WEB_ROOT/apple-touch-icon.svg" -resize 192x192 "$MPVC_WEB_ROOT/apple-touch-icon.png"
             convert -background none -density 300 "$MPVC_WEB_ROOT/apple-touch-icon.svg" -resize 512x512 "$MPVC_WEB_ROOT/apple-touch-icon-maskable.png"
         fi
