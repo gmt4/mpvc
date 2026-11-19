@@ -30,6 +30,7 @@ html_body_open()
     <style>
         body { font-family: monospace, sans-serif; font-size: 0.8rem; background: #121212; color: #e0e0e0; margin: 0; padding: 15px 4px; }
         .browser { max-width: 99%; margin: 0 auto; }
+        .inline { display: inline; }
 
         .dir-header { justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 8px; margin-bottom: 10px; }
         .path-row { padding: 4px 2px 6px 2px; font-size: 0.9rem; }
@@ -267,16 +268,18 @@ handle_action()
     itemn=$(echo "$item" | awk '{print $NF}')
 
     case "$action" in
-    stash-apply)    "$MPVC" -q stash apply "$itemn" ;;
-    stash-append)   "$MPVC" -q stash append "$itemn" ;;
-    equalizer-load) "$MPVC-equalizer" load "$item" ;;
-    playlist-now)   "$MPVC" -q playnow "$item" ;;
-    playlist-now1)  "$MPVC" -q playnow "$item1" ;;
-    playlist-add)   "$MPVC" -q add "$item" ;;
-    playlist-add1)  "$MPVC" -q add "$item1" ;;
-    playlist-play)  "$MPVC" -q play "$item1" ;;
-    playlist-rm)    "$MPVC" -q rm "$item1" ;;
-    chapter-play)   "$MPVC" -q chapter-play "$item1" ;;
+    stash-apply)        "$MPVC" -q stash apply "$itemn" ;;
+    stash-append)       "$MPVC" -q stash append "$itemn" ;;
+    equalizer-load)     "$MPVC-equalizer" load "$item" ;;
+    playlist-now)       "$MPVC" -q playnow "$item" ;;
+    playlist-now1)      "$MPVC" -q playnow "$item1" ;;
+    playlist-add)       "$MPVC" -q add "$item" ;;
+    playlist-add1)      "$MPVC" -q add "$item1" ;;
+    playlist-fetch)     "$MPVC-fzf" fetch "$item" ;;
+    playlist-fetch1)    "$MPVC-fzf" fetch "$item1" ;;
+    playlist-play)      "$MPVC" -q play "$item1" ;;
+    playlist-rm)        "$MPVC" -q rm "$item1" ;;
+    chapter-play)       "$MPVC" -q chapter-play "$item1" ;;
     esac
 
     # Fast-path exit for asynchronous background JavaScript requests
@@ -392,7 +395,7 @@ handle_feeds()
 handle_yewtube()
 {
     filter=$(gup 'filter=[^&]*' "$QUERY_STRING")
-    handle_generic "$MPVC-fzf search $filter" "" "playlist-now1:▶️:btn-compact" "playlist-add1:➕:btn-compact"
+    handle_generic "$MPVC-fzf search $filter" "" "playlist-now1:▶️:btn-compact" "playlist-add1:➕:btn-compact" "playlist-fetch1:📥:btn-compact"
 }
 
 handle_remote()
@@ -459,7 +462,7 @@ handle_generic_action()
         act_emoji="${_rest%%:*}"
         act_class="${_rest#*:}"
 
-        echo "  <form action='$PROGNAME?browser&mode=$mode&action=${act_prefix}' method='POST' style='display:inline;'>"
+        echo "  <form action='$PROGNAME?browser&mode=$mode&action=${act_prefix}' method='POST' class='inline'>"
         echo "      <button type='submit' class='${act_class:-btn-compact}' title='${act_prefix}'>${act_emoji}</button>"
         echo "      <input type='hidden' name='item' value='${item}'>"
         echo "  </form>"
