@@ -126,7 +126,7 @@ Clone the git repo to receive quick development updates via `git pull`, then, us
 
 ```sh
  # fetch a local copy of the github repo
- git clone https://github.com/lwilletts/mpvc/
+ git clone https://github.com/gmt4/mpvc/
 
  # use extras/mpvc-installer: just copy/link to BINDIR=$HOME/bin
  (cd mpvc; BINDIR=~/bin/ extras/mpvc-installer quickstart-ln)
