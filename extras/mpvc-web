@@ -683,7 +683,8 @@ mpvc_web_setup()
 mpvc_web_envclean()
 {
     MPVC=$(command -v mpvc)
-    env -i PATH=/usr/local/bin:/usr/bin:/bin HOME="$HOME" TERM="$TERM" MPVC="$MPVC" "$@"
+
+    env -i PATH=/usr/local/bin:/usr/bin:/bin:$(dirname $MPVC) HOME="$HOME" TERM="$TERM" MPVC="$MPVC" "$@"
 }
 
 mpvc_web()
