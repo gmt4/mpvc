@@ -226,8 +226,8 @@ mpvc_fetch()
     # check before overwriting
     if [ -f "$BINDIR/m" ] || [ -f "$BINDIR/mx" ]; then return; fi
 
-    ln -sfv "$BINDIR/mpvc" "$BINDIR/m"
-    ln -sfv "$BINDIR/mpvc-fzf" "$BINDIR/mx"
+    (cd "$BINDIR"; ln -sfv "mpvc" "m")
+    (cd "$BINDIR"; ln -sfv "mpvc-fzf" "mx")
 }
 
 mpvc_man()
