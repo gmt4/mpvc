@@ -658,7 +658,7 @@ mpvcfzf_feed_lofi()
 
 mpvcfzf_feed_rp_args()
 {
-    echo "$MPVC_FZF_RP_FILE" "https://all.api.radio-browser.info/json/stations/topvote?hidebroken=true&limit=4096&name=Radio%20Paradise" '.[]|select(.name|test("Radio.Paradise.(Main|Mellow|Rock|World)";"i"))|(.url_resolved+";"+.name+";"+.codec+";"+(.bitrate|tostring))'
+    echo "$MPVC_FZF_RP_FILE" "https://api.radioparadise.com/api/list_chan?" '.[]|"https://stream.radioparadise.com/\(.stream_name|sub("^main-mix$";"aac")+"-128");\(.title);\(.current_listeners)-listerners"'
 }
 
 mpvcfzf_feed_rp_std() { mpvcfzf_feeds "${1:-}" $(mpvcfzf_feed_rp_args); }
