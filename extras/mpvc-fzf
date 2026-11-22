@@ -325,8 +325,10 @@ mpvcfzf_thumb_url()
     https://stream.radioparadise.com/mellow*)   mpvcfzf_thumb_rp chan=1 ;;
     https://stream.radioparadise.com/rock*)     mpvcfzf_thumb_rp chan=2 ;;
     https://stream.radioparadise.com/global*)   mpvcfzf_thumb_rp chan=3 ;;
-    https://stream.radioparadise.com/beyond*)   mpvcfzf_thumb_rp chan=4 ;;
-    https://stream.radioparadise.com/serenity*) mpvcfzf_thumb_rp chan=5 ;;
+    #https://stream.radioparadise.com/beyond*)   mpvcfzf_thumb_rp chan=4 ;;
+    https://stream.radioparadise.com/beyond*)   mpvcfzf_thumb_rp chan=5 ;;
+    https://stream.radioparadise.com/serenity*) mpvcfzf_thumb_rp chan=6 ;;
+    https://stream.radioparadise.com/velvet*)   mpvcfzf_thumb_rp chan=9 ;;
 
     https://tilderadio.org/listen)              mpvcfzf_thumb_tr ;;
 
