@@ -302,6 +302,12 @@ mpvc_uninstall()
     rm -v "$BINDIR/mx"
 }
 
+mpvc_list_requirements()
+{
+    echo "# List required deps: $MPVC_INSTALL_TOOLS_REQUIRED"
+    echo "# List recommended deps: $MPVC_INSTALL_TOOLS_RECOMMENDED"
+}
+
 mpvc_check_requirements()
 {
     # attempt at listing packages required by mpvc & extras/ to work
@@ -506,6 +512,7 @@ usage: $PROGNAME args # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
 
   check-update   : Check for updates
   check-reqs     : Check for required packages
+  list-reqs      : List for required packages
   config         : Fetch mpvc config
   config-user    : Fetch mpvc config to BINDIR=$HOME/bin
   config-sys     : Fetch mpvc config to BINDIR=$PREFIX/bin
@@ -544,6 +551,7 @@ main()
     quickstart-ck)   shift; mpvc_quickstart_checks ;;
 
     version)         shift; mpvc_version;;
+    list-reqs)       shift; mpvc_list_requirements;;
     check-reqs)      shift; mpvc_check_requirements;;
     check-update)    shift; mpvc_check_update;;
     man)             shift; mpvc_man "$@";;
