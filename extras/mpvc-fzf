@@ -834,7 +834,7 @@ main()
         -n|next)                shift; mpvcfzf_nextvideo "$arg1"; return $?;;
 
         -o|osearch)             shift; mpvcfzf_isearch_once "$arg1" ;; # lucky
-        -O|Osearch)             shift; mpvcfzf_isearch_once "$arg1" | mpvcfzf_awk1 | mpvc load ;; # lucky
+        -O|Osearch)             shift; mpvcfzf_isearch_once "$arg1" | mpvcfzf_awk 1 | mpvc load ;; # lucky
         -OO)                    shift; mpvcfzf_icache_output_dir ;;
 
         -p|splay)               shift; mpvcfzf_iplay "$arg1" | mpvc load; return ;;
