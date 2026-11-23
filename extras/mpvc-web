@@ -51,6 +51,7 @@ mpvc_web_defaults()
     : "${MPVC_WEB_HTML_THEME:=}"
     : "${MPVC_WEB_HTML_REFRESH:=}"
     : "${MPVC_WEB_CSS_STYLE:=}"
+    : "${MPVC_WEB_BINDIR:=$XDG_DATA_HOME/mpvc/bin}"
 
     # accesskey keyboard shortcuts (Alt+Shift key)
     : "${MPVC_WEB_SHORTCUT_REFRESH:=accesskey=m}"
@@ -612,6 +613,17 @@ mpvc_web_avahi_publish()
         "url=$https_url" >/dev/null 2>&1 &
 }
 
+mpvc_web_setup_bin()
+{
+    mkdir -p "$MPVC_WEB_BINDIR"
+    for cmd in mpvc mpvc-fzf mpvc-chapter mpvc-equalizer mpvc-web mpvc-web-browser mpvc-web-video mpv socat yt-dlp deno; do
+        target=$(command -v "$cmd" 2>/dev/null) || continue
+        case "$target" in
+            "$MPVC_WEB_BINDIR"/*) continue ;;
+        esac
+        ln -sf "$target" "$MPVC_WEB_BINDIR/$cmd"
+    done
+}
 
 mpvc_web_setup()
 {
@@ -680,11 +692,22 @@ mpvc_web_setup()
     )
 }
 
+
 mpvc_web_envclean()
 {
-    MPVC=$(command -v mpvc)
-    MPVC_DIR=$(dirname "$MPVC")
-    env -i "PATH=/usr/local/bin:/usr/bin:/bin:$MPVC_DIR" HOME="$HOME" TERM="$TERM" MPVC="$MPVC" "$@"
+    mpvc_web_setup_bin
+    PATH="$MPVC_WEB_BINDIR:/usr/local/bin:/usr/bin:/bin"
+    MPVC=$(command -v mpvc) || {
+        echo "$PROGNAME: Error: mpvc not found in PATH" >&2
+        return 1
+    }
+    env -i \
+        PATH="$PATH" \
+        HOME="$HOME" \
+        TERM="${TERM:-dumb}" \
+        MPVC="$MPVC" \
+        ${MPVC_SOCKET:+MPVC_SOCKET="$MPVC_SOCKET"} \
+        "$@"
 }
 
 mpvc_web()
