@@ -14,7 +14,7 @@ PROGURL="https://github.com/gmt4/mpvc"
 
 set -euf
 
-SHELL="${SHELL:-/bin/sh}"
+SH="${SH:-/bin/sh}"
 PREFIX="${PREFIX:-$HOME}"
 BINDIR="${BINDIR:-$PREFIX/bin}"
 DOCDIR="${DOCDIR:-$PREFIX/docs}"
@@ -65,7 +65,7 @@ mpvc_verify_github_blob()
         echo "$PROGNAME: Warning: Could not fetch GitHub blob SHA for $path (skipping)" >&2
         return 0
     fi
-    size=$(wc -c < "$file")
+    size=$(wc -c < "$file" | tr -d '[:space:]')
     actual_sha=$(perl -se "print \"blob \${n}\x00\"" -- -n=$size | cat - "$file" | sha1sum | awk '{print $1}')
     if [ "$actual_sha" != "$expected_sha" ]; then
         echo "$PROGNAME: Error: GitHub blob SHA1 mismatch for $file" >&2
@@ -247,7 +247,7 @@ mpvc_docs()
     mkdir -p "$DOCDIR"
     for doc in ${DOCS};
     do
-        install -Dvm640 "$(pwd)/$doc" "$DOCDIR";
+        install -vm640 "$(pwd)/$doc" "$DOCDIR/";
     done
 }
 
@@ -256,7 +256,7 @@ mpvc_licenses()
     mkdir -p "$LICDIR"
     for license in ${LICENSES};
     do
-        install -Dvm644 "$(pwd)/$license" "$LICDIR";
+        install -vm644 "$(pwd)/$license" "$LICDIR/";
     done
 }
 
@@ -279,7 +279,7 @@ mpvc_install()
     mkdir -p "$BINDIR"
     for script in ${SCRIPT};
     do
-        install -Dvm755 "$(pwd)/$script" "$BINDIR";
+        install -vm755 "$(pwd)/$script" "$BINDIR/"
     done
 
     (cd "$BINDIR"; ln -sfv "mpvc" "m")
@@ -404,7 +404,7 @@ done
 mpvc_quickstart_checks()
 {
     case ":$PATH:" in
-        *:"$BINDIR":*)
+        *:"${BINDIR%/}":*)
             ;;
         *)
             echo "⚠️  Note: '$BINDIR' not found in \$PATH. Update your shell config with:"
@@ -416,7 +416,7 @@ mpvc_quickstart_checks()
         *-256color)
             ;;
         *)
-            echo "⚠️  Note: 'TERM=$TERM', TERM supports $(tput colors) colors, Fix with:"
+            echo "⚠️  Note: 'TERM=${TERM:-}', TERM supports $(tput colors || echo 0) colors, Fix with:"
             echo "  export TERM=xterm-256color"
             ;;
     esac
@@ -436,37 +436,37 @@ mpvc_quickstart()
     fi
 
     echo "# Quickstart: Checking for updates..."
-    if ! $SHELL "$0" check-update; then
+    if ! $SH "$0" check-update; then
         echo "❌ Quickstart failed: 'check-update' step encountered an error."
         return 1
     fi
 
     echo "# Quickstart: Fetching/installing files..."
-    if ! $SHELL "$0" $install_mode; then
+    if ! $SH "$0" $install_mode; then
         echo "❌ Quickstart failed: '$install_mode' step encountered an error."
         return 1
     fi
 
     echo "# Quickstart: Fetching/installing manpages..."
-    if ! $SHELL "$0" man-user; then
+    if ! $SH "$0" man-user; then
         echo "❌ Quickstart failed: 'man-user' step encountered an error."
         return 1
     fi
 
     echo "# Quickstart: Fetching/installing shell completion ..."
-    if ! $SHELL "$0" comp-user; then
+    if ! $SH "$0" comp-user; then
         echo "❌ Quickstart failed: 'comp-user' step encountered an error."
         return 1
     fi
 
     echo "# Quickstart: Configuring user directories..."
-    if ! $SHELL "$0" config-user; then
+    if ! $SH "$0" config-user; then
         echo "❌ Quickstart failed: 'config-user' step encountered an error."
         return 1
     fi
 
     echo "# Quickstart: Checking system requirements..."
-    if ! $SHELL "$0" check-reqs; then
+    if ! $SH "$0" check-reqs; then
         echo "❌ Quickstart failed: 'check-reqs' dependency check failed."
         return 1
     fi
@@ -538,11 +538,6 @@ EOF
 main()
 {
     if [ $# -lt 1 ]; then usage; fi
-
-    # hack to force SHELL back to POSIX-sh when using non POSIX-sh shells (macOS)
-    case "$SHELL" in *'zsh'|*'fish')
-        echo "$PROGNAME: Warning Forcing SHELL=/bin/sh, current SHELL=$SHELL is not POSIX-sh"; SHELL="/bin/sh";;
-    esac
 
     case "$1" in
     quickstart)      shift; mpvc_quickstart fetch-user ;;
