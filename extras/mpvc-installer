@@ -520,8 +520,8 @@ usage: $PROGNAME args # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
   man            : Fetch mpvc manpages
   man-user       : Fetch mpvc manpages to MANDIR=$XDG_DATA_HOME
   man-sys        : Fetch mpvc manpages to MANDIR=$MANDIR
-  comp-user       : Install shell completions from MANDIR=$XDG_DATA_HOME
-  comp-sys        : Install shell completions from MANDIR=$XDG_DATA_HOME
+  comp-user      : Install shell completions from MANDIR=$XDG_DATA_HOME
+  comp-sys       : Install shell completions from MANDIR=$XDG_DATA_HOME
 
   fetch-user     : Fetch to BINDIR=$HOME/bin
   link-user      : Symlink to BINDIR=$HOME/bin
