@@ -484,7 +484,7 @@ mpvc_quickstart_uninstall()
     export BINDIR="${BINDIR:-$HOME/bin}"
 
     echo "# QuickStart: Removing mpvc binaries from $BINDIR..."
-    if ! "$0" uninstall-user; then
+    if ! $SH "$0" uninstall-user; then
         echo "❌ Quickstart failed: 'uninstall-user' step encountered an error."
         return 1
     fi
