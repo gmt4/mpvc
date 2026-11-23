@@ -276,3 +276,96 @@ Check the FAQ for any questions left after reading the above docs.
 If you encounter a bug file an [Issue](../../issues).
 
 [^install]: Skip directly to [Installation](#installation) to try mpvc
+
+## Ecosystem Architecture
+
+The following diagram maps how media inputs flow down through the user-facing tools, core scripts, and runtime configuration layers to drive the underlying playback engine:
+
+```mermaid
+graph TD
+    %% Layer 0: Media Sources
+    subgraph L0 [Layer 0: Media Sources]
+        direction LR
+        local[Local FS<br>~/Music] --- cache[Local Cache<br>ytdl-archive] --- feeds[FZF Feeds<br>Radio APIs] --- lan[LAN Peers<br>mpvc-web] --- streams[URL Streams<br>YT/Bandcamp]
+    end
+
+    %% Layer 1: User Interfaces
+    subgraph L1 [Layer 1: User-Facing Tools]
+        direction LR
+        tui[mpvc-tui] --- fzf[mpvc-fzf] --- web[mpvc-web] <--> cgi[mpvc-web-browser]
+    end
+
+    %% Layer 2: Core Logic & Helpers
+    subgraph L2 [Layer 2: Core Script & Helpers]
+        direction LR
+        mpvc[mpvc CLI] --- eq[mpvc-equalizer] --- ch[mpvc-chapter]
+    end
+
+    %% Layer 3: Communication Bridge & Global Config
+    subgraph L3 [Layer 3: Unix Socket & Config Global]
+        direction LR
+        conf[mpvc.conf] -. Sourced by scripts .-> socket[~/.config/mpvc/mpvsocket]
+    end
+
+    %% Layer 4: Media Engine
+    subgraph L4 [Layer 4: Media Engine]
+        direction LR
+        mpv[mpv Player<br>mpv.conf] <--> ytdl[yt-dlp<br>yt-dlp.conf]
+    end
+
+    %% Flow Connections
+    L0 --> L1
+    L1 <--> L2
+    L2 <--> conf
+    socket <--> L4
+
+    %% Styling for crisp rendering
+    style L0 fill:none,stroke:#d48427,stroke-dasharray: 5 5
+    style L1 fill:none,stroke:#388bfd,stroke-dasharray: 5 5
+    style L2 fill:none,stroke:#238636,stroke-dasharray: 5 5
+    style L3 fill:none,stroke:#8b949e,stroke-dasharray: 5 5
+    style L4 fill:none,stroke:#8957e5,stroke-dasharray: 5 5
+
+    classDef default fill:#1f232a,stroke:#30363d,color:#c9d1d9,stroke-width:1px;
+    classDef config fill:#161b22,stroke:#d48427,color:#e3b341,stroke-width:1px;
+
+    class local,cache,feeds,lan,streams,tui,fzf,web,cgi,mpvc,eq,ch,socket,mpv,ytdl default;
+    class conf config;
+```
+
+### Which Component Should You Run?
+
+The mpvc ecosystem is completely modular. You only need to spin up the specific components that match your active media setup:
+
+* **mpvc**
+  The core CLI POSIX engine for automation and window manager keybindings. (manual: [mpvc(1)](https://gmt4.github.io/mpvc/man/man1/mpvc.html))
+  * **Quickstart:** `mpvc add <URL/Path>` or `mpvc toggle`
+
+* **mpvc-tui**
+  A continuous terminal console displaying status, playlists, and desktop notifications. (manual: [mpvc-tui(1)](https://gmt4.github.io/mpvc/man/man1/mpvc-tui.html))
+  * **Quickstart:** `mpvc-tui -t` (or `mpvc-tui -T` for notifications)
+
+* **mpvc-fzf**
+  A keyboard-driven fuzzy browser for media: local music libraries, radio APIs, and YouTube streams. (manual: [mpvc-fzf(1)](https://gmt4.github.io/mpvc/man/man1/mpvc-fzf.html))
+  * **Quickstart:** `mpvc-fzf -p 'query'` or `mpvc-fzf --lofi`
+
+* **mpvc-web**
+  A lightweight HTTP daemon and CGI asset manager to control playback from a phone or tablet browser. (manual: [mpvc-web(1)](https://gmt4.github.io/mpvc/man/man1/mpvc-web.html))
+  * **Quickstart:** `mpvc-web -c start`
+
+* **mpvc-equalizer**
+  A 15-band linear phase equalizer to manipulate audio streams and load acoustic environment presets. (manual: [mpvc-equalizer(1)](https://gmt4.github.io/mpvc/man/man1/mpvc-equalizer.html))
+  * **Quickstart:** `mpvc-equalizer preset classical | mpvc-equalizer load`
+
+* **mpvc-chapter**
+  A local tool to quickly build, adjust, and merge custom timestamp markers into media files. (manual: [mpvc-chapter(1)](https://gmt4.github.io/mpvc/man/man1/mpvc-chapter.html))
+  * **Quickstart:** `mpvc-chapter add` or `mpvc-chapter load`
+
+* **mpvc-autopilot**
+  A background script to autopilot mpvc: pauses or resumes playback dynamically based on local network IP pings or Bluetooth proximity. (manual: [mpvc-autopilot(1)](https://gmt4.github.io/mpvc/man/man1/mpvc-autopilot.html))
+  * **Quickstart:** `mpvc-autopilot -p 300 -n 3 -i <target_ip>`
+
+* **mpvc-installer**
+  An automated installer/deploy shell script tool for seamless installer setups, dependency checking, and complete removals. (manual: [mpvc-installer(1)](https://gmt4.github.io/mpvc/man/man1/mpvc-installer.html))
+  * **Quickstart:** `mpvc-installer quickstart`
+
