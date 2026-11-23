@@ -628,6 +628,7 @@ mpvc_web_setup_bin()
 mpvc_web_setup()
 {
     mpvc_web_config
+    mpvc_web_setup_bin
     echo "# $PROGNAME $PROGVERSION running (beta version: might contain bugs!) SSL=${MPVC_WEB_SSL_ENABLE}"
 
     (
@@ -695,7 +696,6 @@ mpvc_web_setup()
 
 mpvc_web_envclean()
 {
-    mpvc_web_setup_bin
     PATH="$MPVC_WEB_BINDIR:/usr/local/bin:/usr/bin:/bin"
     MPVC=$(command -v mpvc) || {
         echo "$PROGNAME: Error: mpvc not found in PATH" >&2
@@ -722,7 +722,6 @@ mpvc_web()
             mpvc_web_envclean awk -v mpvcbin="$MPVC" \
         '
         function mpvcsys(cmd) { system(mpvcbin" "cmd); }
-        function mpvc(cmd)    { mpvcsys("mpvc -q "cmd); }
 
         BEGIN {
             system("env")
@@ -742,7 +741,7 @@ mpvc_web()
 
             if (cmd in allowCmdList)
             {
-                mpvc(cmd)
+                mpvcsys("-q " cmd)
             }
         }
 
