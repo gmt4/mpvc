@@ -103,7 +103,8 @@ usage: $PROGNAME opts # @version $PROGVERSION (c) $PROGAUTHOR $PROGURL
  toggle   : Toggle MPRIS playing status
  stop     : Pause MPRIS playing status
  status   : Get MPRIS status
- volstatus: Get pactl volume status
+
+ vol{cmd} : Issue pactl volume control {cmd}, where cmd={status,get,set,mute,up,down,...}
 *tips: If unsure about where to begin, start with: $PROGNAME status
 EOF
     if [ $# -gt 0 ]; then echo "$@" 1>&2; fi
@@ -122,7 +123,7 @@ main()
 
     cmd="$1"
     volincr=0.1
-    sink=@DEFAULT_SINK@
+    sink=${sink:-@DEFAULT_SINK@}
     mpris_name="$(mpris_detect_player)"
 
     case "$cmd" in
@@ -149,12 +150,12 @@ main()
     open)      shift; mpris_method OpenUri "string:$1" ;;
     #loop)      shift; mpris_get "string:LoopStatus" ;;
 
-    volon)     pactl_quiet set-sink-mute $sink off ;;
-    voloff)    pactl_quiet set-sink-mute $sink on  ;;
-    volmute)   pactl_quiet set-sink-mute $sink toggle || mpris_set_volume "$cmd" ;;
-    voldown)   pactl_quiet set-sink-volume $sink "-${2:-$volincr}" || mpris_set_volume "$cmd" ;;
-    volup)     pactl_quiet set-sink-volume $sink "+${2:-$volincr}" || mpris_set_volume "$cmd" ;;
-    volset)    pactl_quiet set-sink-volume $sink "${2:-}" || mpris_set_volume "$cmd" "${2:-}";;
+    volon)     pactl_quiet set-sink-mute "$sink" off ;;
+    voloff)    pactl_quiet set-sink-mute "$sink" on  ;;
+    volmute)   pactl_quiet set-sink-mute "$sink" toggle || mpris_set_volume "$cmd" ;;
+    voldown)   pactl_quiet set-sink-volume "$sink" "-${2:-$volincr}" || mpris_set_volume "$cmd" ;;
+    volup)     pactl_quiet set-sink-volume "$sink" "+${2:-$volincr}" || mpris_set_volume "$cmd" ;;
+    volset)    pactl_quiet set-sink-volume "$sink" "${2:-}" || mpris_set_volume "$cmd" "${2:-}";;
     volget)    pactl_quiet list sinks | awk '/^\t+Volume:/{print $5}';;
     volstatus) pactl_quiet list sinks | awk '/^\t+Mute:/{print "mute:"$2}';;
 
