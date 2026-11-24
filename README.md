@@ -32,16 +32,16 @@ Note you can use `m/mx` instead of `mpvc/mpvc-fzf` when typing on the CLI, these
 
 ### 1. Base Player Controls (mpvc)
 ```bash
-mpvc add https://somafm.com/lush130.pls # Start playing SomaFM lush
-mpvc pause                              # Pause playback
-mpvc play 0                             # Play playlist entry 0
-mpvc vol 30                             # Set volume to 30%
-mpvc next                               # Play next track in the playlist
+mpvc add somafm.com/lush130.pls # Start playing SomaFM lush
+mpvc pause                      # Pause playback
+mpvc play 0                     # Play playlist entry 0
+mpvc vol 30                     # Set volume to 30%
+mpvc next                       # Play next track in the playlist
 
-mpvc toggle                             # Toggle playback state (play/pause)
-mpvc togglev                            # Toggle video playback state (on/off)
-mpvc togglei                            # Toggle idle playback state (once/always/off)
-find ~/Music -name "*.mp3" | mpvc load  # Pipe local directories into the active queue
+mpvc toggle                     # Toggle playback state (play/pause)
+mpvc togglev                    # Toggle video playback state (on/off)
+mpvc togglei                    # Toggle idle playback state (once/always/off)
+find -name "*.mp3" | mpvc load  # Pipe local directories into the active queue
 ```
 
 ### 2. Interactive Search Controls (mpvc-fzf)
