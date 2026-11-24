@@ -75,7 +75,7 @@ mpvc_verify_github_blob()
         rm -f "$file"
         return 1
     fi
-    echo "$PROGNAME: OK: GitHub blob SHA1 verified for $file"
+    #echo "$PROGNAME: OK: GitHub blob SHA1 verified for $file"
     return 0
 }
 
