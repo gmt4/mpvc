@@ -327,7 +327,7 @@ CLI. In that sense mpv integrates well with ffmpeg to apply AV filters
 ([\##https://ffmpeg.org/ffmpeg-filters.html"](https://ffmpeg.org/ffmpeg-filters.html)).
 However you've to, either start mpv specifying the ffmpeg cli flags for
 the AV-filters, or add keyboard shortcuts into the input.conf to be
-triggedred during runtime.
+triggered during runtime.
 
 Instead of that, for quickly testing combinations of filters, I was
 looking for something more CLI oriented: apply the filters using the MPV
@@ -631,7 +631,7 @@ Check that mpv speaks MPRIS by running \`mpvc-mpris status\`, or get
 Well, been "moving fast & breaking things" lately (there'll be more
 breakage to come), yet the goal is achieved, and, now this thing (mpvc)
 runs on FreeBSD and MacOS. I consider them to be working, and, usable
-but rought, since are not UNIXes that I do not run regularly.
+but rough, since are not UNIXes that I do not run regularly.
 
 ## Introducing mpvc-chapter: helper for managing chapters, 5 Apr 2024
 
@@ -656,7 +656,7 @@ shows the available cmds:
   "merge" command merges the chapter-file into the media file metadata.
 
 PS: Although the title says "Introducing mpvc-chapter", it has been
-present for a long time, it was just an small auxiliar command, missing
+present for a long time, it was just an small helper command, missing
 documentation, the above lines addresses this.
 
 ## Introducing mpvc-osd: interfacing mpvc with a 4x20 USB LCD, 5 May 2024
@@ -666,7 +666,7 @@ Infamous Bill\` decided it would be fun to interface mpvc with a USB LCD
 on the Raspberry PI that acts as a jukebox, so each time a track starts
 output what's playing now for some seconds, and then poweroff the LCD.
 Turned out nice and easy by using `mpvc-tui -S` scrobbling code, and
-masaging the output to pipe it to the USB LCD for presentation. For the
+massaging the output to pipe it to the USB LCD for presentation. For the
 record the output from `mpvc-tui` is:
 ` mpvc-tui -S 'echo $(date +"T%H:%M") $(mpvc -f "[%status%] #%position%/%playlistlength% %time% %artist% - %title% - %path%")' 'false' `.
 And this is how it looks:
@@ -698,7 +698,7 @@ For the record, this is the list of commands currently running:
 
 Using mpvc-web, on a device with a HDMI display, opens news
 possibilities of displaying video media, that is beyond just acting as a
-jukebox for playing music. For setups where the mediacenter has a video
+jukebox for playing music. For setups where the media center has a video
 display with X11 x2x(1) might come handy to send X11 input events from a
 ssh-client to control the remote mpv running on X11, an example
 invocation is:
@@ -718,7 +718,7 @@ compressed playing status. This is done by defining a custom
 The one-line compressed format has some benefits, such as becoming
 easily integrable with terminal, multiplexers and window managers,
 configurable, and clutter-free among others. This goes hand in hand with
-the hability to browse HTTP/s server listings and add music as in:
+the ability to browse HTTP/s server listings and add music as in:
 
 
     % mpvc-fzf -b https://archive.org/download/lofigirl-youtube/mp3/
@@ -739,7 +739,7 @@ remote, and other media URLs.
 
 ## On customizing mpvc-fzf key-bindings, 16 June 2025
 
-Until now the mpvc-fzf keybidings have been `hard-coded`, now these live
+Until now the mpvc-fzf key bindings have been `hard-coded`, now these live
 where they belong in the `mpvc.conf` config file. This way anyone can
 `add/edit/delete` mpvc-fzf keybindings. I think this is relevant, since
 sometimes keybinding conflict, and, also support add new keybindings.
@@ -775,13 +775,15 @@ The commands below have been on my user crontab(5) for a long time,
 these take care of starting and stopping music on a daily basis, also
 taking care of controlling volume level, and un/muting audio output at
 night. The @reboot, @daily and @weekly crontab entries, take care of
-starting mpvc with wathever I have currently saved to the mpvc current
+starting mpvc with whatever I have currently saved to the mpvc current
 stash.
 
     # crontab: enable audio/mpv in the morning, disable at night
     @reboot           $HOME/bin/mpvc -q quit stash apply current
     #@daily           $HOME/bin/mpvc -q quit stash apply current
     #@weekly          $HOME/bin/mpvc -q quit stash apply current
+
+    @reboot           $HOME/bin/sh/mpvc-web -s 1 -b 0 -a 1 -c start > /dev/null
 
     #m  h d m w cmd
      0 21 * * * $HOME/bin/mpvc -q volume 20
