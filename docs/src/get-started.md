@@ -58,7 +58,7 @@ The `mpvc-installer quickstart` automated install runs strictly in user-space (n
 ```bash
 curl -fsSLO https://github.com/gmt4/mpvc/raw/master/extras/mpvc-installer;
 # take your time to review the mpvc-installer for peace-of-mind
-BINDIR=$HOME/bin SHELL=/bin/sh $SHELL ./mpvc-installer quickstart
+env BINDIR="$HOME/bin" /bin/sh ./mpvc-installer quickstart
 ```
 
 *Prefer using package managers like Homebrew, Nix, Pkg, Gentoo, BSD or the Arch AUR? See the **[Detailed Installation steps in docs/README.md](https://github.com/gmt4/mpvc/blob/master/docs/README.md#installation)**.*
