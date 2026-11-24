@@ -203,7 +203,7 @@ mpvc_config()
 
 mpvc_lint()
 {
-    shellcheck --rcfile=.shellcheckrc --severity=warning --format=gcc ${SCRIPT}
+    shellcheck --severity=warning --format=gcc ${SCRIPT} # --rcfile=.shellcheckrc
 }
 
 mpvc_fetch()
