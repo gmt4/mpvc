@@ -28,7 +28,7 @@ html_body_open()
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> 🎧$(hostname) mpvc browser</title>
     <style>
-        body { font-family: monospace, sans-serif; font-size: 0.8rem; background: #121212; color: #e0e0e0; margin: 0; padding: 15px 4px; }
+        body { font-family: Arial, sans-serif, monospace; font-size: 0.8rem; background: #121212; color: #e0e0e0; margin: 0; padding: 15px 4px; }
         .browser { max-width: 99%; margin: 0 auto; }
         .inline { display: inline; }
 
@@ -65,6 +65,11 @@ html_body_open()
         a:visited, a.folder-link:visited { color: inherit; }
         a:hover, a:focus { color: #5dade2; text-decoration: underline; }
         a.folder-link:hover, a.folder-link:focus { color: #f4d03f; text-decoration: underline; }
+
+        .file-row { display: flex; align-items: center; justify-content: border-bottom: 1px solid #222; border-radius: 4px; transition: background-color 0.1s ease; }
+        .file-row:hover, .dir-row:hover { background-color: #1e1e24; }
+        .file-actions { display: flex; gap: 6px; flex-shrink: 0; }
+        @media (hover: none) { .file-actions { opacity: 1; } }
     </style>
 </head>
 <body>
