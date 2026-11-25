@@ -413,17 +413,20 @@ mpvc_get_playlist_json() {
 }
 
 mpvc_get_playlist_once() {
-    mpvc_get_playlist_json |
-        sed -n 's|"filename":"\(.*\)",*|\1|p' |
-        awk -v numbered="${1:-}" '
-        {
-            gsub("^[ \t]*", " ")
+    mpvc_getr "playlist" | awk -v numbered="${1:-}" '
+    {
+        while (match($0, /"filename":"([^"\\]|\\.)*"/)) {
+            fn = substr($0, RSTART + 12, RLENGTH - 13)
+            gsub(/\\"/, "\"", fn)
+            gsub(/\\\\/, "\\", fn)
+            gsub(/\\\//, "/", fn)
             if (length(numbered) > 0)
-                printf "%2d %s\n", NR-1, $0
+                printf "%2d %s\n", n++, fn
             else
-                print
+                print fn
+            $0 = substr($0, RSTART + RLENGTH)
         }
-    '
+    }'
 }
 
 # fn args: $1: filename $2: full path flag to skip basename
@@ -444,16 +447,21 @@ mpvc_get_playlist() {
 
     if [ "$mode" = "numbered" ]; then
         mpvc_get_playlist_once "$mode"; return
+    elif [ "$mode" = "full" ]; then
+        [ -z "${NO_COLOR:-}" ] && lpos=$(mpvc_get playlist-pos)
+        cols=120
+        firstlast="0 999999"
+    else
+        lpos=$(mpvc_get playlist-pos)
+        lcount=$(mpvc_get playlist-count)
+        cols=$(mpvc_tty_cols)
+        if [ -z "$lcount" ]; then return; fi
+        if [ -z "$cols" ]; then return; fi
+        firstlast=$(mpvc_get_terminal_height "$lpos" "$lcount")
     fi
 
-    lpos=$(mpvc_get playlist-pos)
-    lcount=$(mpvc_get playlist-count)
-    cols=$(mpvc_tty_cols)
-    if [ -z "$lcount" ]; then return; fi
-    if [ -z "$cols" ]; then return; fi
-    firstlast=$(mpvc_get_terminal_height "$lpos" "$lcount")
     mpvc_get_playlist_once |
-        awk -v mpvc="$0" -v lpos="$lpos" -v cols=$cols -v firstlast="$firstlast" -v istrunc="$MPVC_PLAYLIST_TRUNC" \
+        awk -v mpvc="$0" -v lpos="${lpos:-}" -v cols="${cols:-}" -v firstlast="${firstlast:-}" -v istrunc="$MPVC_PLAYLIST_TRUNC" \
         '
         BEGIN {
             # truncate lines x cols when interactive (configurable)
