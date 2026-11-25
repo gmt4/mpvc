@@ -230,16 +230,12 @@ mpvc_config()
 {
     mpvc_defaults
     # if not present, create config dir
-    if [ ! -d "$MPVC_CONFIG_DIR" ]; then mkdir -p "$MPVC_CONFIG_DIR"; fi
-    if [ ! -d "$MPVC_CACHE_DIR" ]; then mkdir -p "$MPVC_CACHE_DIR"; fi
-    if [ ! -d "$MPVC_STASH_DIR" ]; then mkdir -p "$MPVC_STASH_DIR"; fi
-    if [ ! -d "$MPVC_PLAYLIST" ]; then mkdir -p "$MPVC_PLAYLIST"; fi
+    [ -d "$MPVC_PLAYLIST" ] && [ -d "$MPVC_STASH_DIR" ] && [ -d "$MPVC_CACHE_DIR" ] || \
+        mkdir -p "$MPVC_CONFIG_DIR" "$MPVC_CACHE_DIR" "$MPVC_STASH_DIR" "$MPVC_PLAYLIST"
     # if not present, create config files
     if [ ! -e "$MPVC_CURL_CACHE" ]; then true > "$MPVC_CURL_CACHE"; fi
     # if present load user config
     if [ -r "$MPVC_CONFIG" ] && [ -O "$MPVC_CONFIG" ]; then
-        chmod "640" "$MPVC_CONFIG";
-        mpvc_check_user_perms "$MPVC_CONFIG" "640";
         # shellcheck source=docs/config/mpvc.conf
         . "$MPVC_CONFIG"
     else
@@ -339,16 +335,17 @@ mpvc_socklist_active() {
 }
 
 mpvc_json_esc() {
-    if command -v gojq >/dev/null 2>&1; then
-        printf '%s' "$1" | gojq -Rs .
-    else
-        # POSIX fallback: \ and " escaped; tab/CR handled; embedded newlines -> \n
-        printf '%s' "$1" | awk '
+    case "$1" in
+        *[!a-zA-Z0-9_./:-]*|'')
+            printf '%s' "$1" | awk '
             BEGIN { ORS=""; print "\"" }
-            { gsub(/\\/, "\\\\"); gsub(/"/, "\\\""); gsub(/\t/, "\\t");  gsub(/\r/, "\\r"); if (NR > 1) print "\\n"; print }
-            END { print "\"" }
-        '
-    fi
+            { gsub(/\\/, "\\\\"); gsub(/"/, "\\\""); gsub(/\t/, "\\t"); gsub(/\r/, "\\r"); if (NR > 1) print "\\n"; print }
+            END { print "\"" }'
+            ;;
+        *)
+            printf '"%s"' "$1"
+            ;;
+    esac
 }
 
 mpvc_sockecho() { echo "$@" | mpvc_sockrepl; }
@@ -1054,19 +1051,6 @@ mpvc_handle_socket() {
     fi
 }
 
-mpvc_check_user_perms() {
-    # check file perms
-    perms=$(equiet stat -Lc '%a' "$1" || equiet stat -Lf '%Lp' "$1")
-    if [ "$perms" != "$2" ]; then
-        die 2 "$PROGNAME: Error: File ${1##"$HOME/"} has unsafe permissions: $perms (should be $2)."
-    fi
-    # check file owner
-    owner=$(equiet stat -c '%u' "$1" || equiet stat -f '%Du' "$1")
-    if [ "$owner" != "$(id -u)" ] && [ "$owner" != "0" ]; then
-        die 2 "$PROGNAME: Error: File ${1##"$HOME/"} unexpected owner: $owner (should be $(id -u))."
-    fi
-}
-
 mpvc_validate_socket() {
     socket=$MPVC_SOCKET
     # validate deps
@@ -1080,8 +1064,6 @@ mpvc_validate_socket() {
     if [ ! -S "$socket" ]; then
         die 2 "$PROGNAME: Error: Socket ${socket##"$HOME/"} does not exist. Use mpvc --mpv to start one."
     fi
-    # test socket perms
-    mpvc_check_user_perms "$socket" "600"
     # test if socket is open
     if [ "$(mpvc_get pause)" = "" ]; then
         die 3 "$PROGNAME: Error: No files added to ${MPVC_SOCKET##"$HOME/"}."
