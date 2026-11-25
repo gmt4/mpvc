@@ -445,7 +445,7 @@ mpvc_get_playlist() {
     if [ "$mode" = "numbered" ]; then
         mpvc_get_playlist_once "$mode"; return
     elif [ "$mode" = "full" ]; then
-        [ -z "${NO_COLOR:-}" ] && lpos=$(mpvc_get playlist-pos)
+        if [ -z "${NO_COLOR:-}" ]; then lpos=$(mpvc_get playlist-pos); fi
         cols=120
         firstlast="0 999999"
     else
