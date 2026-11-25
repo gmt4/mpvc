@@ -276,9 +276,13 @@ mpvcfzf_thumb_b64()
 {
     yturl=$(mpvcfzf_thumb_cache "$@")
     [ -z "$yturl" ] || [ "$yturl" = "null" ] && return
-    b64data=$(base64 -w0 "$yturl")
-    b64img="data:image/png;base64,$b64data"
-    echo "$b64img"
+    file="$yturl.b64"
+    if [ ! -s "$file" ]; then
+        b64data=$(base64 -w0 "$yturl")
+        b64img="data:image/png;base64,$b64data"
+        echo "$b64img" > $file
+    fi
+    cat "$file"
 }
 
 mpvcfzf_thumb_cache_url()
@@ -307,6 +311,20 @@ mpvcfzf_thumb_cache()
 }
 
 mpvcfzf_thumb_url()
+{
+    yturl="${1:-$(mpvc filename current full)}"
+    [ -z "$yturl" ] || [ "$yturl" = "null" ] && return
+    cache="$MPVC_CACHE_DIR/thumbnail/url.cache"
+    if [ "$(find "$cache" -mmin -2.5 2>/dev/null)" ] && [ "$(sed -n '1p' "$cache")" = "$yturl" ]; then
+        sed -n '2p' "$cache"
+        return
+    fi
+    res=$(mpvcfzf_thumb_url_uncached "$yturl")
+    [ -n "$res" ] && [ "$res" != "null" ] && printf '%s\n%s\n' "$yturl" "$res" > "$cache"
+    echo "$res"
+}
+
+mpvcfzf_thumb_url_uncached()
 {
     yturl="${1:-}"
     yturl="${yturl:-$(mpvc filename current full)}"
