@@ -443,6 +443,13 @@ mpvc_quickstart_checks()
             echo "  export TERM=xterm-256color"
             ;;
     esac
+
+    # check tools are available
+    for f in $SCRIPT;
+    do
+        command -v $(basename $f) >/dev/null
+    done
+
 }
 
 mpvc_quickstart()
