@@ -1,3 +1,6 @@
+> [!WARNING]
+> **Documentation has moved:** This file is kept for historical reference. See the up-to-date documentation at **[gmt4.github.io/mpvc](https://gmt4.github.io/mpvc/)**.
+
 # 🎧 mpvc
 
 ![GitHub](https://img.shields.io/github/license/lwilletts/mpvc)
@@ -9,8 +12,6 @@
 [ [Intro](#%EF%B8%8F-overview-1) | [Reqs](#requirements) | [Install](#installation) | [Config](#configuration) | [Docs](#documentation) | [Usage](#usage) ]
 
 Music player in POSIX-sh using mpv from the shell/fzf + extras/goodies [^install] 📡🛸🚀.
-
-> **Note:** Documentation has moved to [gmt4.github.io/mpvc](https://gmt4.github.io/mpvc/).
 
 A fork of [lwillets/mpvc](https://github.com/lwilletts/mpvc) evolving on its own adding features such as: improved interfaces to CLI, TUI, FZF, WEB, EQZ, & play streaming services as YouTube/Invidious, with a focus on being fully programmable/scriptable from the shell.
 For more on the features of this fork check: [Git](#git) install, [LogBook](#logbook) & [Casts](#screencasts).
