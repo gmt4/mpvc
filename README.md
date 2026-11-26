@@ -9,7 +9,7 @@
 
 An elegant, lightweight, mpc-like command-line and web controller for the mpv media player, built on POSIX shell scripts and Unix sockets.
 
-> **Project Status:** Active development, issue tracking, and the latest version live in [`gmt4/mpvc`](https://github.com/gmt4/mpvc). Tagged major releases are synced directly to the upstream repository [`lwilletts/mpvc`](https://github.com/lwilletts/mpvc) to maintain continuity for downstream package managers ([Project origin & story](https://gmt4.github.io/mpvc/logbook.html)).
+> ⚠️ **Project Status:** Active development, issue tracking, and the latest version live in [`gmt4/mpvc`](https://github.com/gmt4/mpvc). Tagged major releases are synced directly to the upstream repository [`lwilletts/mpvc`](https://github.com/lwilletts/mpvc) to maintain continuity for downstream package managers ([Project origin & story](https://gmt4.github.io/mpvc/logbook.html)).
 
 [🌐 Watch the Demo](https://gmt4.github.io/mpvc/)
 
