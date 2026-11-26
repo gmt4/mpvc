@@ -469,9 +469,14 @@ mpvcfzf_iplay()
 
 mpvcfzf_beet()
 {
-    beet ls -p "$@" |
+    mpvcfzf_beet_raw "$@" |
         mpvcfzf_preview --prompt="(beets) " |
             mpvcfzf_awk 1
+}
+
+mpvcfzf_beet_raw()
+{
+    beet ls -p "$@"
 }
 
 mpvcfzf_localfind()
@@ -879,6 +884,7 @@ main()
         --now|now)              shift; mpvcfzf_now "${1:-}"; return ;;
 
         --beet|beet)            shift; mpvcfzf_beet "${@:-}"; return ;;
+        --beet-raw|beet-raw)    shift; mpvcfzf_beet_raw "${@:-}"; return ;;
         --feed|feed)            shift; mpvcfzf_feed_list "${@:-}"; return ;;
         --lofi|lofi)            shift; mpvcfzf_feed_lofi "${1:-}"; return ;;
         --somafm|somafm)        shift; mpvcfzf_feed_somafm_std "${1:-}"; return ;;
