@@ -148,11 +148,12 @@ function filterFiles()
     });
 }
 
-function filterKeyDown()
+function filterKeyDown(event)
 {
     const elem = document.getElementById('libMode')
     const form = document.getElementById('filterForm')
-    if(elem && elem.vaue == 'remote' && event.key === 'Enter')
+    const dosubmit = ['beets', 'yewtube'].includes(elem?.value);
+    if(elem && dosubmit && event.key === 'Enter')
     {
         // submit to let mpvc-fzf search action populate results
         form.submit()
@@ -366,7 +367,7 @@ handle_listing()
 handle_beets()
 {
     filter=$(gup 'filter=[^&]*' "$QUERY_STRING")
-    handle_generic "beet ls -p ${filter}" "" "playlist-now1:▶️:btn-compact" "playlist-add1:➕:btn-compact"
+    handle_generic "beet ls -p -- ${filter}" "" "playlist-now1:▶️:btn-compact" "playlist-add1:➕:btn-compact"
 }
 
 handle_stash()
@@ -399,12 +400,6 @@ handle_yewtube()
 {
     filter=$(gup 'filter=[^&]*' "$QUERY_STRING")
     handle_generic "$MPVC-fzf search $filter" "" "playlist-now1:▶️:btn-compact" "playlist-add1:➕:btn-compact" "playlist-fetch1:📥:btn-compact"
-}
-
-handle_remote()
-{
-    filter=$(gup 'filter=[^&]*' "$QUERY_STRING")
-    handle_generic "$MPVC-fzf search $filter" "" "playlist-add1:▶️:btn-compact"
 }
 
 handle_ntsr()
@@ -510,7 +505,6 @@ mpvc_browser()
     somafm)         handle_somafm ;;
     radioparadise)  handle_radioparadise ;;
     customfeed)     handle_customfeed ;;
-    remote)         handle_remote ;;
     esac
 }
 
